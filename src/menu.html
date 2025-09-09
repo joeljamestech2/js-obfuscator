@@ -101,6 +101,7 @@ footer a{
 footer a:hover{
   text-shadow:0 0 10px var(--highlight);
 }
+
 /* Login Modal */
 #loginModal{
   position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
@@ -109,6 +110,11 @@ footer a:hover{
 #loginModal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
 #loginModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
 #loginModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+#accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
+#accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);}
+#accountsList li:hover{background:rgba(0,212,255,0.1);}
+
+/* Profile Modal */
 #profileModal{
   position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
 }
@@ -118,9 +124,6 @@ footer a:hover{
 #profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
 #profileModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
 #profileModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
-#accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
-#accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);}
-#accountsList li:hover{background:rgba(0,212,255,0.1);}
 </style>
 </head>
 <body>
@@ -172,10 +175,10 @@ footer a:hover{
 <div id="loginModal">
   <div class="modal-content">
     <h3>Login / Register</h3>
-    <input type="text" id="loginUsername" placeholder="Username" required>
-    <input type="email" id="loginEmail" placeholder="Email" required>
-    <input type="password" id="loginPassword" placeholder="Password" required>
-    <input type="text" id="loginImg" placeholder="User Image URL (optional)">
+    <input type="text" id="loginUsername" name="username" placeholder="Username" autocomplete="username" required>
+    <input type="email" id="loginEmail" name="email" placeholder="Email" autocomplete="email" required>
+    <input type="password" id="loginPassword" name="current-password" placeholder="Password" autocomplete="current-password" required>
+    <input type="text" id="loginImg" name="userimg" placeholder="User Image URL (optional)" autocomplete="off">
     <button id="loginBtn">Login / Register</button>
     <h4>Saved Accounts</h4>
     <ul id="accountsList"></ul>
@@ -187,152 +190,147 @@ footer a:hover{
   <div class="modal-content">
     <h3>User Profile</h3>
     <ul id="profileInfo"></ul>
+    <input type="file" id="profileImgUpload" accept="image/*">
+    <button id="updateImgBtn">Update Image</button>
     <button id="logoutBtn">Logout</button>
     <button id="closeProfile">Close</button>
   </div>
 </div>
 
 <script>
+const defaultUserImg = "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg";
+let users = JSON.parse(localStorage.getItem("joelUsers") || "[]");
+let user = JSON.parse(localStorage.getItem("joelCurrentUser") || "null");
 let lastObfuscatedCode="";
 let originalFileName=null;
-let users = JSON.parse(localStorage.getItem("joelUsers")) || [];
-let user = JSON.parse(localStorage.getItem("joelCurrentUser")) || null;
 
-const loginModal = document.getElementById("loginModal");
-const profileModal = document.getElementById("profileModal");
-const userImgEl = document.getElementById("userImg");
-const usernameText = document.getElementById("usernameText");
-const accountsList = document.getElementById("accountsList");
-
-function showLogin(){ loginModal.style.display = "flex"; renderAccounts(); }
-function hideLogin(){ loginModal.style.display = "none"; }
-function updateHeaderUser(){
-  if(user){
-    userImgEl.src = user.userImg || "/image/main.jpg";
-    usernameText.innerText = user.username;
-  }
+// Show login if no current user
+function showLogin(){
+  document.getElementById("loginModal").style.display="flex";
+  updateAccountsList();
 }
-
-function renderAccounts(){
-  accountsList.innerHTML="";
-  users.forEach(u=>{
+function updateAccountsList(){
+  const list = document.getElementById("accountsList");
+  list.innerHTML="";
+  users.forEach((u,i)=>{
     const li = document.createElement("li");
-    li.innerHTML=`<img src="${u.userImg||'/image/main.jpg'}" style="height:20px;width:20px;border-radius:50%;vertical-align:middle;margin-right:5px;"> ${u.username}`;
+    li.textContent = u.username + " ("+u.email+")";
     li.onclick=()=>{
-      user = u;
-      localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-      updateHeaderUser();
-      hideLogin();
+      document.getElementById("loginUsername").value=u.username;
+      document.getElementById("loginEmail").value=u.email;
+      document.getElementById("loginPassword").value=u.password;
+      document.getElementById("loginImg").value=u.userImg||"";
     };
-    accountsList.appendChild(li);
+    list.appendChild(li);
   });
 }
 
-// Login/Register
-document.getElementById("loginBtn").addEventListener("click",()=>{
-  const username = document.getElementById("loginUsername").value.trim();
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value;
-  let userImg = document.getElementById("loginImg").value.trim();
-  if(!username||!email||!password){ alert("Please fill all fields!"); return; }
-  userImg = userImg||"/image/main.jpg";
-
-  let existing = users.find(u=>u.email===email);
-  if(existing){ user = existing; }
-  else{
-    user = {username,email,password,userImg,secretId:Math.random().toString(36).substr(2,10),downloads:[]};
-    users.push(user);
-    localStorage.setItem("joelUsers", JSON.stringify(users));
+function updateHeaderUser(){
+  if(user){
+    document.getElementById("userImg").src = user.userImg || defaultUserImg;
+    document.getElementById("usernameText").textContent = user.username;
   }
-  localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-  hideLogin();
+}
+
+// Login
+document.getElementById("loginBtn").addEventListener("click",()=>{
+  const uname = document.getElementById("loginUsername").value.trim();
+  const email = document.getElementById("loginEmail").value.trim();
+  const pass = document.getElementById("loginPassword").value.trim();
+  let uimg = document.getElementById("loginImg").value.trim() || defaultUserImg;
+  if(!uname||!email||!pass){alert("⚠️ Fill all required fields!");return;}
+  let exist = users.find(u=>u.email===email);
+  if(exist){
+    exist.username=uname;exist.password=pass;exist.userImg=uimg;
+    user=exist;
+  }else{
+    user={username:uname,email, password:pass, userImg:uimg, secretId:'ID_'+Math.random().toString(36).substring(2,10), downloads:[]};
+    users.push(user);
+  }
+  localStorage.setItem("joelUsers",JSON.stringify(users));
+  localStorage.setItem("joelCurrentUser",JSON.stringify(user));
   updateHeaderUser();
+  document.getElementById("loginModal").style.display="none";
 });
 
-// Show login if no user
-if(!user){ showLogin(); } else { updateHeaderUser(); }
-
-// Profile modal
+// Show profile
 document.getElementById("userProfile").addEventListener("click",()=>{
   const profileInfo = document.getElementById("profileInfo");
   profileInfo.innerHTML="";
   if(user){
-    profileInfo.innerHTML += `<li><strong>Username:</strong> ${user.username}</li>`;
-    profileInfo.innerHTML += `<li><strong>Email:</strong> ${user.email}</li>`;
-    profileInfo.innerHTML += `<li><strong>Secret ID:</strong> ${user.secretId}</li>`;
-    profileInfo.innerHTML += `<li><strong>Download History:</strong></li>`;
-    if(user.downloads.length===0) profileInfo.innerHTML += `<li>None</li>`;
-    else user.downloads.forEach(d=>{profileInfo.innerHTML += `<li>${d.filename} - ${d.date}</li>`;});
+    profileInfo.innerHTML+=`<li><strong>Username:</strong> ${user.username}</li>`;
+    profileInfo.innerHTML+=`<li><strong>Email:</strong> ${user.email}</li>`;
+    profileInfo.innerHTML+=`<li><strong>Secret ID:</strong> ${user.secretId}</li>`;
+    profileInfo.innerHTML+=`<li><strong>Download History:</strong></li>`;
+    if(user.downloads.length===0) profileInfo.innerHTML+=`<li>None</li>`;
+    else{
+      user.downloads.forEach((d)=>{
+        const li = document.createElement("li");
+        li.style.cursor="pointer";
+        li.style.color="var(--highlight)";
+        li.textContent = `${d.filename} - ${d.date}`;
+        li.onclick=()=>{
+          if(d.code){
+            const blob=new Blob([d.code],{type:"text/javascript"});
+            const url=URL.createObjectURL(blob);
+            const a=document.createElement("a");
+            a.href=url;a.download=d.filename;a.click();URL.revokeObjectURL(url);
+          }else alert("⚠️ Original code not available");
+        };
+        profileInfo.appendChild(li);
+      });
+    }
   }
-  profileModal.style.display="flex";
+  document.getElementById("profileModal").style.display="flex";
 });
-document.getElementById("closeProfile").addEventListener("click",()=>{ profileModal.style.display="none"; });
+
+// Update user image
+document.getElementById("updateImgBtn").addEventListener("click",()=>{
+  const fileInput = document.getElementById("profileImgUpload");
+  if(fileInput.files.length===0){user.userImg=defaultUserImg;updateHeaderUser();localStorage.setItem("joelUsers", JSON.stringify(users));localStorage.setItem("joelCurrentUser", JSON.stringify(user)); return;}
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+  reader.onload = e=>{
+    user.userImg=e.target.result;
+    updateHeaderUser();
+    users = users.map(u=>u.email===user.email?user:u);
+    localStorage.setItem("joelUsers",JSON.stringify(users));
+    localStorage.setItem("joelCurrentUser",JSON.stringify(user));
+    alert("✅ User image updated!");
+  };
+  reader.readAsDataURL(file);
+});
 
 // Logout
 document.getElementById("logoutBtn").addEventListener("click",()=>{
-  user = null;
+  user=null;
   localStorage.removeItem("joelCurrentUser");
-  profileModal.style.display="none";
+  updateHeaderUser();
   showLogin();
 });
 
-// --- Obfuscator Code ---
+// Close profile
+document.getElementById("closeProfile").addEventListener("click",()=>{document.getElementById("profileModal").style.display="none";});
+
+// Initialize header or login
+if(user){updateHeaderUser();}else{showLogin();}
+
+// Obfuscator
 document.getElementById("obfuscateBtn").addEventListener("click",()=>{
   const code=document.getElementById("code").value;
   const level=document.getElementById("levelSelect").value;
   if(!code){alert("⚠️ Paste code first!");return;}
   let obfuscated="";
-  if(level==="low"){ obfuscated="// Level: low\n"+code.split("").reverse().join(""); }
-  else if(level==="medium"){ obfuscated=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${btoa(unescape(encodeURIComponent(code)))}")`; }
+  if(level==="low"){obfuscated=`// Level: low\n`+code.split("").reverse().join("");}
+  else if(level==="medium"){const encoded=btoa(unescape(encodeURIComponent(code)));obfuscated=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${encoded}")`;}
   else if(level==="high"){
-    const lines = code.split("\n").map(l=>btoa(unescape(encodeURIComponent(l))));
-    let vars="";
-    lines.forEach(ln=>{ let v1="_0x"+(Math.random()*1e6|0).toString(16); vars+=`  var ${v1}="${ln}";\n  eval(_0x5de6a9(${v1}));\n`; });
+    const lines=code.split("\n").map(l=>btoa(unescape(encodeURIComponent(l))));
+    let vars="";lines.forEach(ln=>{let v1="_0x"+(Math.random()*1e6|0).toString(16);vars+=`  var ${v1}="${ln}";\n  eval(_0x5de6a9(${v1}));\n`;});
     obfuscated=`function _0x5de6a9(_0x3cb417){return decodeURIComponent(escape(atob(_0x3cb417)));}\n(function(){\n${vars}})();`;
   }
-  lastObfuscatedCode = obfuscated;
-  document.getElementById("result").textContent = obfuscated;
+  lastObfuscatedCode=obfuscated;
+  document.getElementById("result").textContent=obfuscated;
 });
 
 // Paste
-document.getElementById("pasteBtn").addEventListener("click",async()=>{
-  try{const text=await navigator.clipboard.readText();document.getElementById("code").value=text;}catch{alert("⚠️ Paste failed!");}
-});
-
-// Upload
-document.getElementById("uploadBtn").addEventListener("click",()=>{
-  const input=document.createElement("input");input.type="file";input.accept=".js";
-  input.onchange=()=>{const file=input.files[0];if(file){const reader=new FileReader();reader.onload=e=>{
-    document.getElementById("code").value=e.target.result;
-    originalFileName = file.name.replace(/\.[^/.]+$/, "");
-  };reader.readAsText(file);}};
-  input.click();
-});
-
-// Copy
-document.getElementById("copyBtn").addEventListener("click",()=>{
-  if(!lastObfuscatedCode){alert("⚠️ Obfuscate first!");return;}
-  navigator.clipboard.writeText(lastObfuscatedCode).then(()=>alert("✅ Copied!")).catch(()=>alert("❌ Copy failed!"));
-});
-
-// Download
-document.getElementById("downloadBtn").addEventListener("click",()=>{
-  if(!lastObfuscatedCode){alert("⚠️ Obfuscate first!");return;}
-  let filename=document.getElementById("filename").value.trim();
-  if(!filename && originalFileName){ filename = originalFileName + "_obfuscated"; }
-  if(!filename){ alert("⚠️ Please enter a filename before downloading!"); return; }
-  if(!filename.endsWith(".js")) filename += ".js";
-  const blob=new Blob([lastObfuscatedCode],{type:"text/javascript"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
-
-  if(user){ // save to download history
-    user.downloads.push({filename,date:new Date().toLocaleString()});
-    users = users.map(u=>u.email===user.email?user:u);
-    localStorage.setItem("joelUsers", JSON.stringify(users));
-    localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-  }
-});
-</script>
-</body>
-</html>
+document.getElementById("pasteBtn").addEventListener("click",async()=>{try{const text=await navigator.clipboard.readText();document.get
