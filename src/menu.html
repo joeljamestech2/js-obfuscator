@@ -1,311 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>JS OBFUSCATOR TOOL BY | LORD JOEL XMD</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<style>
-:root{--bg:#000;--glass:rgba(255,255,255,0.05);--text:#fff;--green:#00ff00;--muted:#aaa;--highlight:#0ff;--radius:12px;--blur:8px;--transition:0.3s ease;--btn-height:35px;--btn-width:130px}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;font-family:'JetBrains Mono',monospace}
-body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;backdrop-filter:blur(var(--blur));border-bottom:1px solid rgba(255,255,255,0.1)}
-.logo img{height:50px;border-radius:8px;max-width:100%;object-fit:contain}
-.status{display:flex;gap:0.7rem;flex-wrap:wrap;align-items:center}
-.status-item{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;padding:0.3rem 0.8rem;border-radius:50px;border:1px solid rgba(255,255,255,0.1);transition:var(--transition);cursor:pointer;color:var(--text)}
-.status-item:hover{border-color:var(--highlight);background:rgba(0,212,255,0.1)}
-.status-item i{color:var(--highlight)}
-main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem}
-.tool-card{background:var(--glass);backdrop-filter:blur(var(--blur));border-radius:var(--radius);padding:2rem;width:100%;max-width:900px;text-align:center;border:1px solid rgba(255,255,255,0.05)}
-.tool-card h2{font-weight:600;margin-bottom:1rem;color:var(--text)}
-.tool-card textarea{width:100%;height:160px;background:#000;color:var(--green);border:none;border-radius:var(--radius);padding:1rem;resize:vertical;font-family:'JetBrains Mono',monospace;margin-bottom:1rem}
-.button-grid{display:grid;grid-template-columns:repeat(2,var(--btn-width));grid-auto-rows:var(--btn-height);gap:0.5rem;justify-content:center;align-items:center;margin-bottom:0.5rem}
-.button-grid button,.button-grid select{height:var(--btn-height);width:var(--btn-width);border-radius:50px;padding:0.3rem 0.6rem;border:1px solid var(--highlight);background:#000;color:var(--text);font-weight:600;cursor:pointer;transition:var(--transition);font-family:'JetBrains Mono',monospace}
-.button-grid button:hover,.button-grid select:hover{background:rgba(0,212,255,0.1);box-shadow:0 0 10px rgba(0,212,255,0.2);transform:scale(1.05)}
-pre{background:#000;color:var(--green);padding:1rem;border-radius:var(--radius);width:100%;overflow-x:auto;white-space:pre-wrap;word-break:break-word;max-height:360px;overflow:auto;position:relative;text-shadow:0 0 2px var(--green);font-family:'JetBrains Mono',monospace}
-.output-grid{display:grid;grid-template-columns:repeat(2,var(--btn-width));grid-auto-rows:var(--btn-height);gap:0.5rem;justify-content:center;align-items:center;margin-top:0.5rem}
-.output-grid button,.output-grid input{height:var(--btn-height);width:var(--btn-width);border-radius:50px;padding:0.3rem 0.6rem;border:1px solid var(--highlight);background:#000;color:var(--text);font-weight:600;cursor:pointer;transition:var(--transition);font-family:'JetBrains Mono',monospace}
-.output-grid button:hover,.output-grid input:hover{background:rgba(0,212,255,0.1);box-shadow:0 0 10px rgba(0,212,255,0.2);transform:scale(1.05)}
-footer{margin-top:1rem;text-align:center;font-size:0.85rem;color:var(--muted)}
-footer a{color:var(--highlight);text-decoration:none;cursor:pointer}
-footer a:hover{text-shadow:0 0 10px var(--highlight)}
-.small{font-size:0.8rem;color:var(--muted);margin-top:8px}
-</style>
+  <meta charset="UTF-8">
+  <title>JS Obfuscator by Joel</title>
+  <style>
+    body {
+      background:#0f0f0f;
+      color:white;
+      font-family:monospace;
+      margin:0;
+      padding:0;
+      text-align:center;
+    }
+    header {
+      background:#1a1a1a;
+      padding:10px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    #username {
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    #username .icon {
+      font-size:18px;
+      color:#00ff88;
+    }
+    #username .name {
+      font-weight:bold;
+    }
+    textarea {
+      width:90%;
+      height:200px;
+      margin:10px 0;
+      background:#111;
+      color:#00ff00;
+      border:none;
+      padding:10px;
+      border-radius:8px;
+    }
+    pre {
+      width:90%;
+      max-height:300px;
+      margin:10px auto;
+      background:#111;
+      color:#00ff00;
+      padding:10px;
+      border-radius:8px;
+      overflow:auto;
+      word-break:break-word;
+    }
+    .btn-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      width:90%;
+      margin:10px auto;
+    }
+    button {
+      padding:10px;
+      border:none;
+      border-radius:8px;
+      background:#222;
+      color:white;
+      cursor:pointer;
+    }
+    button:hover { background:#333; }
+    #filename { padding:5px; margin:5px; }
+    img.banner { max-width:100%; border-radius:12px; margin:10px 0; }
+    footer { margin:20px 0; font-size:14px; color:#888; }
+  </style>
 </head>
 <body>
-<header>
-  <div class="logo"><img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Logo"></div>
-  <div class="status">
-    <div class="status-item"><i class="fa fa-bolt"></i> <span id="battery">--%</span></div>
-    <div class="status-item"><i class="fa fa-wifi"></i> <span id="ip">Loading...</span></div>
-    <div class="status-item"><i class="fas fa-headset"></i> Support</div>
-    <div class="status-item"><i class="fa fa-broadcast-tower"></i> WA Channel</div>
+  <header>
+    <h2>JS Obfuscator Tool</h2>
+    <div id="username">
+      <span class="icon">$(usernameicon)</span>
+      <span class="name">joelobsfucator user</span>
+    </div>
+    <div id="battery">🔋 ...%</div>
+  </header>
+
+  <img class="banner" src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="banner">
+
+  <textarea id="code" placeholder="⚡ Paste your JavaScript code here..."></textarea>
+
+  <div class="btn-grid">
+    <button onclick="obfuscate('low')">Obfuscate Low</button>
+    <button onclick="obfuscate('medium')">Obfuscate Medium</button>
+    <button onclick="obfuscate('high')">Obfuscate High</button>
+    <button id="uploadBtn">Upload JS</button>
   </div>
-</header>
 
-<main>
-  <div class="tool-card">
-    <h2>JS OBFUSCATOR <span class="small">(Low = reverse · Medium = base64 · High = _0x style)</span></h2>
-    <textarea id="code" placeholder="Paste your JavaScript code here..."></textarea>
+  <pre id="result">⚡ Your obfuscated code will appear here...</pre>
 
-    <div class="button-grid">
-      <button id="pasteBtn">Paste codes</button>
-      <button id="uploadBtn">Upload codes</button>
-      <select id="levelSelect">
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high" selected>High</option>
-      </select>
-      <button id="obfuscateBtn">Obfuscate</button>
-    </div>
+  <input id="filename" placeholder="Enter file name before download">
+  <button id="downloadBtn">Download</button>
+  <button id="copyBtn">Copy</button>
+  <button id="clearBtn">Clear</button>
 
-    <pre id="result">⚡ Your obfuscated code will appear here...</pre>
-
-    <div class="output-grid">
-      <button id="copyBtn">Copy</button>
-      <button id="beautifyBtn">Beautify</button>
-      <input type="text" id="filename" placeholder="Filename">
-      <button id="downloadBtn">Download</button>
-    </div>
-    <div class="output-grid" style="margin-top:6px;">
-      <button id="clearBtn">Clear</button>
-      <button id="detectBtn">Auto-detect & Beautify</button>
-    </div>
-  </div>
-</main>
-
-<footer>
-  JavaScript Obfuscator website created by <a onclick="window.open('https://github.com/joeljamestech2','_blank')">joeljamestech</a>
-</footer>
+  <footer>
+    JavaScript Obfuscator website created by joeljamestech  
+    <a href="https://github.com/joeljamestech2" target="_blank" style="color:#00ff88;">@joeljamestech2</a>
+  </footer>
 
 <script>
-/* Utility helpers */
-function randHex(len=6){ return Math.random().toString(16).slice(2,2+len); }
-function makeMangled(){ return "_0x"+randHex(6); }
+let lastObfuscatedCode="", originalFileName="";
 
-/* --- High-level obfuscation (produces _0x style) --- */
-/*
- - Extract string literals and replace them with a decoder call like _0xARR(0)
- - Create an array variable _0xARR = ["...", "..."]
- - Create decoder function function _0xARRf(i){return _0xARR[i];}
- - Mangle declared identifiers (var/let/const/function) names into _0x... pattern (best-effort)
- - Return combined wrapper + transformed code
-*/
-function obfuscateHigh(source){
-  // 1) gather string literals (single, double, template)
-  const stringRegex = /(["'`])((?:\\.|(?!\1).)*?)\1/gms;
-  const strings = [];
-  const stringMap = new Map();
-  let s = source;
-  s = s.replace(stringRegex, (m, quote, inner)=>{
-    // preserve short empty strings
-    const key = quote + inner + quote;
-    if(!stringMap.has(key)){
-      stringMap.set(key, strings.length);
-      strings.push(inner);
-    }
-    return `__STR_${stringMap.get(key)}__`;
-  });
-
-  // 2) mangle declared identifiers: function/var/let/const/class names - best-effort
-  // collect declared names
-  const declRegex = /\b(?:function|class)\s+([A-Za-z_$][\w$]*)|\b(?:var|let|const)\s+([A-Za-z_$][\w$]*)(?=\s*[=;,\n])/g;
-  const idMap = new Map();
-  s = s.replace(declRegex, (m, fnName, varName)=>{
-    const name = fnName || varName;
-    if(name && !idMap.has(name)){
-      idMap.set(name, makeMangled());
-    }
-    // replace declaration token with original followed by placeholder; we'll replace references later
-    return m;
-  });
-
-  // 3) Replace identifiers usages (best-effort) - avoid property access a.b or ["a"]
-  // Build a safe regex that matches whole word occurrences of each declared name
-  for(const [orig, mangled] of idMap.entries()){
-    // word boundary replace, do not replace inside quotes/strings (we already replaced strings with __STR_x__)
-    const word = new RegExp('\\b'+orig+'\\b','g');
-    s = s.replace(word, mangled);
+// 🔋 Real battery percentage
+navigator.getBattery().then(battery=>{
+  function updateBattery(){
+    document.getElementById("battery").innerText="🔋 "+Math.round(battery.level*100)+"%";
   }
-
-  // 4) Replace string placeholders with decoder calls _0xARR(index)
-  const arrName = makeMangled(); // e.g., _0x5de6a9
-  const funcName = makeMangled(); // decoder name
-  s = s.replace(/__STR_(\d+)__/g, (m, idx)=> `${funcName}(${idx})`);
-
-  // 5) Build array literal (escape backticks and backslashes and newlines carefully)
-  const escaped = strings.map(str=>{
-    // escape backslashes and backticks and line breaks for safe representation in array
-    return str.replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\r/g,'\\r').replace(/\n/g,'\\n');
-  }).map(item => '`' + item + '`'); // use template-literal-style entries to preserve quotes inside
-
-  const header = `var ${arrName}=[${escaped.join(",")}];\nfunction ${funcName}(i){return ${arrName}[i];}\n`;
-
-  // 6) Final output: header + transformed code
-  return header + s;
-}
-
-/* --- Low and Medium (simple) --- */
-function obfuscateLow(code){ return code.split("").reverse().join(""); }
-function obfuscateMedium(code){ return btoa(code); }
-
-/* --- Beautify / Deobfuscate --- */
-function deobfuscateHigh(code){
-  try{
-    // detect array var and func pattern
-    // look for: var _0xabc=[`...`,`...`];\nfunction _0xdef(i){return _0xabc[i];}
-    const headerMatch = code.match(/var\s+(_0x[a-f0-9]+)\s*=\s*\[([\s\S]*?)\];\s*function\s+(_0x[a-f0-9]+)\s*\(\s*[^\)]*\)\s*{\s*return\s+\1\s*\[\s*([^\]]+)\s*\]\s*;?\s*}/i);
-    // fallback more permissive regex
-    const altMatch = code.match(/var\s+(_0x[a-f0-9]+)\s*=\s*\[([\s\S]*?)\];\s*function\s+(_0x[a-f0-9]+)\s*\(\s*i\s*\)\s*{\s*return\s+\1\s*\[\s*i\s*\]\s*;?\s*}/i);
-    const match = headerMatch || altMatch;
-    if(!match) return null;
-
-    const arrName = match[1];
-    const arrContents = match[2];
-
-    // Parse array contents: backtick wrapped entries
-    const entryRegex = /`((?:\\`|\\n|\\r|\\\\|[^`])*)`/g;
-    const entries = [];
-    let m;
-    while((m = entryRegex.exec(arrContents)) !== null){
-      // unescape
-      const raw = m[1].replace(/\\n/g,'\n').replace(/\\r/g,'\r').replace(/\\\\/g,'\\').replace(/\\`/g,'`');
-      entries.push(raw);
-    }
-
-    // remove header from code
-    const body = code.replace(match[0], '');
-
-    // replace decoder calls like _0xabc(0) with the string literal
-    const decoderCall = new RegExp(arrName.replace(/\$/g,'\\$') + '\\s*\\(\\s*(\\d+)\\s*\\)', 'g');
-    let restored = body.replace(decoderCall, (m2, idx)=>{
-      const i = Number(idx);
-      if(Number.isFinite(i) && entries[i] !== undefined) {
-        // use double-quoted strings for restored code
-        const s = entries[i].replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n');
-        return `"${s}"`;
-      }
-      return m2;
-    });
-
-    // best-effort un-mangling of identifiers: this tool currently does not persist the mapping of mangled ids
-    // so we can't restore original names. We'll at least return restored strings and body.
-    return restored.trim();
-  }catch(e){
-    return null;
-  }
-}
-
-function deobfuscateMedium(code){
-  try{ return atob(code); }catch(e){ return null; }
-}
-function deobfuscateLow(code){ return code.split("").reverse().join(""); }
-
-/* Main API */
-let lastObfuscatedCode = "";
-let lastLevel = "";
-
-function obfuscate(code, level){
-  if(level === "low") return obfuscateLow(code);
-  if(level === "medium") return obfuscateMedium(code);
-  if(level === "high") return obfuscateHigh(code);
-  return code;
-}
-function beautify(code, level){
-  if(level === "low") return deobfuscateLow(code);
-  if(level === "medium") return deobfuscateMedium(code);
-  if(level === "high"){
-    // try to deobfuscate high
-    const out = deobfuscateHigh(code);
-    return out || ("// ❌ Beautify failed: code doesn't match the expected high pattern or parsing error.");
-  }
-  return "// ⚠️ Cannot beautify this input.";
-}
-
-/* UI wiring */
-document.getElementById("obfuscateBtn").addEventListener("click", ()=>{
-  const code = document.getElementById("code").value;
-  const level = document.getElementById("levelSelect").value;
-  if(!code){ alert("⚠️ Paste code first!"); return; }
-  lastLevel = level;
-  const ob = obfuscate(code, level);
-  lastObfuscatedCode = ob;
-  document.getElementById("result").textContent = ob;
+  updateBattery();
+  battery.addEventListener("levelchange", updateBattery);
 });
 
-document.getElementById("beautifyBtn").addEventListener("click", ()=>{
-  if(!lastObfuscatedCode){ alert("⚠️ Nothing to beautify!"); return; }
-  const res = beautify(lastObfuscatedCode, lastLevel);
-  document.getElementById("result").textContent = res;
-});
-
-document.getElementById("pasteBtn").addEventListener("click", async ()=>{
-  try{
-    const txt = await navigator.clipboard.readText();
-    document.getElementById("code").value = txt;
-  }catch(e){ alert("⚠️ Paste failed!"); }
-});
-
-document.getElementById("uploadBtn").addEventListener("click", ()=>{
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".js,application/javascript";
-  input.onchange = ()=> {
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = e => document.getElementById("code").value = e.target.result;
-    reader.readAsText(file);
+// Upload file
+document.getElementById("uploadBtn").addEventListener("click",()=>{
+  const input=document.createElement("input");
+  input.type="file";
+  input.accept=".js,application/javascript";
+  input.onchange=e=>{
+    const file=e.target.files[0];
+    if(file){
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        document.getElementById("code").value=ev.target.result;
+        originalFileName=file.name.replace(/\.[^/.]+$/,"");
+      };
+      reader.readAsText(file);
+    }
   };
   input.click();
 });
 
-document.getElementById("copyBtn").addEventListener("click", ()=>{
-  if(!lastObfuscatedCode){ alert("⚠️ Obfuscate first!"); return; }
-  navigator.clipboard.writeText(lastObfuscatedCode).then(()=>alert("✅ Copied!")).catch(()=>alert("❌ Copy failed!"));
-});
-
-document.getElementById("downloadBtn").addEventListener("click", ()=>{
-  if(!lastObfuscatedCode){ alert("⚠️ Obfuscate first!"); return; }
-  let filename = document.getElementById("filename").value.trim() || `obfuscated_${Date.now()}`;
-  if(!filename.endsWith(".js")) filename += ".js";
-  const blob = new Blob([lastObfuscatedCode], {type: "text/javascript"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = filename; a.click();
-  URL.revokeObjectURL(url);
-});
-
-document.getElementById("clearBtn").addEventListener("click", ()=>{
-  document.getElementById("code").value = "";
-  document.getElementById("result").textContent = "⚡ Your obfuscated code will appear here...";
-  lastObfuscatedCode = "";
-  lastLevel = "";
-});
-
-document.getElementById("detectBtn").addEventListener("click", ()=>{
-  const sample = document.getElementById("result").textContent || document.getElementById("code").value || "";
-  if(!sample.trim()){ alert("⚠️ Paste or obfuscate code first!"); return; }
-  // Auto-detect: try high -> medium -> low
-  let attempt, out;
-  // detect high pattern quickly
-  if(/var\s+_0x[a-f0-9]{3,}/i.test(sample) && /_0x[a-f0-9]{3,}\(\d+\)/i.test(sample)){
-    attempt = "high";
-    out = beautify(sample, "high");
-  } else if(/^[A-Za-z0-9+/=]+\s*$/.test(sample.replace(/\s/g,'')) && sample.length % 4 === 0){
-    attempt = "medium";
-    out = beautify(sample, "medium");
+// Obfuscation
+function obfuscate(level){
+  let code=document.getElementById("code").value;
+  if(!code.trim()){ alert("⚠️ Enter or upload JavaScript code first!"); return; }
+  
+  let obf="";
+  if(level==="low"){
+    obf=code.split("").reverse().join("");
+  } else if(level==="medium"){
+    obf=btoa(code);
+    obf=`eval(atob("${obf}"))`;
   } else {
-    attempt = "low";
-    out = beautify(sample, "low");
+    let encoded=btoa(unescape(encodeURIComponent(code)));
+    let wrapper=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${encoded}")`;
+    obf=wrapper;
   }
-  if(out) document.getElementById("result").textContent = out;
-  else alert("⚠️ Auto-detect failed to beautify.");
+  
+  lastObfuscatedCode="// Obfuscation Level: "+level+"\n"+obf;
+  document.getElementById("result").textContent=lastObfuscatedCode;
+}
+
+// Download
+document.getElementById("downloadBtn").addEventListener("click",()=>{
+  let filename=document.getElementById("filename").value.trim();
+  if(!filename && originalFileName){
+    filename=originalFileName+"_obfuscated";
+  }
+  if(!filename){
+    alert("⚠️ Please enter a filename before downloading!");
+    return;
+  }
+  const blob=new Blob([lastObfuscatedCode],{type:"text/javascript"});
+  const link=document.createElement("a");
+  link.href=URL.createObjectURL(blob);
+  link.download=filename.endsWith(".js")?filename:filename+".js";
+  link.click();
 });
 
-/* Make fake battery & ip */
-document.getElementById("battery").innerText = Math.floor(Math.random()*50+50) + "%";
-document.getElementById("ip").innerText = `192.168.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+// Copy
+document.getElementById("copyBtn").addEventListener("click",()=>{
+  if(!lastObfuscatedCode){alert("⚠️ Nothing to copy!");return;}
+  navigator.clipboard.writeText(lastObfuscatedCode);
+  alert("✅ Code copied!");
+});
+
+// Clear
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  document.getElementById("code").value="";
+  document.getElementById("result").textContent="⚡ Your obfuscated code will appear here...";
+  lastObfuscatedCode="";
+  originalFileName="";
+});
 </script>
 </body>
 </html>
