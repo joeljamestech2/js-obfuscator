@@ -59,7 +59,7 @@ main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;g
   box-shadow:0 0 10px rgba(0,212,255,0.2);
   transform:scale(1.05);
 }
-pre{background:#000;color:var(--green);padding:1rem;border-radius:var(--radius);width:100%;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word;position:relative;text-shadow:0 0 2px var(--green);font-family:'JetBrains Mono',monospace;}
+pre{background:#000;color:var(--green);padding:1rem;border-radius:var(--radius);width:100%;overflow-x:auto;white-space:pre-wrap;word-break:break-word;max-height:300px;overflow:auto;position:relative;text-shadow:0 0 2px var(--green);font-family:'JetBrains Mono',monospace;}
 .output-grid{
   display:grid;
   grid-template-columns:repeat(2, var(--btn-width));
@@ -106,7 +106,7 @@ footer a:hover{
 <body>
 
 <header>
-  <div class="logo"><img src="image/main.jpg" alt="Logo"></div>
+  <div class="logo"><img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Logo"></div>
   <div class="status">
     <div class="status-item"><i class="fa fa-bolt"></i> <span id="battery">--%</span></div>
     <div class="status-item"><i class="fa fa-wifi"></i> <span id="ip">Loading...</span></div>
@@ -122,24 +122,24 @@ footer a:hover{
 
     <!-- Top 2x2 button grid with Level selector -->
     <div class="button-grid">
-      <button id="pasteBtn"><i class=""></i> Paste codes</button>
-      <button id="uploadBtn"><i class=""></i> Upload codes</button>
+      <button id="pasteBtn">Paste codes</button>
+      <button id="uploadBtn">Upload codes</button>
       <select id="levelSelect">
         <option value="low">Low</option>
         <option value="medium" selected>Medium</option>
         <option value="high">High</option>
       </select>
-      <button id="obfuscateBtn"><i class=""></i> Obfuscate</button>    
+      <button id="obfuscateBtn">Obfuscate</button>    
     </div>
 
     <pre id="result">⚡ Your obfuscated code will appear here...</pre>
 
     <!-- Output 2x2 grid -->
     <div class="output-grid">
-      <button id="copyBtn"><i class=""></i> Copy</button>
-      <button id="settingBtn"><i class=""></i> Setting</button>
+      <button id="copyBtn">Copy</button>
+      <button id="clearBtn">Clear</button>
       <input type="text" id="filename" placeholder="Filename">
-      <button id="downloadBtn"><i class=""></i> Download</button>
+      <button id="downloadBtn">Download</button>
     </div>
   </div>
 </main>
@@ -151,25 +151,51 @@ footer a:hover{
 <script>
 let lastObfuscatedCode="";
 
-// Obfuscate
+// Simple obfuscation function
+function obfuscate(code, level){
+  if(level==="low"){
+    return code.split("").reverse().join("");
+  }
+  if(level==="medium"){
+    return btoa(code); // base64
+  }
+  if(level==="high"){
+    let encoded = btoa(encodeURIComponent(code.split("").reverse().join("")));
+    let varName = "x"+Math.random().toString(36).substring(2,8);
+    return `// High level obfuscation\n(function(${varName}){\n eval(decodeURIComponent(atob(${varName})))\n})("${encoded}")`;
+  }
+  return code;
+}
+
+// Obfuscate button
 document.getElementById("obfuscateBtn").addEventListener("click",()=>{
   const code=document.getElementById("code").value;
   const level=document.getElementById("levelSelect").value;
   if(!code){alert("⚠️ Paste code first!");return;}
-  lastObfuscatedCode=`// Level: ${level}\n`+code.split("").reverse().join("");
+  lastObfuscatedCode = obfuscate(code, level);
   document.getElementById("result").textContent=lastObfuscatedCode;
 });
 
 // Paste
 document.getElementById("pasteBtn").addEventListener("click",async()=>{
-  try{const text=await navigator.clipboard.readText();document.getElementById("code").value=text;}catch{alert("⚠️ Paste failed!");}
+  try{
+    const text=await navigator.clipboard.readText();
+    document.getElementById("code").value=text;
+  }catch{
+    alert("⚠️ Paste failed!");
+  }
 });
 
 // Upload
 document.getElementById("uploadBtn").addEventListener("click",()=>{
   const input=document.createElement("input");
-  input.type="file";input.accept=".js";
-  input.onchange=()=>{const file=input.files[0];const reader=new FileReader();reader.onload=e=>{document.getElementById("code").value=e.target.result;};reader.readAsText(file);};
+  input.type="file";input.accept=".js,application/javascript";
+  input.onchange=()=>{
+    const file=input.files[0];
+    const reader=new FileReader();
+    reader.onload=e=>{document.getElementById("code").value=e.target.result;};
+    reader.readAsText(file);
+  };
   input.click();
 });
 
@@ -182,16 +208,23 @@ document.getElementById("copyBtn").addEventListener("click",()=>{
 // Download
 document.getElementById("downloadBtn").addEventListener("click",()=>{
   if(!lastObfuscatedCode){alert("⚠️ Obfuscate first!");return;}
-  let filename=document.getElementById("filename").value.trim()||"obfuscated";
+  let filename=document.getElementById("filename").value.trim()||`obfuscated_${Date.now()}`;
   if(!filename.endsWith(".js"))filename+=".js";
   const blob=new Blob([lastObfuscatedCode],{type:"text/javascript"});
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
 });
 
-// Fake Battery & IP
-document.getElementById("battery").innerText="100%";
-document.getElementById("ip").innerText="127.0.0.1";
+// Clear
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  document.getElementById("code").value="";
+  document.getElementById("result").textContent="⚡ Your obfuscated code will appear here...";
+  lastObfuscatedCode="";
+});
+
+// Fake Battery & IP (dynamic look)
+document.getElementById("battery").innerText=Math.floor(Math.random()*50+50)+"%";
+document.getElementById("ip").innerText=`192.168.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
 </script>
 </body>
 </html>
