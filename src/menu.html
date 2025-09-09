@@ -23,10 +23,10 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;font-family:'JetBrains Mono',monospace;}
 body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
 header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;backdrop-filter:blur(var(--blur));border-bottom:1px solid rgba(255,255,255,0.1);}
-.logo img{height:50px; border-radius:8px; max-width:100%; object-fit:contain;}
+.logo img{height:50px; border-radius:8px; max-width:100%; object-fit:contain; cursor:pointer;}
 .status{display:flex;gap:0.7rem;flex-wrap:wrap;align-items:center;}
 .status-item{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;padding:0.3rem 0.8rem;border-radius:50px;border:1px solid rgba(255,255,255,0.1);transition:var(--transition);cursor:pointer;color:var(--text);}
-.status-item i{color:var(--highlight);}
+.status-item img{height:30px;width:30px;border-radius:50%;object-fit:cover;}
 .status-item:hover{border-color:var(--highlight);background:rgba(0,212,255,0.1);}
 main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem;}
 .tool-card{background:var(--glass);backdrop-filter:blur(var(--blur));border-radius:var(--radius);padding:2rem;width:100%;max-width:700px;text-align:center;border:1px solid rgba(255,255,255,0.05);}
@@ -101,6 +101,21 @@ footer a{
 footer a:hover{
   text-shadow:0 0 10px var(--highlight);
 }
+/* Login Modal */
+#loginModal{
+  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
+}
+#loginModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;}
+#loginModal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
+#loginModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+#loginModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+#profileModal{
+  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
+}
+#profileModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
+#profileModal h3{margin-bottom:1rem;}
+#profileModal ul{list-style:none;text-align:left;margin:0;padding:0;}
+#profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
 </style>
 </head>
 <body>
@@ -110,8 +125,10 @@ footer a:hover{
     <img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Logo">
   </div>
   <div class="status">
-    <div class="status-item"><i class="fa fa-bolt"></i> <span id="battery">--%</span></div>
-    <div class="status-item"><i class="fa fa-user"></i> joelobsfucator user</div>
+    <div class="status-item" id="userProfile">
+      <img src="" alt="User" id="userImg">
+      <span id="usernameText"></span>
+    </div>
   </div>
 </header>
 
@@ -148,9 +165,94 @@ footer a:hover{
   JavaScript Obfuscator website created by <a onclick="window.open('https://github.com/joeljamestech2','_blank')">joeljamestech</a>
 </footer>
 
+<!-- Login Modal -->
+<div id="loginModal">
+  <div class="modal-content">
+    <h3>Login / Register</h3>
+    <input type="text" id="loginUsername" placeholder="Username" required>
+    <input type="email" id="loginEmail" placeholder="Email" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <input type="text" id="loginImg" placeholder="User Image URL (optional)">
+    <button id="loginBtn">Login</button>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div id="profileModal">
+  <div class="modal-content">
+    <h3>User Profile</h3>
+    <ul id="profileInfo">
+      <!-- dynamically filled -->
+    </ul>
+    <button id="closeProfile">Close</button>
+  </div>
+</div>
+
 <script>
 let lastObfuscatedCode="";
 let originalFileName=null;
+let user = JSON.parse(localStorage.getItem("joelUser")) || null;
+
+// Show login if no user
+const loginModal = document.getElementById("loginModal");
+const profileModal = document.getElementById("profileModal");
+const userImgEl = document.getElementById("userImg");
+const usernameText = document.getElementById("usernameText");
+
+function showLogin(){
+  loginModal.style.display = "flex";
+}
+
+function hideLogin(){
+  loginModal.style.display = "none";
+}
+
+function updateHeaderUser(){
+  userImgEl.src = user.userImg || "https://i.ibb.co/ZYW3VTp/placeholder.png";
+  usernameText.innerText = user.username;
+}
+
+// Login action
+document.getElementById("loginBtn").addEventListener("click",()=>{
+  const username = document.getElementById("loginUsername").value.trim();
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  let userImg = document.getElementById("loginImg").value.trim();
+
+  if(!username || !email || !password){ alert("Please fill all required fields!"); return; }
+
+  userImg = userImg || "https://i.ibb.co/ZYW3VTp/placeholder.png";
+
+  user = {
+    username,email,password,
+    userImg,
+    secretId: Math.random().toString(36).substr(2,10),
+    downloads:[]
+  };
+  localStorage.setItem("joelUser", JSON.stringify(user));
+  hideLogin();
+  updateHeaderUser();
+});
+
+// If user exists, skip login
+if(!user){ showLogin(); } else { updateHeaderUser(); }
+
+// Show profile modal
+document.getElementById("userProfile").addEventListener("click",()=>{
+  const profileInfo = document.getElementById("profileInfo");
+  profileInfo.innerHTML = "";
+  if(user){
+    profileInfo.innerHTML += `<li><strong>Username:</strong> ${user.username}</li>`;
+    profileInfo.innerHTML += `<li><strong>Email:</strong> ${user.email}</li>`;
+    profileInfo.innerHTML += `<li><strong>Secret ID:</strong> ${user.secretId}</li>`;
+    profileInfo.innerHTML += `<li><strong>Download History:</strong></li>`;
+    if(user.downloads.length===0) profileInfo.innerHTML += `<li>None</li>`;
+    else user.downloads.forEach(d=>{profileInfo.innerHTML += `<li>${d.filename} - ${d.date}</li>`;});
+  }
+  profileModal.style.display = "flex";
+});
+
+document.getElementById("closeProfile").addEventListener("click",()=>{ profileModal.style.display="none"; });
 
 // Obfuscate
 document.getElementById("obfuscateBtn").addEventListener("click",()=>{
@@ -234,20 +336,14 @@ document.getElementById("downloadBtn").addEventListener("click",()=>{
   const blob=new Blob([lastObfuscatedCode],{type:"text/javascript"});
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
-});
 
-// Battery % API
-if(navigator.getBattery){
-  navigator.getBattery().then(bat=>{
-    function updateBattery(){
-      document.getElementById("battery").innerText=Math.round(bat.level*100)+"%";
-    }
-    updateBattery();
-    bat.addEventListener("levelchange",updateBattery);
-  });
-}else{
-  document.getElementById("battery").innerText="100%";
-}
+  // Save to user download history
+  if(user){
+    const now = new Date().toLocaleString();
+    user.downloads.push({filename,date:now});
+    localStorage.setItem("joelUser", JSON.stringify(user));
+  }
+});
 </script>
 </body>
 </html>
