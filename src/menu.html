@@ -113,7 +113,8 @@ footer a:hover{
   position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
 }
 #profileModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
-#profileModal h3{margin-bottom:1rem;}
+#profileModal h3{display:flex;align-items:center;margin-bottom:1rem;}
+#profileModal h3 img{margin-right:10px;}
 #profileModal ul{list-style:none;text-align:left;margin:0;padding:0;}
 #profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
 #profileModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
@@ -185,7 +186,10 @@ footer a:hover{
 <!-- Profile Modal -->
 <div id="profileModal">
   <div class="modal-content">
-    <h3>User Profile</h3>
+    <h3>
+      <img id="profileHeaderImg" src="" alt="User" style="height:30px;width:30px;border-radius:50%;">
+      <span id="profileHeaderUsername"></span>
+    </h3>
     <ul id="profileInfo"></ul>
     <button id="uploadProfileImgBtn">Upload Profile Image</button>
     <button id="logoutBtn">Logout</button>
@@ -267,15 +271,24 @@ if(!user){ showLogin(); } else { updateHeaderUser(); }
 // Profile modal
 document.getElementById("userProfile").addEventListener("click",()=>{
   const profileInfo = document.getElementById("profileInfo");
-  profileInfo.innerHTML="";
+  const profileHeaderImg = document.getElementById("profileHeaderImg");
+  const profileHeaderUsername = document.getElementById("profileHeaderUsername");
+
   if(user){
-    profileInfo.innerHTML += `<li><strong>Username:</strong> ${user.username}</li>`;
-    profileInfo.innerHTML += `<li><strong>Email:</strong> ${user.email}</li>`;
-    profileInfo.innerHTML += `<li><strong>Secret ID:</strong> ${user.secretId}</li>`;
-    profileInfo.innerHTML += `<li><strong>Download History:</strong></li>`;
+    // Set header image and username
+    profileHeaderImg.src = user.userImg || defaultUserImg;
+    profileHeaderUsername.textContent = user.username;
+
+    // Populate details
+    profileInfo.innerHTML = `
+      <li><strong>Email:</strong> ${user.email}</li>
+      <li><strong>Secret ID:</strong> ${user.secretId}</li>
+      <li><strong>Download History:</strong></li>
+    `;
     if(user.downloads.length===0) profileInfo.innerHTML += `<li>None</li>`;
     else user.downloads.forEach(d=>{profileInfo.innerHTML += `<li>${d.filename} - ${d.date}</li>`;});
   }
+
   profileModal.style.display="flex";
 });
 document.getElementById("closeProfile").addEventListener("click",()=>{ profileModal.style.display="none"; });
