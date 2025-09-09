@@ -1,0 +1,9 @@
+{
+  "name": "js-obfuscator-api by joeljamestech",
+  "version": "1.0.0",
+  "main": "api/obfuscate.js",
+  "license": "MIT",
+  "dependencies": {
+    "javascript-obfuscator": "^4.1.1"
+  }
+}
