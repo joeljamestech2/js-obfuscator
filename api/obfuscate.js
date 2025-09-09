@@ -1,48 +1,49 @@
-const JavaScriptObfuscator = require("javascript-obfuscator");
-
-export default function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Only POST allowed" });
-  }
-
-  try {
-    const { code, level } = req.body;
-
-    if (!code) {
-      return res.status(400).json({ error: "Missing 'code' in request body" });
-    }
-
-    // 🔹 Obfuscation levels
-    const presets = {
-      low: {
-        compact: true,
-        stringArray: false,
-      },
-      medium: {
-        compact: true,
-        stringArray: true,
-        rotateStringArray: true,
-      },
-      high: {
-        compact: true,
-        controlFlowFlattening: true,
-        deadCodeInjection: true,
-        stringArray: true,
-        stringArrayEncoding: ["rc4"],
-        rotateStringArray: true,
-      },
-    };
-
-    const options = presets[level?.toLowerCase()] || presets.medium;
-
-    const obfuscationResult = JavaScriptObfuscator.obfuscate(code, options);
-
-    res.status(200).json({
-      level: level || "medium",
-      original: code,
-      obfuscated: obfuscationResult.getObfuscatedCode(),
-    });
-  } catch (err) {
-    res.status(500).json({ error: "Obfuscation failed", details: err.message });
-  }
+// Level: low
 }
+}  
+;)} egassem.rre :sliated ,"deliaf noitacsufbO" :rorre {(nosj.)005(sutats.ser    
+{ )rre( hctac }  
+;)}    
+,)(edoCdetacsufbOteg.tluseRnoitacsufbo :detacsufbo      
+,edoc :lanigiro      
+,"muidem" || level :level      
+{(nosj.)002(sutats.ser    
+
+;)snoitpo ,edoc(etacsufbo.rotacsufbOtpircSavaJ = tluseRnoitacsufbo tsnoc    
+
+;muidem.steserp || ])(esaCrewoLot.?level[steserp = snoitpo tsnoc    
+
+;}    
+,}      
+,eurt :yarrAgnirtSetator        
+,]"4cr"[ :gnidocnEyarrAgnirts        
+,eurt :yarrAgnirts        
+,eurt :noitcejnIedoCdaed        
+,eurt :gninettalFwolFlortnoc        
+,eurt :tcapmoc        
+{ :hgih      
+,}      
+,eurt :yarrAgnirtSetator        
+,eurt :yarrAgnirts        
+,eurt :tcapmoc        
+{ :muidem      
+,}      
+,eslaf :yarrAgnirts        
+,eurt :tcapmoc        
+{ :wol      
+{ = steserp tsnoc    
+slevel noitacsufbO �� //    
+
+}    
+;)} "ydob tseuqer ni 'edoc' gnissiM" :rorre {(nosj.)004(sutats.ser nruter      
+{ )edoc!( fi    
+
+;ydob.qer = } level ,edoc { tsnoc    
+{ yrt  
+
+}  
+;)} "dewolla TSOP ylnO" :rorre {(nosj.)504(sutats.ser nruter    
+{ )"TSOP" ==! dohtem.qer( fi  
+{ )ser ,qer(reldnah noitcnuf tluafed tropxe
+
+;)"rotacsufbo-tpircsavaj"(eriuqer = rotacsufbOtpircSavaJ tsnoc
