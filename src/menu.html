@@ -26,7 +26,7 @@ header{display:flex;justify-content:space-between;align-items:center;padding:1re
 .logo img{height:50px; border-radius:8px; max-width:100%; object-fit:contain; cursor:pointer;}
 .status{display:flex;gap:0.7rem;flex-wrap:wrap;align-items:center;}
 .status-item{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;padding:0.3rem 0.8rem;border-radius:50px;border:1px solid rgba(255,255,255,0.1);transition:var(--transition);cursor:pointer;color:var(--text);}
-.status-item img{height:30px;width:30px;border-radius:50%;object-fit:cover;}
+.status-item img{height:30px;width:30px;border-radius:50%;object-fit:cover;cursor:pointer;}
 .status-item:hover{border-color:var(--highlight);background:rgba(0,212,255,0.1);}
 main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem;}
 .tool-card{background:var(--glass);backdrop-filter:blur(var(--blur));border-radius:var(--radius);padding:2rem;width:100%;max-width:700px;text-align:center;border:1px solid rgba(255,255,255,0.05);}
@@ -118,6 +118,9 @@ footer a:hover{
 #profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
 #profileModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
 #profileModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+#accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
+#accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);}
+#accountsList li:hover{background:rgba(0,212,255,0.1);}
 </style>
 </head>
 <body>
@@ -173,7 +176,9 @@ footer a:hover{
     <input type="email" id="loginEmail" placeholder="Email" required>
     <input type="password" id="loginPassword" placeholder="Password" required>
     <input type="text" id="loginImg" placeholder="User Image URL (optional)">
-    <button id="loginBtn">Login</button>
+    <button id="loginBtn">Login / Register</button>
+    <h4>Saved Accounts</h4>
+    <ul id="accountsList"></ul>
   </div>
 </div>
 
@@ -197,30 +202,44 @@ const loginModal = document.getElementById("loginModal");
 const profileModal = document.getElementById("profileModal");
 const userImgEl = document.getElementById("userImg");
 const usernameText = document.getElementById("usernameText");
+const accountsList = document.getElementById("accountsList");
 
-function showLogin(){ loginModal.style.display = "flex"; }
+function showLogin(){ loginModal.style.display = "flex"; renderAccounts(); }
 function hideLogin(){ loginModal.style.display = "none"; }
 function updateHeaderUser(){
   if(user){
-    userImgEl.src = user.userImg || "https://i.ibb.co/ZYW3VTp/placeholder.png";
+    userImgEl.src = user.userImg || "/image/main.jpg";
     usernameText.innerText = user.username;
   }
 }
 
-// Login action
+function renderAccounts(){
+  accountsList.innerHTML="";
+  users.forEach(u=>{
+    const li = document.createElement("li");
+    li.innerHTML=`<img src="${u.userImg||'/image/main.jpg'}" style="height:20px;width:20px;border-radius:50%;vertical-align:middle;margin-right:5px;"> ${u.username}`;
+    li.onclick=()=>{
+      user = u;
+      localStorage.setItem("joelCurrentUser", JSON.stringify(user));
+      updateHeaderUser();
+      hideLogin();
+    };
+    accountsList.appendChild(li);
+  });
+}
+
+// Login/Register
 document.getElementById("loginBtn").addEventListener("click",()=>{
   const username = document.getElementById("loginUsername").value.trim();
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
   let userImg = document.getElementById("loginImg").value.trim();
-
-  if(!username || !email || !password){ alert("Please fill all fields!"); return; }
-  userImg = userImg || "https://i.ibb.co/ZYW3VTp/placeholder.png";
+  if(!username||!email||!password){ alert("Please fill all fields!"); return; }
+  userImg = userImg||"/image/main.jpg";
 
   let existing = users.find(u=>u.email===email);
-  if(existing){
-    user = existing;
-  }else{
+  if(existing){ user = existing; }
+  else{
     user = {username,email,password,userImg,secretId:Math.random().toString(36).substr(2,10),downloads:[]};
     users.push(user);
     localStorage.setItem("joelUsers", JSON.stringify(users));
@@ -236,7 +255,7 @@ if(!user){ showLogin(); } else { updateHeaderUser(); }
 // Profile modal
 document.getElementById("userProfile").addEventListener("click",()=>{
   const profileInfo = document.getElementById("profileInfo");
-  profileInfo.innerHTML = "";
+  profileInfo.innerHTML="";
   if(user){
     profileInfo.innerHTML += `<li><strong>Username:</strong> ${user.username}</li>`;
     profileInfo.innerHTML += `<li><strong>Email:</strong> ${user.email}</li>`;
@@ -245,7 +264,7 @@ document.getElementById("userProfile").addEventListener("click",()=>{
     if(user.downloads.length===0) profileInfo.innerHTML += `<li>None</li>`;
     else user.downloads.forEach(d=>{profileInfo.innerHTML += `<li>${d.filename} - ${d.date}</li>`;});
   }
-  profileModal.style.display = "flex";
+  profileModal.style.display="flex";
 });
 document.getElementById("closeProfile").addEventListener("click",()=>{ profileModal.style.display="none"; });
 
