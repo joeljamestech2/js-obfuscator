@@ -8,7 +8,7 @@
   body {
     margin: 0;
     font-family: 'Courier New', Courier, monospace;
-    background: #000000;
+    background: #000;
     color: #00ff00;
     display: flex;
     flex-direction: column;
@@ -25,7 +25,7 @@
   form {
     width: 90%;
     max-width: 700px;
-    background: #111111;
+    background: #111;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
@@ -91,6 +91,7 @@
     font-family: 'Courier New', monospace;
     text-shadow: 0 0 2px #00ff00;
     overflow-x: auto;
+    min-height: 150px;
   }
 
   .copy-btn {
@@ -144,6 +145,17 @@
 <script>
 let lastObfuscatedCode = "";
 
+// Typing animation function
+function typeEffect(element, text, speed = 10) {
+  element.textContent = "";
+  let i = 0;
+  const interval = setInterval(() => {
+    element.textContent += text.charAt(i);
+    i++;
+    if (i >= text.length) clearInterval(interval);
+  }, speed);
+}
+
 // Obfuscate
 document.getElementById("obfuscatorForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -158,7 +170,7 @@ document.getElementById("obfuscatorForm").addEventListener("submit", async (e) =
 
   const data = await res.json();
   lastObfuscatedCode = data.obfuscated || "";
-  document.getElementById("result").textContent = lastObfuscatedCode || "❌ Error: " + data.error;
+  typeEffect(document.getElementById("result"), lastObfuscatedCode, 5);
 });
 
 // Download JS
