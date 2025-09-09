@@ -1,209 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JS Obfuscator Tool</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JS OBFUSCATOR TOOL BY | LORD JOEL XMD</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <style>
-  body {
-    margin: 0;
-    font-family: 'Courier New', Courier, monospace;
-    background: #000;
-    color: #00ff00;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-  }
-
-  h1 {
-    margin-top: 40px;
-    color: #00ff00;
-    text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00;
-  }
-
-  form {
-    width: 90%;
-    max-width: 700px;
-    background: #111;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
-    margin-top: 20px;
-  }
-
-  textarea {
-    width: 100%;
-    height: 150px;
-    padding: 12px;
-    background: #000;
-    color: #00ff00;
-    border: none;
-    border-radius: 8px;
-    font-family: 'Courier New', monospace;
-    resize: vertical;
-    margin-bottom: 15px;
-    text-shadow: 0 0 2px #00ff00;
-  }
-
-  select, button, input[type="text"] {
-    padding: 10px 15px;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-  }
-
-  select {
-    background: #00ff00;
-    color: #000;
-    cursor: pointer;
-  }
-
-  button {
-    background: #00ff00;
-    color: #000;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-
-  button:hover {
-    transform: scale(1.05);
-  }
-
-  input[type="text"] {
-    background: #000;
-    color: #00ff00;
-    flex: 1;
-    border: 1px solid #00ff00;
-  }
-
-  pre {
-    width: 90%;
-    max-width: 700px;
-    background: #000;
-    color: #00ff00;
-    padding: 15px;
-    border-radius: 12px;
-    margin-top: 20px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    position: relative;
-    font-family: 'Courier New', monospace;
-    text-shadow: 0 0 2px #00ff00;
-    overflow-x: auto;
-    min-height: 150px;
-  }
-
-  .copy-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #00ff00;
-    color: #000;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  .download-section {
-    display: flex;
-    align-items: center;
-    width: 90%;
-    max-width: 700px;
-    margin-top: 15px;
-    gap: 10px;
-  }
+:root {
+  --bg:#000;
+  --glass:rgba(255,255,255,0.05);
+  --text:#fff;
+  --green:#00ff00;
+  --muted:#aaa;
+  --highlight:#0ff;
+  --radius:12px;
+  --blur:8px;
+  --transition:0.3s ease;
+  --btn-height:35px;
+  --btn-width:130px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;font-family:'JetBrains Mono',monospace;}
+body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;backdrop-filter:blur(var(--blur));border-bottom:1px solid rgba(255,255,255,0.1);}
+.logo img{height:50px; border-radius:8px; max-width:100%; object-fit:contain;}
+.status{display:flex;gap:0.7rem;flex-wrap:wrap;align-items:center;}
+.status-item{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;padding:0.3rem 0.8rem;border-radius:50px;border:1px solid rgba(255,255,255,0.1);transition:var(--transition);cursor:pointer;color:var(--text);}
+.status-item:hover{border-color:var(--highlight);background:rgba(0,212,255,0.1);}
+.status-item i{color:var(--highlight);}
+main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem;}
+.tool-card{background:var(--glass);backdrop-filter:blur(var(--blur));border-radius:var(--radius);padding:2rem;width:100%;max-width:700px;text-align:center;border:1px solid rgba(255,255,255,0.05);}
+.tool-card h2{font-weight:600;margin-bottom:1rem;color:var(--text);}
+.tool-card textarea{width:100%;height:150px;background:#000;color:var(--green);border:none;border-radius:var(--radius);padding:1rem;resize:vertical;font-family:'JetBrains Mono',monospace;margin-bottom:1rem;}
+.button-grid{
+  display:grid;
+  grid-template-columns:repeat(2, var(--btn-width));
+  grid-auto-rows: var(--btn-height);
+  gap:0.5rem;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:0.5rem;
+}
+.button-grid button, .button-grid select{
+  height:var(--btn-height);
+  width:var(--btn-width);
+  border-radius:50px;
+  padding:0.3rem 0.6rem;
+  border:1px solid var(--highlight);
+  background:#000;
+  color:var(--text);
+  font-weight:600;
+  cursor:pointer;
+  transition:var(--transition);
+  font-family:'JetBrains Mono',monospace;
+}
+.button-grid button:hover, .button-grid select:hover{
+  background:rgba(0,212,255,0.1);
+  box-shadow:0 0 10px rgba(0,212,255,0.2);
+  transform:scale(1.05);
+}
+pre{background:#000;color:var(--green);padding:1rem;border-radius:var(--radius);width:100%;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word;position:relative;text-shadow:0 0 2px var(--green);font-family:'JetBrains Mono',monospace;}
+.output-grid{
+  display:grid;
+  grid-template-columns:repeat(2, var(--btn-width));
+  grid-auto-rows: var(--btn-height);
+  gap:0.5rem;
+  justify-content:center;
+  align-items:center;
+  margin-top:0.5rem;
+}
+.output-grid button,.output-grid input{
+  height:var(--btn-height);
+  width:var(--btn-width);
+  border-radius:50px;
+  padding:0.3rem 0.6rem;
+  border:1px solid var(--highlight);
+  background:#000;
+  color:var(--text);
+  font-weight:600;
+  cursor:pointer;
+  transition:var(--transition);
+  font-family:'JetBrains Mono',monospace;
+}
+.output-grid button:hover,.output-grid input:hover{
+  background:rgba(0,212,255,0.1);
+  box-shadow:0 0 10px rgba(0,212,255,0.2);
+  transform:scale(1.05);
+}
+footer{
+  margin-top:1rem;
+  text-align:center;
+  font-size:0.85rem;
+  color:var(--muted);
+}
+footer a{
+  color:var(--highlight);
+  text-decoration:none;
+  cursor:pointer;
+}
+footer a:hover{
+  text-shadow:0 0 10px var(--highlight);
+}
 </style>
 </head>
 <body>
 
-<h1>🔒 JS Obfuscator</h1>
+<header>
+  <div class="logo"><img src="image/main.jpg" alt="Logo"></div>
+  <div class="status">
+    <div class="status-item"><i class="fas fa-bolt"></i> <span id="battery">--%</span></div>
+    <div class="status-item"><i class="fas fa-wifi"></i> <span id="ip">Loading...</span></div>
+    <div class="status-item"><i class="fas fa-headset"></i> Support</div>
+    <div class="status-item"><i class="fas fa-broadcast-tower"></i> WA Channel</div>
+  </div>
+</header>
 
-<form id="obfuscatorForm">
-  <textarea id="code" placeholder="Paste your JavaScript code here..."></textarea>
-  <label for="level">Obfuscation Level:</label>
-  <select id="level">
-    <option value="low">Low</option>
-    <option value="medium" selected>Medium</option>
-    <option value="high">High</option>
-  </select>
-  <br><br>
-  <button type="submit">Obfuscate 🚀</button>
-</form>
+<main>
+  <div class="tool-card">
+    <h2>JS OBFUSCATOR </h2>
+    <textarea id="code" placeholder="Paste your JavaScript code here..."></textarea>
 
-<div style="position: relative; width: 90%; max-width: 700px;">
-  <pre id="result">⚡ Your obfuscated code will appear here...</pre>
-  <button class="copy-btn" id="copyBtn">Copy 📋</button>
-</div>
+    <!-- Top 2x2 button grid with Level selector -->
+    <div class="button-grid">
+      <button id="pasteBtn"><i class="fas fa-clipboard"></i> Paste codes</button>
+      <button id="uploadBtn"><i class="fas fa-upload"></i> Upload codes</button>
+      <select id="levelSelect">
+        <option value="low">Low</option>
+        <option value="medium" selected>Medium</option>
+        <option value="high">High</option>
+      </select>
+      <button id="obfuscateBtn"><i class="fas fa-lock"></i> Obfuscate</button>    
+    </div>
 
-<div class="download-section">
-  <input type="text" id="filename" placeholder="Enter filename (default: obfuscated)">
-  <button id="downloadBtn">Download ⬇️</button>
-</div>
+    <pre id="result">⚡ Your obfuscated code will appear here...</pre>
+
+    <!-- Output 2x2 grid -->
+    <div class="output-grid">
+      <button id="copyBtn"><i class="fas fa-copy"></i> Copy</button>
+      <button id="settingBtn"><i class="fas fa-sliders-h"></i> Setting</button>
+      <input type="text" id="filename" placeholder="Filename">
+      <button id="downloadBtn"><i class="fas fa-download"></i> Download</button>
+    </div>
+  </div>
+</main>
+
+<footer>
+  JavaScript Obfuscator website created by <a onclick="window.open('https://github.com/joeljamestech2','_blank')">joeljamestech</a>
+</footer>
 
 <script>
-let lastObfuscatedCode = "";
-
-// Typing animation function
-function typeEffect(element, text, speed = 10) {
-  element.textContent = "";
-  let i = 0;
-  const interval = setInterval(() => {
-    element.textContent += text.charAt(i);
-    i++;
-    if (i >= text.length) clearInterval(interval);
-  }, speed);
-}
+let lastObfuscatedCode="";
 
 // Obfuscate
-document.getElementById("obfuscatorForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const code = document.getElementById("code").value;
-  const level = document.getElementById("level").value;
-
-  const res = await fetch("/api/obfuscate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ code, level }),
-  });
-
-  const data = await res.json();
-  lastObfuscatedCode = data.obfuscated || "";
-  typeEffect(document.getElementById("result"), lastObfuscatedCode, 5);
+document.getElementById("obfuscateBtn").addEventListener("click",()=>{
+  const code=document.getElementById("code").value;
+  const level=document.getElementById("levelSelect").value;
+  if(!code){alert("⚠️ Paste code first!");return;}
+  lastObfuscatedCode=`// Level: ${level}\n`+code.split("").reverse().join("");
+  document.getElementById("result").textContent=lastObfuscatedCode;
 });
 
-// Download JS
-document.getElementById("downloadBtn").addEventListener("click", () => {
-  if (!lastObfuscatedCode) {
-    alert("⚠️ Please obfuscate some code first!");
-    return;
-  }
-
-  let filename = document.getElementById("filename").value.trim() || "obfuscated";
-  if (!filename.endsWith(".js")) filename += ".js";
-
-  const blob = new Blob([lastObfuscatedCode], { type: "text/javascript" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
+// Paste
+document.getElementById("pasteBtn").addEventListener("click",async()=>{
+  try{const text=await navigator.clipboard.readText();document.getElementById("code").value=text;}catch{alert("⚠️ Paste failed!");}
 });
 
-// Copy to clipboard
-document.getElementById("copyBtn").addEventListener("click", () => {
-  if (!lastObfuscatedCode) {
-    alert("⚠️ Please obfuscate some code first!");
-    return;
-  }
-  navigator.clipboard.writeText(lastObfuscatedCode)
-    .then(() => alert("✅ Obfuscated code copied!"))
-    .catch(() => alert("❌ Copy failed."));
+// Upload
+document.getElementById("uploadBtn").addEventListener("click",()=>{
+  const input=document.createElement("input");
+  input.type="file";input.accept=".js";
+  input.onchange=()=>{const file=input.files[0];const reader=new FileReader();reader.onload=e=>{document.getElementById("code").value=e.target.result;};reader.readAsText(file);};
+  input.click();
 });
+
+// Copy
+document.getElementById("copyBtn").addEventListener("click",()=>{
+  if(!lastObfuscatedCode){alert("⚠️ Obfuscate first!");return;}
+  navigator.clipboard.writeText(lastObfuscatedCode).then(()=>alert("✅ Copied!")).catch(()=>alert("❌ Copy failed!"));
+});
+
+// Download
+document.getElementById("downloadBtn").addEventListener("click",()=>{
+  if(!lastObfuscatedCode){alert("⚠️ Obfuscate first!");return;}
+  let filename=document.getElementById("filename").value.trim()||"obfuscated";
+  if(!filename.endsWith(".js"))filename+=".js";
+  const blob=new Blob([lastObfuscatedCode],{type:"text/javascript"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
+});
+
+// Fake Battery & IP
+document.getElementById("battery").innerText="100%";
+document.getElementById("ip").innerText="127.0.0.1";
 </script>
-
 </body>
 </html>
