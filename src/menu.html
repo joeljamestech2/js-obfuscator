@@ -116,6 +116,8 @@ footer a:hover{
 #profileModal h3{margin-bottom:1rem;}
 #profileModal ul{list-style:none;text-align:left;margin:0;padding:0;}
 #profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
+#profileModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+#profileModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
 </style>
 </head>
 <body>
@@ -137,7 +139,6 @@ footer a:hover{
     <h2>JS OBFUSCATOR </h2>
     <textarea id="code" placeholder="Paste your JavaScript code here..."></textarea>
 
-    <!-- Top 2x2 button grid with Level selector -->
     <div class="button-grid">
       <button id="pasteBtn">Paste codes</button>
       <button id="uploadBtn">Upload codes</button>
@@ -151,7 +152,6 @@ footer a:hover{
 
     <pre id="result">⚡ Your obfuscated code will appear here...</pre>
 
-    <!-- Output 2x2 grid -->
     <div class="output-grid">
       <button id="copyBtn">Copy</button>
       <button id="settingBtn">Setting</button>
@@ -181,9 +181,8 @@ footer a:hover{
 <div id="profileModal">
   <div class="modal-content">
     <h3>User Profile</h3>
-    <ul id="profileInfo">
-      <!-- dynamically filled -->
-    </ul>
+    <ul id="profileInfo"></ul>
+    <button id="logoutBtn">Logout</button>
     <button id="closeProfile">Close</button>
   </div>
 </div>
@@ -191,25 +190,21 @@ footer a:hover{
 <script>
 let lastObfuscatedCode="";
 let originalFileName=null;
-let user = JSON.parse(localStorage.getItem("joelUser")) || null;
+let users = JSON.parse(localStorage.getItem("joelUsers")) || [];
+let user = JSON.parse(localStorage.getItem("joelCurrentUser")) || null;
 
-// Show login if no user
 const loginModal = document.getElementById("loginModal");
 const profileModal = document.getElementById("profileModal");
 const userImgEl = document.getElementById("userImg");
 const usernameText = document.getElementById("usernameText");
 
-function showLogin(){
-  loginModal.style.display = "flex";
-}
-
-function hideLogin(){
-  loginModal.style.display = "none";
-}
-
+function showLogin(){ loginModal.style.display = "flex"; }
+function hideLogin(){ loginModal.style.display = "none"; }
 function updateHeaderUser(){
-  userImgEl.src = user.userImg || "https://i.ibb.co/ZYW3VTp/placeholder.png";
-  usernameText.innerText = user.username;
+  if(user){
+    userImgEl.src = user.userImg || "https://i.ibb.co/ZYW3VTp/placeholder.png";
+    usernameText.innerText = user.username;
+  }
 }
 
 // Login action
@@ -219,25 +214,26 @@ document.getElementById("loginBtn").addEventListener("click",()=>{
   const password = document.getElementById("loginPassword").value;
   let userImg = document.getElementById("loginImg").value.trim();
 
-  if(!username || !email || !password){ alert("Please fill all required fields!"); return; }
-
+  if(!username || !email || !password){ alert("Please fill all fields!"); return; }
   userImg = userImg || "https://i.ibb.co/ZYW3VTp/placeholder.png";
 
-  user = {
-    username,email,password,
-    userImg,
-    secretId: Math.random().toString(36).substr(2,10),
-    downloads:[]
-  };
-  localStorage.setItem("joelUser", JSON.stringify(user));
+  let existing = users.find(u=>u.email===email);
+  if(existing){
+    user = existing;
+  }else{
+    user = {username,email,password,userImg,secretId:Math.random().toString(36).substr(2,10),downloads:[]};
+    users.push(user);
+    localStorage.setItem("joelUsers", JSON.stringify(users));
+  }
+  localStorage.setItem("joelCurrentUser", JSON.stringify(user));
   hideLogin();
   updateHeaderUser();
 });
 
-// If user exists, skip login
+// Show login if no user
 if(!user){ showLogin(); } else { updateHeaderUser(); }
 
-// Show profile modal
+// Profile modal
 document.getElementById("userProfile").addEventListener("click",()=>{
   const profileInfo = document.getElementById("profileInfo");
   profileInfo.innerHTML = "";
@@ -251,41 +247,30 @@ document.getElementById("userProfile").addEventListener("click",()=>{
   }
   profileModal.style.display = "flex";
 });
-
 document.getElementById("closeProfile").addEventListener("click",()=>{ profileModal.style.display="none"; });
 
-// Obfuscate
+// Logout
+document.getElementById("logoutBtn").addEventListener("click",()=>{
+  user = null;
+  localStorage.removeItem("joelCurrentUser");
+  profileModal.style.display="none";
+  showLogin();
+});
+
+// --- Obfuscator Code ---
 document.getElementById("obfuscateBtn").addEventListener("click",()=>{
   const code=document.getElementById("code").value;
   const level=document.getElementById("levelSelect").value;
   if(!code){alert("⚠️ Paste code first!");return;}
-
-  let obfuscated = "";
-
-  if(level==="low"){
-    obfuscated = `// Level: low\n` + code.split("").reverse().join("");
-  } 
-  else if(level==="medium"){
-    const encoded = btoa(unescape(encodeURIComponent(code)));
-    obfuscated = `(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${encoded}")`;
-  } 
+  let obfuscated="";
+  if(level==="low"){ obfuscated="// Level: low\n"+code.split("").reverse().join(""); }
+  else if(level==="medium"){ obfuscated=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${btoa(unescape(encodeURIComponent(code)))}")`; }
   else if(level==="high"){
     const lines = code.split("\n").map(l=>btoa(unescape(encodeURIComponent(l))));
-    let vars = "";
-    lines.forEach((ln)=>{
-      let v1 = "_0x"+(Math.random()*1e6|0).toString(16);
-      let v2 = "_0x"+(Math.random()*1e6|0).toString(16);
-      vars += `  var ${v1}="${ln}";\n  eval(_0x5de6a9(${v1}));\n`;
-    });
-    obfuscated = 
-`function _0x5de6a9(_0x3cb417){
-  return decodeURIComponent(escape(atob(_0x3cb417)));
-}
-(function(){
-${vars}
-})();`;
+    let vars="";
+    lines.forEach(ln=>{ let v1="_0x"+(Math.random()*1e6|0).toString(16); vars+=`  var ${v1}="${ln}";\n  eval(_0x5de6a9(${v1}));\n`; });
+    obfuscated=`function _0x5de6a9(_0x3cb417){return decodeURIComponent(escape(atob(_0x3cb417)));}\n(function(){\n${vars}})();`;
   }
-
   lastObfuscatedCode = obfuscated;
   document.getElementById("result").textContent = obfuscated;
 });
@@ -297,18 +282,11 @@ document.getElementById("pasteBtn").addEventListener("click",async()=>{
 
 // Upload
 document.getElementById("uploadBtn").addEventListener("click",()=>{
-  const input=document.createElement("input");
-  input.type="file";input.accept=".js";
-  input.onchange=()=>{const file=input.files[0];
-    if(file){
-      const reader=new FileReader();
-      reader.onload=e=>{
-        document.getElementById("code").value=e.target.result;
-        originalFileName = file.name.replace(/\.[^/.]+$/, "");
-      };
-      reader.readAsText(file);
-    }
-  };
+  const input=document.createElement("input");input.type="file";input.accept=".js";
+  input.onchange=()=>{const file=input.files[0];if(file){const reader=new FileReader();reader.onload=e=>{
+    document.getElementById("code").value=e.target.result;
+    originalFileName = file.name.replace(/\.[^/.]+$/, "");
+  };reader.readAsText(file);}};
   input.click();
 });
 
@@ -322,26 +300,18 @@ document.getElementById("copyBtn").addEventListener("click",()=>{
 document.getElementById("downloadBtn").addEventListener("click",()=>{
   if(!lastObfuscatedCode){alert("⚠️ Obfuscate first!");return;}
   let filename=document.getElementById("filename").value.trim();
-
-  if(!filename && originalFileName){
-    filename = originalFileName + "_obfuscated";
-  }
-
-  if(!filename){
-    alert("⚠️ Please enter a filename before downloading!");
-    return;
-  }
-
+  if(!filename && originalFileName){ filename = originalFileName + "_obfuscated"; }
+  if(!filename){ alert("⚠️ Please enter a filename before downloading!"); return; }
   if(!filename.endsWith(".js")) filename += ".js";
   const blob=new Blob([lastObfuscatedCode],{type:"text/javascript"});
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
 
-  // Save to user download history
-  if(user){
-    const now = new Date().toLocaleString();
-    user.downloads.push({filename,date:now});
-    localStorage.setItem("joelUser", JSON.stringify(user));
+  if(user){ // save to download history
+    user.downloads.push({filename,date:new Date().toLocaleString()});
+    users = users.map(u=>u.email===user.email?user:u);
+    localStorage.setItem("joelUsers", JSON.stringify(users));
+    localStorage.setItem("joelCurrentUser", JSON.stringify(user));
   }
 });
 </script>
