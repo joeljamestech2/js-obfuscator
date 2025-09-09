@@ -147,8 +147,8 @@ footer a:hover{
       <button id="uploadBtn">Upload codes</button>
       <select id="levelSelect">
         <option value="low">Low</option>
-        <option value="medium" selected>Medium</option>
-        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="high" selected>High</option>
       </select>
       <button id="obfuscateBtn">Obfuscate</button>    
     </div>
@@ -187,6 +187,7 @@ footer a:hover{
   <div class="modal-content">
     <h3>User Profile</h3>
     <ul id="profileInfo"></ul>
+    <button id="uploadProfileImgBtn">Upload Profile Image</button>
     <button id="logoutBtn">Logout</button>
     <button id="closeProfile">Close</button>
   </div>
@@ -195,6 +196,8 @@ footer a:hover{
 <script>
 let lastObfuscatedCode="";
 let originalFileName=null;
+const defaultUserImg = "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
+
 let users = JSON.parse(localStorage.getItem("joelUsers")) || [];
 let user = JSON.parse(localStorage.getItem("joelCurrentUser")) || null;
 
@@ -208,7 +211,7 @@ function showLogin(){ loginModal.style.display = "flex"; renderAccounts(); }
 function hideLogin(){ loginModal.style.display = "none"; }
 function updateHeaderUser(){
   if(user){
-    userImgEl.src = user.userImg || "/image/main.jpg";
+    userImgEl.src = user.userImg || defaultUserImg;
     usernameText.innerText = user.username;
   }
 }
@@ -217,7 +220,7 @@ function renderAccounts(){
   accountsList.innerHTML="";
   users.forEach(u=>{
     const li = document.createElement("li");
-    li.innerHTML=`<img src="${u.userImg||'/image/main.jpg'}" style="height:20px;width:20px;border-radius:50%;vertical-align:middle;margin-right:5px;"> ${u.username}`;
+    li.innerHTML=`<img src="${u.userImg||defaultUserImg}" style="height:20px;width:20px;border-radius:50%;vertical-align:middle;margin-right:5px;"> ${u.username}`;
     li.onclick=()=>{
       user = u;
       localStorage.setItem("joelCurrentUser", JSON.stringify(user));
@@ -233,17 +236,26 @@ document.getElementById("loginBtn").addEventListener("click",()=>{
   const username = document.getElementById("loginUsername").value.trim();
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
-  let userImg = document.getElementById("loginImg").value.trim();
-  if(!username||!email||!password){ alert("Please fill all fields!"); return; }
-  userImg = userImg||"/image/main.jpg";
+  let userImg = document.getElementById("loginImg").value.trim() || defaultUserImg;
+
+  if(!username || !email || !password){ alert("Please fill all fields!"); return; }
 
   let existing = users.find(u=>u.email===email);
-  if(existing){ user = existing; }
-  else{
-    user = {username,email,password,userImg,secretId:Math.random().toString(36).substr(2,10),downloads:[]};
+  if(existing){
+    user = existing;
+  } else {
+    user = {
+      username,
+      email,
+      password,
+      userImg,
+      secretId: Math.random().toString(36).substr(2,10),
+      downloads: []
+    };
     users.push(user);
     localStorage.setItem("joelUsers", JSON.stringify(users));
   }
+
   localStorage.setItem("joelCurrentUser", JSON.stringify(user));
   hideLogin();
   updateHeaderUser();
@@ -274,6 +286,29 @@ document.getElementById("logoutBtn").addEventListener("click",()=>{
   localStorage.removeItem("joelCurrentUser");
   profileModal.style.display="none";
   showLogin();
+});
+
+// Upload profile image
+document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.onchange = ()=>{
+    const file = input.files[0];
+    if(file){
+      const reader = new FileReader();
+      reader.onload = e=>{
+        user.userImg = e.target.result; 
+        users = users.map(u=>u.email===user.email?user:u);
+        localStorage.setItem("joelUsers", JSON.stringify(users));
+        localStorage.setItem("joelCurrentUser", JSON.stringify(user));
+        updateHeaderUser();
+        alert("✅ Profile image updated!");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  input.click();
 });
 
 // --- Obfuscator Code ---
