@@ -117,7 +117,7 @@ footer a:hover{
 #profileModal h3 img{margin-right:10px;}
 #profileModal ul{list-style:none;text-align:left;margin:0;padding:0;}
 #profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
-#profileModal button{margin-top:0.5rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+#profileModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
 #profileModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
 #accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
 #accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);}
@@ -192,9 +192,24 @@ footer a:hover{
     </h3>
     <ul id="profileInfo"></ul>
     <button id="uploadProfileImgBtn">Upload Profile Image</button>
-    <button id="logoutBtn">Logout</button>
-    <button id="deleteAccountBtn">Delete Account</button>
+    <button onclick="showConfirmModal()">Logout / Delete Account</button>
     <button id="closeProfile">Close</button>
+  </div>
+</div>
+
+<!-- Confirm Modal -->
+<div id="confirmModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1001;">
+  <div style="background:rgba(255,255,255,0.05);backdrop-filter:blur(8px);padding:2rem;border-radius:12px;width:90%;max-width:400px;text-align:center;color:#fff;">
+    <h3 style="margin-bottom:1rem;">Confirm Account Action</h3>
+    <input type="email" id="confirmEmail" placeholder="Email" style="width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:12px;border:1px solid #0ff;background:#000;color:#0ff;">
+    <input type="password" id="confirmPassword" placeholder="Password" style="width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:12px;border:1px solid #0ff;background:#000;color:#0ff;">
+    <input type="text" id="confirmSecret" placeholder="Secret ID (JOEL-XMD~...)" style="width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:12px;border:1px solid #0ff;background:#000;color:#0ff;">
+    <div style="display:flex;justify-content:space-between;margin-top:1rem;gap:0.5rem;">
+      <button id="confirmLogoutBtn" style="flex:1;height:35px;border-radius:50px;border:1px solid #0ff;background:#000;color:#0ff;font-weight:600;cursor:pointer;">Logout</button>
+      <button id="confirmDeleteBtn" style="flex:1;height:35px;border-radius:50px;border:1px solid #f00;background:#000;color:#f00;font-weight:600;cursor:pointer;">Delete</button>
+    </div>
+    <p id="confirmMessage" style="margin-top:1rem;color:#0ff;font-size:0.85rem;"></p>
+    <button id="closeConfirmModal" style="margin-top:1rem;width:100%;height:35px;border-radius:50px;border:1px solid #0ff;background:#000;color:#0ff;font-weight:600;cursor:pointer;">Close</button>
   </div>
 </div>
 
@@ -211,6 +226,7 @@ const profileModal = document.getElementById("profileModal");
 const userImgEl = document.getElementById("userImg");
 const usernameText = document.getElementById("usernameText");
 const accountsList = document.getElementById("accountsList");
+const confirmModal = document.getElementById("confirmModal");
 
 function showLogin(){ loginModal.style.display = "flex"; renderAccounts(); }
 function hideLogin(){ loginModal.style.display = "none"; }
@@ -220,7 +236,6 @@ function updateHeaderUser(){
     usernameText.innerText = user.username;
   }
 }
-
 function renderAccounts(){
   accountsList.innerHTML="";
   users.forEach(u=>{
@@ -242,31 +257,17 @@ document.getElementById("loginBtn").addEventListener("click",()=>{
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
   let userImg = document.getElementById("loginImg").value.trim() || defaultUserImg;
-
   if(!username || !email || !password){ alert("Please fill all fields!"); return; }
-
   let existing = users.find(u=>u.email===email);
-  if(existing){
-    user = existing;
-  } else {
-    user = {
-      username,
-      email,
-      password,
-      userImg,
-      secretId: "JOEL-XMD~" + Math.random().toString(36).substr(2,8),
-      downloads: []
-    };
+  if(existing){ user = existing; } else {
+    user = { username,email,password,userImg,secretId:"JOEL-XMD~"+Math.random().toString(36).substr(2,10),downloads:[] };
     users.push(user);
     localStorage.setItem("joelUsers", JSON.stringify(users));
   }
-
   localStorage.setItem("joelCurrentUser", JSON.stringify(user));
   hideLogin();
   updateHeaderUser();
 });
-
-// Show login if no user
 if(!user){ showLogin(); } else { updateHeaderUser(); }
 
 // Profile modal
@@ -274,65 +275,23 @@ document.getElementById("userProfile").addEventListener("click",()=>{
   const profileInfo = document.getElementById("profileInfo");
   const profileHeaderImg = document.getElementById("profileHeaderImg");
   const profileHeaderUsername = document.getElementById("profileHeaderUsername");
-
   if(user){
-    // Set header image and username
     profileHeaderImg.src = user.userImg || defaultUserImg;
     profileHeaderUsername.textContent = user.username;
-
-    // Populate details
-    profileInfo.innerHTML = `
-      <li><strong>Email:</strong> ${user.email}</li>
+    profileInfo.innerHTML = `<li><strong>Email:</strong> ${user.email}</li>
       <li><strong>Secret ID:</strong> ${user.secretId}</li>
-      <li><strong>Download History:</strong></li>
-    `;
+      <li><strong>Download History:</strong></li>`;
     if(user.downloads.length===0) profileInfo.innerHTML += `<li>None</li>`;
     else user.downloads.forEach(d=>{profileInfo.innerHTML += `<li>${d.filename} - ${d.date}</li>`;});
   }
-
   profileModal.style.display="flex";
 });
 document.getElementById("closeProfile").addEventListener("click",()=>{ profileModal.style.display="none"; });
 
-// Logout with secret ID
-document.getElementById("logoutBtn").addEventListener("click",()=>{
-  const secret = prompt("Enter your secret ID to logout (starts with JOEL-XMD~):");
-  if(!secret || !secret.startsWith("JOEL-XMD~") || secret !== user.secretId){
-    alert("❌ Invalid secret ID! Logout canceled.");
-    return;
-  }
-  user = null;
-  localStorage.removeItem("joelCurrentUser");
-  profileModal.style.display="none";
-  showLogin();
-});
-
-// Delete Account
-document.getElementById("deleteAccountBtn").addEventListener("click",()=>{
-  const email = prompt("Enter your email to confirm deletion:");
-  const password = prompt("Enter your password to confirm deletion:");
-  if(!email || !password){
-    alert("❌ Deletion canceled. Both fields are required.");
-    return;
-  }
-  if(email !== user.email || password !== user.password){
-    alert("❌ Incorrect email or password. Deletion canceled.");
-    return;
-  }
-  // Remove from users array
-  users = users.filter(u => u.email !== user.email);
-  localStorage.setItem("joelUsers", JSON.stringify(users));
-  localStorage.removeItem("joelCurrentUser");
-  alert("✅ Account deleted successfully!");
-  profileModal.style.display="none";
-  showLogin();
-});
-
 // Upload profile image
 document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
   const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*";
+  input.type = "file"; input.accept = "image/*";
   input.onchange = ()=>{
     const file = input.files[0];
     if(file){
@@ -351,26 +310,58 @@ document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
   input.click();
 });
 
-let selectedLevel = "high";
-document.querySelectorAll("#levelButtons button[data-level]").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    const secret = prompt("Enter your Secret ID:") || "";
-    if(secret !== LOGOUT_SECRET_ID && (!user || secret !== user.secretId)){
-      alert("❌ Incorrect Secret ID!");
-      return;
-    }
-    selectedLevel = btn.getAttribute("data-level");
-    alert(`✅ Level set to ${selectedLevel}`);
-  });
+// Confirm Modal
+function showConfirmModal(){ confirmModal.style.display="flex"; }
+function hideConfirmModal(){
+confirmModal.style.display="none"; 
+document.getElementById("confirmEmail").value="";
+document.getElementById("confirmPassword").value="";
+document.getElementById("confirmSecret").value="";
+document.getElementById("confirmMessage").textContent="";
+}
+
+// Logout
+document.getElementById("confirmLogoutBtn").addEventListener("click",()=>{
+  const secret = document.getElementById("confirmSecret").value.trim() || "12345678";
+  if(secret===user.secretId || secret==="12345678"){
+    user = null;
+    localStorage.removeItem("joelCurrentUser");
+    hideConfirmModal();
+    profileModal.style.display="none";
+    showLogin();
+  } else {
+    document.getElementById("confirmMessage").textContent="❌ Invalid Secret ID!";
+  }
 });
 
+// Delete account
+document.getElementById("confirmDeleteBtn").addEventListener("click",()=>{
+  const email = document.getElementById("confirmEmail").value.trim();
+  const password = document.getElementById("confirmPassword").value;
+  if(email===user.email && password===user.password){
+    users = users.filter(u=>u.email!==user.email);
+    localStorage.setItem("joelUsers", JSON.stringify(users));
+    user=null;
+    localStorage.removeItem("joelCurrentUser");
+    hideConfirmModal();
+    profileModal.style.display="none";
+    showLogin();
+  } else {
+    document.getElementById("confirmMessage").textContent="❌ Email or Password incorrect!";
+  }
+});
+
+document.getElementById("closeConfirmModal").addEventListener("click",hideConfirmModal);
+
+// --- Obfuscator Code ---
 document.getElementById("obfuscateBtn").addEventListener("click",()=>{
   const code=document.getElementById("code").value;
+  const level=document.getElementById("levelSelect").value;
   if(!code){alert("⚠️ Paste code first!");return;}
   let obfuscated="";
-  if(selectedLevel==="low"){ obfuscated="// Level: low\n"+code.split("").reverse().join(""); }
-  else if(selectedLevel==="medium"){ obfuscated=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${btoa(unescape(encodeURIComponent(code)))}")`; }
-  else if(selectedLevel==="high"){
+  if(level==="low"){ obfuscated="// Level: low\n"+code.split("").reverse().join(""); }
+  else if(level==="medium"){ obfuscated=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${btoa(unescape(encodeURIComponent(code)))}")`; }
+  else if(level==="high"){
     const lines = code.split("\n").map(l=>btoa(unescape(encodeURIComponent(l))));
     let vars="";
     lines.forEach(ln=>{ let v1="_0x"+(Math.random()*1e6|0).toString(16); vars+=`  var ${v1}="${ln}";\n  eval(_0x5de6a9(${v1}));\n`; });
@@ -381,12 +372,12 @@ document.getElementById("obfuscateBtn").addEventListener("click",()=>{
 });
 
 // Paste
-document.getElementById("pasteBtn")?.addEventListener("click",async()=>{
+document.getElementById("pasteBtn").addEventListener("click",async()=>{
   try{const text=await navigator.clipboard.readText();document.getElementById("code").value=text;}catch{alert("⚠️ Paste failed!");}
 });
 
 // Upload
-document.getElementById("uploadBtn")?.addEventListener("click",()=>{
+document.getElementById("uploadBtn").addEventListener("click",()=>{
   const input=document.createElement("input");input.type="file";input.accept=".js";
   input.onchange=()=>{const file=input.files[0];if(file){const reader=new FileReader();reader.onload=e=>{
     document.getElementById("code").value=e.target.result;
@@ -421,4 +412,4 @@ document.getElementById("downloadBtn").addEventListener("click",()=>{
 });
 </script>
 </body>
-        </html>
+</html>
