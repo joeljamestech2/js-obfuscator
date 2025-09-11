@@ -34,14 +34,14 @@ main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;g
 .tool-card textarea{width:100%;height:150px;background:#000;color:var(--green);border:none;border-radius:var(--radius);padding:1rem;resize:vertical;font-family:'JetBrains Mono',monospace;margin-bottom:1rem;}
 .button-grid{
   display:grid;
-  grid-template-columns:repeat(2, var(--btn-width));
+  grid-template-columns:repeat(4, var(--btn-width));
   grid-auto-rows: var(--btn-height);
   gap:0.5rem;
   justify-content:center;
   align-items:center;
   margin-bottom:0.5rem;
 }
-.button-grid button, .button-grid select{
+.button-grid button{
   height:var(--btn-height);
   width:var(--btn-width);
   border-radius:50px;
@@ -54,7 +54,7 @@ main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;g
   transition:var(--transition);
   font-family:'JetBrains Mono',monospace;
 }
-.button-grid button:hover, .button-grid select:hover{
+.button-grid button:hover{
   background:rgba(0,212,255,0.1);
   box-shadow:0 0 10px rgba(0,212,255,0.2);
   transform:scale(1.05);
@@ -101,30 +101,14 @@ footer a{
 footer a:hover{
   text-shadow:0 0 10px var(--highlight);
 }
-
-/* Login Modal */
-#loginModal{
+/* Modals */
+.modal{
   position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
 }
-#loginModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;}
-#loginModal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
-#loginModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
-#loginModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
-
-/* Profile Modal */
-#profileModal{
-  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
-}
-#profileModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
-#profileModal h3{display:flex;align-items:center;margin-bottom:1rem;}
-#profileModal h3 img{margin-right:10px;}
-#profileModal ul{list-style:none;text-align:left;margin:0;padding:0;}
-#profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
-#profileModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
-#profileModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
-#accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
-#accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);}
-#accountsList li:hover{background:rgba(0,212,255,0.1);}
+.modal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;}
+.modal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
+.modal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+.modal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
 </style>
 </head>
 <body>
@@ -143,27 +127,23 @@ footer a:hover{
 
 <main>
   <div class="tool-card">
-    <h2>JS OBFUSCATOR </h2>
+    <h2>JS OBFUSCATOR</h2>
     <textarea id="code" placeholder="Paste your JavaScript code here..."></textarea>
 
-    <div class="button-grid">
-      <button id="pasteBtn">Paste codes</button>
-      <button id="uploadBtn">Upload codes</button>
-      <select id="levelSelect">
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high" selected>High</option>
-      </select>
-      <button id="obfuscateBtn">Obfuscate</button>    
+    <div class="button-grid" id="levelButtons">
+      <button data-level="low">Low</button>
+      <button data-level="medium">Medium</button>
+      <button data-level="high">High</button>
+      <button id="obfuscateBtn">Obfuscate</button>
     </div>
 
     <pre id="result">⚡ Your obfuscated code will appear here...</pre>
 
     <div class="output-grid">
       <button id="copyBtn">Copy</button>
-      <button id="settingBtn">Setting</button>
       <input type="text" id="filename" placeholder="Filename">
       <button id="downloadBtn">Download</button>
+      <button id="logoutBtn">Logout</button>
     </div>
   </div>
 </main>
@@ -173,7 +153,7 @@ footer a:hover{
 </footer>
 
 <!-- Login Modal -->
-<div id="loginModal">
+<div id="loginModal" class="modal">
   <div class="modal-content">
     <h3>Login / Register</h3>
     <input type="text" id="loginUsername" placeholder="Username" required>
@@ -187,7 +167,7 @@ footer a:hover{
 </div>
 
 <!-- Profile Modal -->
-<div id="profileModal">
+<div id="profileModal" class="modal">
   <div class="modal-content">
     <h3>
       <img id="profileHeaderImg" src="" alt="User" style="height:30px;width:30px;border-radius:50%;">
@@ -195,8 +175,18 @@ footer a:hover{
     </h3>
     <ul id="profileInfo"></ul>
     <button id="uploadProfileImgBtn">Upload Profile Image</button>
-    <button id="logoutBtn">Logout</button>
     <button id="closeProfile">Close</button>
+  </div>
+</div>
+
+<!-- Logout Secret Modal -->
+<div id="logoutModal" class="modal">
+  <div class="modal-content">
+    <h3>Logout</h3>
+    <input type="text" id="logoutSecretInput" placeholder="Enter Secret ID">
+    <div id="logoutErrorMsg" style="color:red;font-size:0.85rem;display:none;">❌ Incorrect Secret ID!</div>
+    <button id="confirmLogoutBtn">Logout</button>
+    <button onclick="document.getElementById('logoutModal').style.display='none'">Cancel</button>
   </div>
 </div>
 
@@ -204,12 +194,14 @@ footer a:hover{
 let lastObfuscatedCode="";
 let originalFileName=null;
 const defaultUserImg = "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
+const LOGOUT_SECRET_ID = "12345678";
 
 let users = JSON.parse(localStorage.getItem("joelUsers")) || [];
 let user = JSON.parse(localStorage.getItem("joelCurrentUser")) || null;
 
 const loginModal = document.getElementById("loginModal");
 const profileModal = document.getElementById("profileModal");
+const logoutModal = document.getElementById("logoutModal");
 const userImgEl = document.getElementById("userImg");
 const usernameText = document.getElementById("usernameText");
 const accountsList = document.getElementById("accountsList");
@@ -222,7 +214,6 @@ function updateHeaderUser(){
     usernameText.innerText = user.username;
   }
 }
-
 function renderAccounts(){
   accountsList.innerHTML="";
   users.forEach(u=>{
@@ -251,24 +242,15 @@ document.getElementById("loginBtn").addEventListener("click",()=>{
   if(existing){
     user = existing;
   } else {
-    user = {
-      username,
-      email,
-      password,
-      userImg,
-      secretId: Math.random().toString(36).substr(2,10),
-      downloads: []
-    };
+    user = { username,email,password,userImg,secretId: Math.random().toString(36).substr(2,10),downloads:[] };
     users.push(user);
     localStorage.setItem("joelUsers", JSON.stringify(users));
   }
-
   localStorage.setItem("joelCurrentUser", JSON.stringify(user));
   hideLogin();
   updateHeaderUser();
 });
 
-// Show login if no user
 if(!user){ showLogin(); } else { updateHeaderUser(); }
 
 // Profile modal
@@ -278,11 +260,9 @@ document.getElementById("userProfile").addEventListener("click",()=>{
   const profileHeaderUsername = document.getElementById("profileHeaderUsername");
 
   if(user){
-    // Set header image and username
     profileHeaderImg.src = user.userImg || defaultUserImg;
     profileHeaderUsername.textContent = user.username;
 
-    // Populate details
     profileInfo.innerHTML = `
       <li><strong>Email:</strong> ${user.email}</li>
       <li><strong>Secret ID:</strong> ${user.secretId}</li>
@@ -298,17 +278,28 @@ document.getElementById("closeProfile").addEventListener("click",()=>{ profileMo
 
 // Logout
 document.getElementById("logoutBtn").addEventListener("click",()=>{
-  user = null;
-  localStorage.removeItem("joelCurrentUser");
-  profileModal.style.display="none";
-  showLogin();
+  document.getElementById("logoutSecretInput").value="";
+  document.getElementById("logoutErrorMsg").style.display="none";
+  logoutModal.style.display="flex";
+});
+
+document.getElementById("confirmLogoutBtn").addEventListener("click",()=>{
+  const entered = document.getElementById("logoutSecretInput").value.trim();
+  if(entered === LOGOUT_SECRET_ID || (user && entered === user.secretId)){
+    user = null;
+    localStorage.removeItem("joelCurrentUser");
+    logoutModal.style.display="none";
+    alert("✅ Logged out successfully!");
+    showLogin();
+  } else {
+    document.getElementById("logoutErrorMsg").style.display="block";
+  }
 });
 
 // Upload profile image
 document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
   const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*";
+  input.type = "file"; input.accept = "image/*";
   input.onchange = ()=>{
     const file = input.files[0];
     if(file){
@@ -327,15 +318,27 @@ document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
   input.click();
 });
 
-// --- Obfuscator Code ---
+// Obfuscator
+let selectedLevel = "high";
+document.querySelectorAll("#levelButtons button[data-level]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const secret = prompt("Enter your Secret ID:") || "";
+    if(secret !== LOGOUT_SECRET_ID && (!user || secret !== user.secretId)){
+      alert("❌ Incorrect Secret ID!");
+      return;
+    }
+    selectedLevel = btn.getAttribute("data-level");
+    alert(`✅ Level set to ${selectedLevel}`);
+  });
+});
+
 document.getElementById("obfuscateBtn").addEventListener("click",()=>{
   const code=document.getElementById("code").value;
-  const level=document.getElementById("levelSelect").value;
   if(!code){alert("⚠️ Paste code first!");return;}
   let obfuscated="";
-  if(level==="low"){ obfuscated="// Level: low\n"+code.split("").reverse().join(""); }
-  else if(level==="medium"){ obfuscated=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${btoa(unescape(encodeURIComponent(code)))}")`; }
-  else if(level==="high"){
+  if(selectedLevel==="low"){ obfuscated="// Level: low\n"+code.split("").reverse().join(""); }
+  else if(selectedLevel==="medium"){ obfuscated=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${btoa(unescape(encodeURIComponent(code)))}")`; }
+  else if(selectedLevel==="high"){
     const lines = code.split("\n").map(l=>btoa(unescape(encodeURIComponent(l))));
     let vars="";
     lines.forEach(ln=>{ let v1="_0x"+(Math.random()*1e6|0).toString(16); vars+=`  var ${v1}="${ln}";\n  eval(_0x5de6a9(${v1}));\n`; });
@@ -346,12 +349,12 @@ document.getElementById("obfuscateBtn").addEventListener("click",()=>{
 });
 
 // Paste
-document.getElementById("pasteBtn").addEventListener("click",async()=>{
+document.getElementById("pasteBtn")?.addEventListener("click",async()=>{
   try{const text=await navigator.clipboard.readText();document.getElementById("code").value=text;}catch{alert("⚠️ Paste failed!");}
 });
 
 // Upload
-document.getElementById("uploadBtn").addEventListener("click",()=>{
+document.getElementById("uploadBtn")?.addEventListener("click",()=>{
   const input=document.createElement("input");input.type="file";input.accept=".js";
   input.onchange=()=>{const file=input.files[0];if(file){const reader=new FileReader();reader.onload=e=>{
     document.getElementById("code").value=e.target.result;
