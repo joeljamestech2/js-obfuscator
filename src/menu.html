@@ -93,35 +93,27 @@ footer{
   font-size:0.85rem;
   color:var(--muted);
 }
-footer a{
-  color:var(--highlight);
-  text-decoration:none;
-  cursor:pointer;
+footer a{color:var(--highlight);text-decoration:none;cursor:pointer;}
+footer a:hover{text-shadow:0 0 10px var(--highlight);}
+
+/* Modals */
+#loginModal,#profileModal,#aboutMeModal{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.85);display:none;
+  justify-content:center;align-items:center;z-index:1000;
 }
-footer a:hover{
-  text-shadow:0 0 10px var(--highlight);
-}
-/* Login Modal */
-#loginModal{
-  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
-}
-#loginModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;}
-#loginModal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
-#loginModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
-#loginModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
-#profileModal{
-  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
-}
-#profileModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
+.modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
 #profileModal h3{display:flex;align-items:center;margin-bottom:1rem;}
 #profileModal h3 img{margin-right:10px;}
 #profileModal ul{list-style:none;text-align:left;margin:0;padding:0;}
 #profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
-#profileModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
-#profileModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
 #accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
 #accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);}
 #accountsList li:hover{background:rgba(0,212,255,0.1);}
+
+#aboutMeModal .about-links{display:flex;flex-direction:column;gap:0.5rem;margin:1rem 0;}
+#aboutMeModal button{width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+#aboutMeModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
 </style>
 </head>
 <body>
@@ -197,6 +189,22 @@ footer a:hover{
   </div>
 </div>
 
+<!-- About Me Modal -->
+<div id="aboutMeModal">
+  <div class="modal-content">
+    <h3>About Me</h3>
+    <div class="about-links">
+      <button onclick="window.open('https://chat.whatsapp.com/your-group-link','_blank')">WA Group</button>
+      <button onclick="window.open('https://whatsapp.com/channel/your-channel-link','_blank')">WA Channel</button>
+      <button onclick="window.open('https://tiktok.com/@yourusername','_blank')">TikTok</button>
+      <button onclick="window.open('https://wa.me/255781144539','_blank')">Chat Me</button>
+      <button onclick="window.open('https://github.com/joeljamestech2','_blank')">GitHub</button>
+      <button onclick="window.open('https://www.buymeacoffee.com/joeljamestech','_blank')">Buy Me Coffee</button>
+    </div>
+    <button onclick="document.getElementById('aboutMeModal').style.display='none'">Close</button>
+  </div>
+</div>
+
 <script>
 let lastObfuscatedCode="";
 let originalFileName=null;
@@ -253,7 +261,7 @@ document.getElementById("loginBtn").addEventListener("click",()=>{
       email,
       password,
       userImg,
-      secretId: Math.random().toString(36).substr(2,10),
+      secretId: "LORD-JOEL~" + Math.random().toString(36).substr(2,10),
       downloads: []
     };
     users.push(user);
@@ -275,11 +283,8 @@ document.getElementById("userProfile").addEventListener("click",()=>{
   const profileHeaderUsername = document.getElementById("profileHeaderUsername");
 
   if(user){
-    // Set header image and username
     profileHeaderImg.src = user.userImg || defaultUserImg;
     profileHeaderUsername.textContent = user.username;
-
-    // Populate details
     profileInfo.innerHTML = `
       <li><strong>Email:</strong> ${user.email}</li>
       <li><strong>Secret ID:</strong> ${user.secretId}</li>
@@ -288,17 +293,22 @@ document.getElementById("userProfile").addEventListener("click",()=>{
     if(user.downloads.length===0) profileInfo.innerHTML += `<li>None</li>`;
     else user.downloads.forEach(d=>{profileInfo.innerHTML += `<li>${d.filename} - ${d.date}</li>`;});
   }
-
   profileModal.style.display="flex";
 });
 document.getElementById("closeProfile").addEventListener("click",()=>{ profileModal.style.display="none"; });
 
-// Logout
+// Logout (with secret ID confirmation)
 document.getElementById("logoutBtn").addEventListener("click",()=>{
-  user = null;
-  localStorage.removeItem("joelCurrentUser");
-  profileModal.style.display="none";
-  showLogin();
+  const inputId = prompt("Enter your Secret ID to confirm logout:");
+  if(inputId === user.secretId){
+    user = null;
+    localStorage.removeItem("joelCurrentUser");
+    profileModal.style.display="none";
+    showLogin();
+    alert("✅ Logged out successfully!");
+  } else {
+    alert("❌ Wrong Secret ID! Logout cancelled.");
+  }
 });
 
 // Upload profile image
@@ -322,6 +332,11 @@ document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
     }
   };
   input.click();
+});
+
+// Open About Me modal on logo click
+document.querySelector(".logo img").addEventListener("click",()=>{
+  document.getElementById("aboutMeModal").style.display="flex";
 });
 
 // --- Obfuscator Code ---
