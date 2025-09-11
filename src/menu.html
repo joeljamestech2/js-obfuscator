@@ -34,14 +34,14 @@ main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;g
 .tool-card textarea{width:100%;height:150px;background:#000;color:var(--green);border:none;border-radius:var(--radius);padding:1rem;resize:vertical;font-family:'JetBrains Mono',monospace;margin-bottom:1rem;}
 .button-grid{
   display:grid;
-  grid-template-columns:repeat(4, var(--btn-width));
+  grid-template-columns:repeat(2, var(--btn-width));
   grid-auto-rows: var(--btn-height);
   gap:0.5rem;
   justify-content:center;
   align-items:center;
   margin-bottom:0.5rem;
 }
-.button-grid button{
+.button-grid button, .button-grid select{
   height:var(--btn-height);
   width:var(--btn-width);
   border-radius:50px;
@@ -54,7 +54,7 @@ main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;g
   transition:var(--transition);
   font-family:'JetBrains Mono',monospace;
 }
-.button-grid button:hover{
+.button-grid button:hover, .button-grid select:hover{
   background:rgba(0,212,255,0.1);
   box-shadow:0 0 10px rgba(0,212,255,0.2);
   transform:scale(1.05);
@@ -101,14 +101,27 @@ footer a{
 footer a:hover{
   text-shadow:0 0 10px var(--highlight);
 }
-/* Modals */
-.modal{
+/* Login Modal */
+#loginModal{
   position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
 }
-.modal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;}
-.modal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
-.modal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
-.modal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+#loginModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;}
+#loginModal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
+#loginModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+#loginModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+#profileModal{
+  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
+}
+#profileModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
+#profileModal h3{display:flex;align-items:center;margin-bottom:1rem;}
+#profileModal h3 img{margin-right:10px;}
+#profileModal ul{list-style:none;text-align:left;margin:0;padding:0;}
+#profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
+#profileModal button{margin-top:0.5rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+#profileModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+#accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
+#accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);}
+#accountsList li:hover{background:rgba(0,212,255,0.1);}
 </style>
 </head>
 <body>
@@ -127,23 +140,27 @@ footer a:hover{
 
 <main>
   <div class="tool-card">
-    <h2>JS OBFUSCATOR</h2>
+    <h2>JS OBFUSCATOR </h2>
     <textarea id="code" placeholder="Paste your JavaScript code here..."></textarea>
 
-    <div class="button-grid" id="levelButtons">
-      <button data-level="low">Low</button>
-      <button data-level="medium">Medium</button>
-      <button data-level="high">High</button>
-      <button id="obfuscateBtn">Obfuscate</button>
+    <div class="button-grid">
+      <button id="pasteBtn">Paste codes</button>
+      <button id="uploadBtn">Upload codes</button>
+      <select id="levelSelect">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high" selected>High</option>
+      </select>
+      <button id="obfuscateBtn">Obfuscate</button>    
     </div>
 
     <pre id="result">⚡ Your obfuscated code will appear here...</pre>
 
     <div class="output-grid">
       <button id="copyBtn">Copy</button>
+      <button id="settingBtn">Setting</button>
       <input type="text" id="filename" placeholder="Filename">
       <button id="downloadBtn">Download</button>
-      <button id="logoutBtn">Logout</button>
     </div>
   </div>
 </main>
@@ -153,7 +170,7 @@ footer a:hover{
 </footer>
 
 <!-- Login Modal -->
-<div id="loginModal" class="modal">
+<div id="loginModal">
   <div class="modal-content">
     <h3>Login / Register</h3>
     <input type="text" id="loginUsername" placeholder="Username" required>
@@ -167,7 +184,7 @@ footer a:hover{
 </div>
 
 <!-- Profile Modal -->
-<div id="profileModal" class="modal">
+<div id="profileModal">
   <div class="modal-content">
     <h3>
       <img id="profileHeaderImg" src="" alt="User" style="height:30px;width:30px;border-radius:50%;">
@@ -175,18 +192,9 @@ footer a:hover{
     </h3>
     <ul id="profileInfo"></ul>
     <button id="uploadProfileImgBtn">Upload Profile Image</button>
+    <button id="logoutBtn">Logout</button>
+    <button id="deleteAccountBtn">Delete Account</button>
     <button id="closeProfile">Close</button>
-  </div>
-</div>
-
-<!-- Logout Secret Modal -->
-<div id="logoutModal" class="modal">
-  <div class="modal-content">
-    <h3>Logout</h3>
-    <input type="text" id="logoutSecretInput" placeholder="Enter Secret ID">
-    <div id="logoutErrorMsg" style="color:red;font-size:0.85rem;display:none;">❌ Incorrect Secret ID!</div>
-    <button id="confirmLogoutBtn">Logout</button>
-    <button onclick="document.getElementById('logoutModal').style.display='none'">Cancel</button>
   </div>
 </div>
 
@@ -194,14 +202,12 @@ footer a:hover{
 let lastObfuscatedCode="";
 let originalFileName=null;
 const defaultUserImg = "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
-const LOGOUT_SECRET_ID = "12345678";
 
 let users = JSON.parse(localStorage.getItem("joelUsers")) || [];
 let user = JSON.parse(localStorage.getItem("joelCurrentUser")) || null;
 
 const loginModal = document.getElementById("loginModal");
 const profileModal = document.getElementById("profileModal");
-const logoutModal = document.getElementById("logoutModal");
 const userImgEl = document.getElementById("userImg");
 const usernameText = document.getElementById("usernameText");
 const accountsList = document.getElementById("accountsList");
@@ -214,6 +220,7 @@ function updateHeaderUser(){
     usernameText.innerText = user.username;
   }
 }
+
 function renderAccounts(){
   accountsList.innerHTML="";
   users.forEach(u=>{
@@ -242,15 +249,24 @@ document.getElementById("loginBtn").addEventListener("click",()=>{
   if(existing){
     user = existing;
   } else {
-    user = { username,email,password,userImg,secretId: Math.random().toString(36).substr(2,10),downloads:[] };
+    user = {
+      username,
+      email,
+      password,
+      userImg,
+      secretId: "JOEL-XMD~" + Math.random().toString(36).substr(2,8),
+      downloads: []
+    };
     users.push(user);
     localStorage.setItem("joelUsers", JSON.stringify(users));
   }
+
   localStorage.setItem("joelCurrentUser", JSON.stringify(user));
   hideLogin();
   updateHeaderUser();
 });
 
+// Show login if no user
 if(!user){ showLogin(); } else { updateHeaderUser(); }
 
 // Profile modal
@@ -260,9 +276,11 @@ document.getElementById("userProfile").addEventListener("click",()=>{
   const profileHeaderUsername = document.getElementById("profileHeaderUsername");
 
   if(user){
+    // Set header image and username
     profileHeaderImg.src = user.userImg || defaultUserImg;
     profileHeaderUsername.textContent = user.username;
 
+    // Populate details
     profileInfo.innerHTML = `
       <li><strong>Email:</strong> ${user.email}</li>
       <li><strong>Secret ID:</strong> ${user.secretId}</li>
@@ -276,30 +294,45 @@ document.getElementById("userProfile").addEventListener("click",()=>{
 });
 document.getElementById("closeProfile").addEventListener("click",()=>{ profileModal.style.display="none"; });
 
-// Logout
+// Logout with secret ID
 document.getElementById("logoutBtn").addEventListener("click",()=>{
-  document.getElementById("logoutSecretInput").value="";
-  document.getElementById("logoutErrorMsg").style.display="none";
-  logoutModal.style.display="flex";
+  const secret = prompt("Enter your secret ID to logout (starts with JOEL-XMD~):");
+  if(!secret || !secret.startsWith("JOEL-XMD~") || secret !== user.secretId){
+    alert("❌ Invalid secret ID! Logout canceled.");
+    return;
+  }
+  user = null;
+  localStorage.removeItem("joelCurrentUser");
+  profileModal.style.display="none";
+  showLogin();
 });
 
-document.getElementById("confirmLogoutBtn").addEventListener("click",()=>{
-  const entered = document.getElementById("logoutSecretInput").value.trim();
-  if(entered === LOGOUT_SECRET_ID || (user && entered === user.secretId)){
-    user = null;
-    localStorage.removeItem("joelCurrentUser");
-    logoutModal.style.display="none";
-    alert("✅ Logged out successfully!");
-    showLogin();
-  } else {
-    document.getElementById("logoutErrorMsg").style.display="block";
+// Delete Account
+document.getElementById("deleteAccountBtn").addEventListener("click",()=>{
+  const email = prompt("Enter your email to confirm deletion:");
+  const password = prompt("Enter your password to confirm deletion:");
+  if(!email || !password){
+    alert("❌ Deletion canceled. Both fields are required.");
+    return;
   }
+  if(email !== user.email || password !== user.password){
+    alert("❌ Incorrect email or password. Deletion canceled.");
+    return;
+  }
+  // Remove from users array
+  users = users.filter(u => u.email !== user.email);
+  localStorage.setItem("joelUsers", JSON.stringify(users));
+  localStorage.removeItem("joelCurrentUser");
+  alert("✅ Account deleted successfully!");
+  profileModal.style.display="none";
+  showLogin();
 });
 
 // Upload profile image
 document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
   const input = document.createElement("input");
-  input.type = "file"; input.accept = "image/*";
+  input.type = "file";
+  input.accept = "image/*";
   input.onchange = ()=>{
     const file = input.files[0];
     if(file){
@@ -318,7 +351,6 @@ document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
   input.click();
 });
 
-// Obfuscator
 let selectedLevel = "high";
 document.querySelectorAll("#levelButtons button[data-level]").forEach(btn=>{
   btn.addEventListener("click",()=>{
@@ -389,4 +421,4 @@ document.getElementById("downloadBtn").addEventListener("click",()=>{
 });
 </script>
 </body>
-</html>
+        </html>
