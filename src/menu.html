@@ -41,7 +41,10 @@ main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;g
   align-items:center;
   margin-bottom:0.5rem;
 }
-.button-grid button, .button-grid select{
+.button-grid button, .button-grid select, .button-grid input,
+.output-grid button,.output-grid input,
+#loginModal button,#loginModal input,
+#profileModal button,#aboutMeModal button,#secretIdContainer input,#secretIdContainer button{
   height:var(--btn-height);
   width:var(--btn-width);
   border-radius:50px;
@@ -54,50 +57,23 @@ main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;g
   transition:var(--transition);
   font-family:'JetBrains Mono',monospace;
 }
-.button-grid button:hover, .button-grid select:hover{
+.button-grid button:hover, .button-grid select:hover, .button-grid input:hover,
+.output-grid button:hover,.output-grid input:hover,
+#loginModal button:hover,#loginModal input:hover,
+#profileModal button:hover,#aboutMeModal button:hover,
+#secretIdContainer input:hover,#secretIdContainer button:hover{
   background:rgba(0,212,255,0.1);
   box-shadow:0 0 10px rgba(0,212,255,0.2);
   transform:scale(1.05);
 }
 pre{background:#000;color:var(--green);padding:1rem;border-radius:var(--radius);width:100%;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word;position:relative;text-shadow:0 0 2px var(--green);font-family:'JetBrains Mono',monospace;}
-.output-grid{
-  display:grid;
-  grid-template-columns:repeat(2, var(--btn-width));
-  grid-auto-rows: var(--btn-height);
-  gap:0.5rem;
-  justify-content:center;
-  align-items:center;
-  margin-top:0.5rem;
-}
-.output-grid button,.output-grid input{
-  height:var(--btn-height);
-  width:var(--btn-width);
-  border-radius:50px;
-  padding:0.3rem 0.6rem;
-  border:1px solid var(--highlight);
-  background:#000;
-  color:var(--text);
-  font-weight:600;
-  cursor:pointer;
-  transition:var(--transition);
-  font-family:'JetBrains Mono',monospace;
-}
-.output-grid button:hover,.output-grid input:hover{
-  background:rgba(0,212,255,0.1);
-  box-shadow:0 0 10px rgba(0,212,255,0.2);
-  transform:scale(1.05);
-}
-footer{
-  margin-top:1rem;
-  text-align:center;
-  font-size:0.85rem;
-  color:var(--muted);
-}
+.output-grid{display:grid;grid-template-columns:repeat(2, var(--btn-width));grid-auto-rows: var(--btn-height);gap:0.5rem;justify-content:center;align-items:center;margin-top:0.5rem;}
+footer{margin-top:1rem;text-align:center;font-size:0.85rem;color:var(--muted);}
 footer a{color:var(--highlight);text-decoration:none;cursor:pointer;}
 footer a:hover{text-shadow:0 0 10px var(--highlight);}
 
 /* Modals */
-#loginModal,#profileModal,#aboutMeModal{
+#loginModal,#profileModal,#aboutMeModal,#secretIdModal{
   position:fixed;top:0;left:0;width:100%;height:100%;
   background:rgba(0,0,0,0.85);display:none;
   justify-content:center;align-items:center;z-index:1000;
@@ -115,8 +91,9 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
 #aboutMeModal img{height:80px;width:80px;border-radius:50%;margin-bottom:0.5rem;}
 #aboutMeModal h3{text-align:center;margin-bottom:0.5rem;}
 #aboutMeModal .about-links{display:flex;flex-direction:column;gap:0.5rem;margin:1rem 0;}
-#aboutMeModal button{width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
-#aboutMeModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+
+/* Secret ID Modal */
+#secretIdContainer{display:flex;flex-direction:column;align-items:center;gap:0.5rem;margin-top:1rem;}
 </style>
 </head>
 <body>
@@ -190,6 +167,10 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
     <button id="uploadProfileImgBtn">Upload Profile Image</button>
     <button id="logoutBtn">Logout</button>
     <button id="closeProfile">Close</button>
+    <div id="secretIdContainer" style="display:none;">
+      <input type="text" id="secretIdInput" placeholder="Enter Secret ID">
+      <button id="confirmSecretBtn">Confirm</button>
+    </div>
   </div>
 </div>
 
@@ -211,162 +192,96 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
 </div>
 
 <script>
-const defaultUserImg = "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
+// Users & login
+let defaultUserImg="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
 let users = JSON.parse(localStorage.getItem("joelUsers")) || [];
 let user = JSON.parse(localStorage.getItem("joelCurrentUser")) || null;
-let lastObfuscatedCode="";
-let originalFileName=null;
 
-// Header Update
+const loginModal=document.getElementById("loginModal");
+const profileModal=document.getElementById("profileModal");
+const userImgEl=document.getElementById("userImg");
+const usernameText=document.getElementById("usernameText");
+const accountsList=document.getElementById("accountsList");
+const secretIdContainer=document.getElementById("secretIdContainer");
+const secretIdInput=document.getElementById("secretIdInput");
+const confirmSecretBtn=document.getElementById("confirmSecretBtn");
+
+function showLogin(){ loginModal.style.display="flex"; renderAccounts(); }
+function hideLogin(){ loginModal.style.display="none"; }
 function updateHeaderUser(){
-  if(user){
-    document.getElementById("userImg").src = user.userImg || defaultUserImg;
-    document.getElementById("usernameText").innerText = user.username;
-  }
+  if(user){userImgEl.src=user.userImg||defaultUserImg; usernameText.innerText=user.username;}
+}
+function renderAccounts(){
+  accountsList.innerHTML="";
+  users.forEach(u=>{
+    const li=document.createElement("li");
+    li.innerHTML=`<img src="${u.userImg||defaultUserImg}" style="height:20px;width:20px;border-radius:50%;vertical-align:middle;margin-right:5px;"> ${u.username}`;
+    li.onclick=()=>{
+      user=u;
+      localStorage.setItem("joelCurrentUser",JSON.stringify(user));
+      updateHeaderUser();
+      hideLogin();
+    };
+    accountsList.appendChild(li);
+  });
 }
 
 // Login/Register
 document.getElementById("loginBtn").addEventListener("click",()=>{
-  const username = document.getElementById("loginUsername").value.trim();
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value;
-  let userImg = document.getElementById("loginImg").value.trim() || defaultUserImg;
-  if(!username || !email || !password){ alert("Please fill all fields!"); return; }
-
-  let existing = users.find(u=>u.email===email);
-  if(existing){ user = existing; } 
-  else{
-    user = {
-      username,email,password,userImg,
-      secretId:"LORD-JOEL~"+Math.random().toString(36).substr(2,8),
-      downloads:[]
-    };
-    users.push(user);
-    localStorage.setItem("joelUsers", JSON.stringify(users));
+  const username=document.getElementById("loginUsername").value.trim();
+  const email=document.getElementById("loginEmail").value.trim();
+  const password=document.getElementById("loginPassword").value;
+  let userImg=document.getElementById("loginImg").value.trim()||defaultUserImg;
+  if(!username||!email||!password){alert("Please fill all fields!");return;}
+  let existing=users.find(u=>u.email===email);
+  if(existing){user=existing;}else{
+    user={username,email,password,userImg,secretId:"LORD-JOEL~",downloads:[]};
+    users.push(user);localStorage.setItem("joelUsers",JSON.stringify(users));
   }
-  localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-  document.getElementById("loginModal").style.display="none";
+  localStorage.setItem("joelCurrentUser",JSON.stringify(user));
+  hideLogin();
   updateHeaderUser();
 });
 
-// Show login if no user
-if(!user){ document.getElementById("loginModal").style.display="flex"; } 
-else { updateHeaderUser(); }
-
-// About Me Modal
-document.getElementById("logoDiv").addEventListener("click",()=>{
-  document.getElementById("aboutMeModal").style.display="flex";
-});
+if(!user){showLogin();}else{updateHeaderUser();}
 
 // Profile modal
 document.getElementById("userProfile").addEventListener("click",()=>{
-  const profileInfo = document.getElementById("profileInfo");
-  const profileHeaderImg = document.getElementById("profileHeaderImg");
-  const profileHeaderUsername = document.getElementById("profileHeaderUsername");
-
+  const profileInfo=document.getElementById("profileInfo");
+  const profileHeaderImg=document.getElementById("profileHeaderImg");
+  const profileHeaderUsername=document.getElementById("profileHeaderUsername");
   if(user){
-    profileHeaderImg.src = user.userImg || defaultUserImg;
-    profileHeaderUsername.textContent = user.username;
-    profileInfo.innerHTML = `<li><strong>Email:</strong> ${user.email}</li>
+    profileHeaderImg.src=user.userImg||defaultUserImg;
+    profileHeaderUsername.textContent=user.username;
+    profileInfo.innerHTML=`
+      <li><strong>Email:</strong> ${user.email}</li>
       <li><strong>Secret ID:</strong> ${user.secretId}</li>
       <li><strong>Download History:</strong></li>`;
-    if(user.downloads.length===0) profileInfo.innerHTML += `<li>None</li>`;
-    else user.downloads.forEach(d=>{profileInfo.innerHTML += `<li>${d.filename} - ${d.date}</li>`;});
+    if(user.downloads.length===0)profileInfo.innerHTML+="<li>None</li>";
+    else user.downloads.forEach(d=>{profileInfo.innerHTML+=`<li>${d.filename} - ${d.date}</li>`;});
   }
-  document.getElementById("profileModal").style.display="flex";
+  profileModal.style.display="flex";
 });
-document.getElementById("closeProfile").addEventListener("click",()=>{ document.getElementById("profileModal").style.display="none"; });
 
-// Logout with Secret ID check
+// Logout workflow
 document.getElementById("logoutBtn").addEventListener("click",()=>{
-  const inputId = prompt("Enter your secret ID to logout:");
-  if(inputId === user.secretId){ 
-    user=null; 
-    localStorage.removeItem("joelCurrentUser"); 
-    document.getElementById("profileModal").style.display="none";
-    document.getElementById("loginModal").style.display="flex";
-  } else { alert("❌ Invalid Secret ID!"); }
+  secretIdContainer.style.display="flex";
+});
+confirmSecretBtn.addEventListener("click",()=>{
+  if(secretIdInput.value===user.secretId){
+    user=null;localStorage.removeItem("joelCurrentUser");
+    profileModal.style.display="none";
+    secretIdInput.value="";secretIdContainer.style.display="none";
+    showLogin();
+  }else{alert("Incorrect Secret ID!");}
 });
 
-// Upload profile image
-document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
-  const input = document.createElement("input");
-  input.type="file";input.accept="image/*";
-  input.onchange=()=>{
-    const file = input.files[0];
-    if(file){
-      const reader=new FileReader();
-      reader.onload=e=>{
-        user.userImg=e.target.result;
-        users = users.map(u=>u.email===user.email?user:u);
-        localStorage.setItem("joelUsers", JSON.stringify(users));
-        localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-        updateHeaderUser();
-        alert("✅ Profile image updated!");
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  input.click();
-});
+// Close profile
+document.getElementById("closeProfile").addEventListener("click",()=>{profileModal.style.display="none";});
 
-// --- Obfuscator ---
-document.getElementById("obfuscateBtn").addEventListener("click",()=>{
-  const code=document.getElementById("code").value;
-  const level=document.getElementById("levelSelect").value;
-  if(!code){alert("⚠️ Paste code first!");return;}
-  let obfuscated="";
-  if(level==="low"){ obfuscated="// Level: low\n"+code.split("").reverse().join(""); }
-  else if(level==="medium"){ obfuscated=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${btoa(unescape(encodeURIComponent(code)))}")`; }
-  else if(level==="high"){
-    const lines = code.split("\n").map(l=>btoa(unescape(encodeURIComponent(l))));
-    let vars="";
-    lines.forEach(ln=>{ let v1="_0x"+(Math.random()*1e6|0).toString(16); vars+=`  var ${v1}="${ln}";\n  eval(_0x5de6a9(${v1}));\n`; });
-    obfuscated=`function _0x5de6a9(_0x3cb417){return decodeURIComponent(escape(atob(_0x3cb417)));}\n(function(){\n${vars}})();`;
-  }
-  lastObfuscatedCode = obfuscated;
-  document.getElementById("result").textContent = obfuscated;
-});
-
-// Paste
-document.getElementById("pasteBtn").addEventListener("click",async()=>{
-  try{const text=await navigator.clipboard.readText();document.getElementById("code").value=text;}catch{alert("⚠️ Paste failed!");}
-});
-
-// Upload
-document.getElementById("uploadBtn").addEventListener("click",()=>{
-  const input=document.createElement("input");input.type="file";input.accept=".js";
-  input.onchange=()=>{const file=input.files[0];if(file){const reader=new FileReader();reader.onload=e=>{
-    document.getElementById("code").value=e.target.result;
-    originalFileName = file.name.replace(/\.[^/.]+$/, "");
-  };reader.readAsText(file);}};
-  input.click();
-});
-
-// Copy
-document.getElementById("copyBtn").addEventListener("click",()=>{
-  if(!lastObfuscatedCode){alert("⚠️ Obfuscate first!");return;}
-  navigator.clipboard.writeText(lastObfuscatedCode).then(()=>alert("✅ Copied!")).catch(()=>alert("❌ Copy failed!"));
-});
-
-// Download
-document.getElementById("downloadBtn").addEventListener("click",()=>{
-  if(!lastObfuscatedCode){alert("⚠️ Obfuscate first!");return;}
-  let filename=document.getElementById("filename").value.trim();
-  if(!filename && originalFileName){ filename = originalFileName + "_obfuscated"; }
-  if(!filename){ alert("⚠️ Please enter a filename before downloading!"); return; }
-  if(!filename.endsWith(".js")) filename += ".js";
-  const blob=new Blob([lastObfuscatedCode],{type:"text/javascript"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
-
-  if(user){ // save to download history
-    user.downloads.push({filename,date:new Date().toLocaleString()});
-    users = users.map(u=>u.email===user.email?user:u);
-    localStorage.setItem("joelUsers", JSON.stringify(users));
-    localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-  }
-});
+// About Me click
+document.getElementById("logoDiv").addEventListener("click",()=>{document.getElementById("aboutMeModal").style.display="flex";});
 </script>
+
 </body>
-</html>
+  </html>
