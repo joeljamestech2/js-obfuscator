@@ -111,6 +111,9 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
 #accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);}
 #accountsList li:hover{background:rgba(0,212,255,0.1);}
 
+/* About Me Modal */
+#aboutMeModal img{height:80px;width:80px;border-radius:50%;margin-bottom:0.5rem;}
+#aboutMeModal h3{text-align:center;margin-bottom:0.5rem;}
 #aboutMeModal .about-links{display:flex;flex-direction:column;gap:0.5rem;margin:1rem 0;}
 #aboutMeModal button{width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
 #aboutMeModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
@@ -119,8 +122,9 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
 <body>
 
 <header>
-  <div class="logo">
+  <div class="logo" id="logoDiv">
     <img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Logo">
+    <span id="aboutMe" style="display:none;"></span>
   </div>
   <div class="status">
     <div class="status-item" id="userProfile">
@@ -179,7 +183,7 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
 <div id="profileModal">
   <div class="modal-content">
     <h3>
-      <img id="profileHeaderImg" src="" alt="User" style="height:30px;width:30px;border-radius:50%;">
+      <img id="profileHeaderImg" src="" alt="User">
       <span id="profileHeaderUsername"></span>
     </h3>
     <ul id="profileInfo"></ul>
@@ -192,55 +196,33 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
 <!-- About Me Modal -->
 <div id="aboutMeModal">
   <div class="modal-content">
-    <h3>About Me</h3>
+    <img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Joel Image">
+    <h3>joeljamestech</h3>
     <div class="about-links">
-      <button onclick="window.open('https://chat.whatsapp.com/your-group-link','_blank')">WA Group</button>
-      <button onclick="window.open('https://whatsapp.com/channel/your-channel-link','_blank')">WA Channel</button>
-      <button onclick="window.open('https://tiktok.com/@yourusername','_blank')">TikTok</button>
-      <button onclick="window.open('https://wa.me/255781144539','_blank')">Chat Me</button>
-      <button onclick="window.open('https://github.com/joeljamestech2','_blank')">GitHub</button>
-      <button onclick="window.open('https://www.buymeacoffee.com/joeljamestech','_blank')">Buy Me Coffee</button>
+      <button onclick="window.open('https://chat.whatsapp.com/', '_blank')">WA Group</button>
+      <button onclick="window.open('https://www.youtube.com/channel/', '_blank')">WA Channel</button>
+      <button onclick="window.open('https://www.tiktok.com/', '_blank')">TikTok</button>
+      <button onclick="window.open('https://wa.me/255781144539', '_blank')">Chat Me</button>
+      <button onclick="window.open('https://github.com/joeljamestech2', '_blank')">GitHub Account</button>
+      <button onclick="window.open('https://www.buymeacoffee.com/', '_blank')">Buy Me Coffee</button>
     </div>
     <button onclick="document.getElementById('aboutMeModal').style.display='none'">Close</button>
   </div>
 </div>
 
 <script>
-let lastObfuscatedCode="";
-let originalFileName=null;
 const defaultUserImg = "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
-
 let users = JSON.parse(localStorage.getItem("joelUsers")) || [];
 let user = JSON.parse(localStorage.getItem("joelCurrentUser")) || null;
+let lastObfuscatedCode="";
+let originalFileName=null;
 
-const loginModal = document.getElementById("loginModal");
-const profileModal = document.getElementById("profileModal");
-const userImgEl = document.getElementById("userImg");
-const usernameText = document.getElementById("usernameText");
-const accountsList = document.getElementById("accountsList");
-
-function showLogin(){ loginModal.style.display = "flex"; renderAccounts(); }
-function hideLogin(){ loginModal.style.display = "none"; }
+// Header Update
 function updateHeaderUser(){
   if(user){
-    userImgEl.src = user.userImg || defaultUserImg;
-    usernameText.innerText = user.username;
+    document.getElementById("userImg").src = user.userImg || defaultUserImg;
+    document.getElementById("usernameText").innerText = user.username;
   }
-}
-
-function renderAccounts(){
-  accountsList.innerHTML="";
-  users.forEach(u=>{
-    const li = document.createElement("li");
-    li.innerHTML=`<img src="${u.userImg||defaultUserImg}" style="height:20px;width:20px;border-radius:50%;vertical-align:middle;margin-right:5px;"> ${u.username}`;
-    li.onclick=()=>{
-      user = u;
-      localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-      updateHeaderUser();
-      hideLogin();
-    };
-    accountsList.appendChild(li);
-  });
 }
 
 // Login/Register
@@ -249,32 +231,32 @@ document.getElementById("loginBtn").addEventListener("click",()=>{
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
   let userImg = document.getElementById("loginImg").value.trim() || defaultUserImg;
-
   if(!username || !email || !password){ alert("Please fill all fields!"); return; }
 
   let existing = users.find(u=>u.email===email);
-  if(existing){
-    user = existing;
-  } else {
+  if(existing){ user = existing; } 
+  else{
     user = {
-      username,
-      email,
-      password,
-      userImg,
-      secretId: "LORD-JOEL~" + Math.random().toString(36).substr(2,10),
-      downloads: []
+      username,email,password,userImg,
+      secretId:"LORD-JOEL~"+Math.random().toString(36).substr(2,8),
+      downloads:[]
     };
     users.push(user);
     localStorage.setItem("joelUsers", JSON.stringify(users));
   }
-
   localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-  hideLogin();
+  document.getElementById("loginModal").style.display="none";
   updateHeaderUser();
 });
 
 // Show login if no user
-if(!user){ showLogin(); } else { updateHeaderUser(); }
+if(!user){ document.getElementById("loginModal").style.display="flex"; } 
+else { updateHeaderUser(); }
+
+// About Me Modal
+document.getElementById("logoDiv").addEventListener("click",()=>{
+  document.getElementById("aboutMeModal").style.display="flex";
+});
 
 // Profile modal
 document.getElementById("userProfile").addEventListener("click",()=>{
@@ -285,43 +267,37 @@ document.getElementById("userProfile").addEventListener("click",()=>{
   if(user){
     profileHeaderImg.src = user.userImg || defaultUserImg;
     profileHeaderUsername.textContent = user.username;
-    profileInfo.innerHTML = `
-      <li><strong>Email:</strong> ${user.email}</li>
+    profileInfo.innerHTML = `<li><strong>Email:</strong> ${user.email}</li>
       <li><strong>Secret ID:</strong> ${user.secretId}</li>
-      <li><strong>Download History:</strong></li>
-    `;
+      <li><strong>Download History:</strong></li>`;
     if(user.downloads.length===0) profileInfo.innerHTML += `<li>None</li>`;
     else user.downloads.forEach(d=>{profileInfo.innerHTML += `<li>${d.filename} - ${d.date}</li>`;});
   }
-  profileModal.style.display="flex";
+  document.getElementById("profileModal").style.display="flex";
 });
-document.getElementById("closeProfile").addEventListener("click",()=>{ profileModal.style.display="none"; });
+document.getElementById("closeProfile").addEventListener("click",()=>{ document.getElementById("profileModal").style.display="none"; });
 
-// Logout (with secret ID confirmation)
+// Logout with Secret ID check
 document.getElementById("logoutBtn").addEventListener("click",()=>{
-  const inputId = prompt("Enter your Secret ID to confirm logout:");
-  if(inputId === user.secretId){
-    user = null;
-    localStorage.removeItem("joelCurrentUser");
-    profileModal.style.display="none";
-    showLogin();
-    alert("✅ Logged out successfully!");
-  } else {
-    alert("❌ Wrong Secret ID! Logout cancelled.");
-  }
+  const inputId = prompt("Enter your secret ID to logout:");
+  if(inputId === user.secretId){ 
+    user=null; 
+    localStorage.removeItem("joelCurrentUser"); 
+    document.getElementById("profileModal").style.display="none";
+    document.getElementById("loginModal").style.display="flex";
+  } else { alert("❌ Invalid Secret ID!"); }
 });
 
 // Upload profile image
 document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
   const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*";
-  input.onchange = ()=>{
+  input.type="file";input.accept="image/*";
+  input.onchange=()=>{
     const file = input.files[0];
     if(file){
-      const reader = new FileReader();
-      reader.onload = e=>{
-        user.userImg = e.target.result; 
+      const reader=new FileReader();
+      reader.onload=e=>{
+        user.userImg=e.target.result;
         users = users.map(u=>u.email===user.email?user:u);
         localStorage.setItem("joelUsers", JSON.stringify(users));
         localStorage.setItem("joelCurrentUser", JSON.stringify(user));
@@ -334,12 +310,7 @@ document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
   input.click();
 });
 
-// Open About Me modal on logo click
-document.querySelector(".logo img").addEventListener("click",()=>{
-  document.getElementById("aboutMeModal").style.display="flex";
-});
-
-// --- Obfuscator Code ---
+// --- Obfuscator ---
 document.getElementById("obfuscateBtn").addEventListener("click",()=>{
   const code=document.getElementById("code").value;
   const level=document.getElementById("levelSelect").value;
