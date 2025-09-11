@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JS OBFUSCATOR TOOL BY | LORD JOEL XMD</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -17,16 +17,16 @@
   --radius:12px;
   --blur:8px;
   --transition:0.3s ease;
-  --btn-height:35px;
-  --btn-width:130px;
+  --btn-height:45px;
+  --btn-width:170px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;font-family:'JetBrains Mono',monospace;}
 body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
 header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;backdrop-filter:blur(var(--blur));border-bottom:1px solid rgba(255,255,255,0.1);}
-.logo img{height:50px; border-radius:8px; max-width:100%; object-fit:contain; cursor:pointer;}
+.logo img{height:60px; border-radius:12px; max-width:100%; object-fit:contain; cursor:pointer;}
 .status{display:flex;gap:0.7rem;flex-wrap:wrap;align-items:center;}
-.status-item{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;padding:0.3rem 0.8rem;border-radius:50px;border:1px solid rgba(255,255,255,0.1);transition:var(--transition);cursor:pointer;color:var(--text);}
-.status-item img{height:30px;width:30px;border-radius:50%;object-fit:cover;cursor:pointer;}
+.status-item{display:flex;align-items:center;gap:0.5rem;font-size:1rem;padding:0.3rem 0.8rem;border-radius:50px;border:1px solid rgba(255,255,255,0.1);transition:var(--transition);cursor:pointer;color:var(--text);}
+.status-item img{height:40px;width:40px;border-radius:50%;object-fit:cover;cursor:pointer;box-shadow:0 0 5px var(--highlight);}
 .status-item:hover{border-color:var(--highlight);background:rgba(0,212,255,0.1);}
 main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem;}
 .tool-card{background:var(--glass);backdrop-filter:blur(var(--blur));border-radius:var(--radius);padding:2rem;width:100%;max-width:700px;text-align:center;border:1px solid rgba(255,255,255,0.05);}
@@ -80,15 +80,16 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
 }
 .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
 #profileModal h3{display:flex;align-items:center;margin-bottom:1rem;}
-#profileModal h3 img{margin-right:10px;}
+#profileModal h3 img{margin-right:10px;box-shadow:0 0 5px var(--highlight);}
 #profileModal ul{list-style:none;text-align:left;margin:0;padding:0;}
 #profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
 #accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
 #accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);}
 #accountsList li:hover{background:rgba(0,212,255,0.1);}
 
-/* About Me Modal */
-#aboutMeModal img{height:80px;width:80px;border-radius:50%;margin-bottom:0.5rem;}
+/* About Me inside profile */
+#profileAboutMe{display:flex;flex-direction:column;gap:0.5rem;margin:1rem 0;}
+#aboutMeModal img{height:80px;width:80px;border-radius:50%;margin-bottom:0.5rem;box-shadow:0 0 5px var(--highlight);}
 #aboutMeModal h3{text-align:center;margin-bottom:0.5rem;}
 #aboutMeModal .about-links{display:flex;flex-direction:column;gap:0.5rem;margin:1rem 0;}
 
@@ -164,6 +165,17 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
       <span id="profileHeaderUsername"></span>
     </h3>
     <ul id="profileInfo"></ul>
+
+    <!-- About Me buttons inside profile -->
+    <div id="profileAboutMe">
+      <button onclick="window.open('https://chat.whatsapp.com/', '_blank')">WA Group</button>
+      <button onclick="window.open('https://www.youtube.com/channel/', '_blank')">WA Channel</button>
+      <button onclick="window.open('https://www.tiktok.com/', '_blank')">TikTok</button>
+      <button onclick="window.open('https://wa.me/255781144539', '_blank')">Chat Me</button>
+      <button onclick="window.open('https://github.com/joeljamestech2', '_blank')">GitHub Account</button>
+      <button onclick="window.open('https://www.buymeacoffee.com/', '_blank')">Buy Me Coffee</button>
+    </div>
+
     <button id="uploadProfileImgBtn">Upload Profile Image</button>
     <button id="logoutBtn">Logout</button>
     <button id="closeProfile">Close</button>
@@ -192,33 +204,36 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
 </div>
 
 <script>
-// Users & login
-let defaultUserImg="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
+let lastObfuscatedCode="";
+let originalFileName=null;
+const defaultUserImg = "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
 let users = JSON.parse(localStorage.getItem("joelUsers")) || [];
 let user = JSON.parse(localStorage.getItem("joelCurrentUser")) || null;
 
-const loginModal=document.getElementById("loginModal");
-const profileModal=document.getElementById("profileModal");
-const userImgEl=document.getElementById("userImg");
-const usernameText=document.getElementById("usernameText");
-const accountsList=document.getElementById("accountsList");
-const secretIdContainer=document.getElementById("secretIdContainer");
-const secretIdInput=document.getElementById("secretIdInput");
-const confirmSecretBtn=document.getElementById("confirmSecretBtn");
+const loginModal = document.getElementById("loginModal");
+const profileModal = document.getElementById("profileModal");
+const userImgEl = document.getElementById("userImg");
+const usernameText = document.getElementById("usernameText");
+const accountsList = document.getElementById("accountsList");
+const secretContainer = document.getElementById("secretIdContainer");
+const secretInput = document.getElementById("secretIdInput");
 
-function showLogin(){ loginModal.style.display="flex"; renderAccounts(); }
-function hideLogin(){ loginModal.style.display="none"; }
+function showLogin(){ loginModal.style.display = "flex"; renderAccounts(); }
+function hideLogin(){ loginModal.style.display = "none"; }
 function updateHeaderUser(){
-  if(user){userImgEl.src=user.userImg||defaultUserImg; usernameText.innerText=user.username;}
+  if(user){
+    userImgEl.src = user.userImg || defaultUserImg;
+    usernameText.innerText = user.username;
+  }
 }
 function renderAccounts(){
   accountsList.innerHTML="";
   users.forEach(u=>{
-    const li=document.createElement("li");
-    li.innerHTML=`<img src="${u.userImg||defaultUserImg}" style="height:20px;width:20px;border-radius:50%;vertical-align:middle;margin-right:5px;"> ${u.username}`;
+    const li = document.createElement("li");
+    li.innerHTML=`<img src="${u.userImg||defaultUserImg}" style="height:25px;width:25px;border-radius:50%;vertical-align:middle;margin-right:5px;"> ${u.username}`;
     li.onclick=()=>{
-      user=u;
-      localStorage.setItem("joelCurrentUser",JSON.stringify(user));
+      user = u;
+      localStorage.setItem("joelCurrentUser", JSON.stringify(user));
       updateHeaderUser();
       hideLogin();
     };
