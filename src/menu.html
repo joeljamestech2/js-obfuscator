@@ -1,238 +1,386 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JS Obfuscator - Joel</title>
-  <style>
-    body {
-      margin:0;
-      font-family:monospace;
-      background:#121212;
-      color:white;
-    }
-    header {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:10px 20px;
-      background:#1e1e1e;
-      border-bottom:1px solid #444;
-    }
-    #logoSection { display:flex;align-items:center;cursor:pointer;position:relative; }
-    #logo { width:50px;height:50px;border-radius:50%; }
-    #aboutMe { margin-left:10px;font-weight:bold; }
-    #logoDropdown {
-      display:none;
-      position:absolute;
-      top:60px;
-      left:0;
-      background:#1e1e1e;
-      border:1px solid #444;
-      border-radius:10px;
-      padding:10px;
-      z-index:1000;
-      min-width:200px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.5);
-    }
-    #logoDropdown button {
-      display:block;
-      width:100%;
-      margin:5px 0;
-      padding:8px;
-      border:none;
-      background:#333;
-      color:white;
-      cursor:pointer;
-      border-radius:6px;
-    }
-    #logoDropdown button:hover { background:#555; }
-    #userProfile { display:flex;align-items:center; }
-    #profileImg { width:40px;height:40px;border-radius:50%;margin-right:8px; }
-    main { padding:20px; }
-    textarea {
-      width:100%;
-      height:150px;
-      background:#000;
-      color:lime;
-      font-family:monospace;
-      border:1px solid #444;
-      padding:10px;
-      border-radius:8px;
-    }
-    button {
-      margin-top:10px;
-      padding:10px 20px;
-      border:none;
-      border-radius:8px;
-      background:#333;
-      color:white;
-      cursor:pointer;
-    }
-    button:hover { background:#555; }
-    .modal {
-      display:none;
-      position:fixed;
-      top:0;left:0;
-      width:100%;height:100%;
-      background:rgba(0,0,0,0.7);
-      justify-content:center;
-      align-items:center;
-      z-index:2000;
-    }
-    .modal-content {
-      background:#1e1e1e;
-      padding:20px;
-      border-radius:10px;
-      text-align:center;
-      max-width:400px;
-      width:90%;
-    }
-    input, #loginSecretId {
-      width:90%;
-      padding:10px;
-      margin:8px 0;
-      border:1px solid #444;
-      border-radius:8px;
-      background:#000;
-      color:white;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JS OBFUSCATOR TOOL BY | LORD JOEL XMD</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+:root {
+  --bg:#000;
+  --glass:rgba(255,255,255,0.05);
+  --text:#fff;
+  --green:#00ff00;
+  --muted:#aaa;
+  --highlight:#0ff;
+  --radius:12px;
+  --blur:8px;
+  --transition:0.3s ease;
+  --btn-height:35px;
+  --btn-width:130px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;font-family:'JetBrains Mono',monospace;}
+body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;backdrop-filter:blur(var(--blur));border-bottom:1px solid rgba(255,255,255,0.1);}
+.logo img{height:50px; border-radius:8px; max-width:100%; object-fit:contain; cursor:pointer;}
+.status{display:flex;gap:0.7rem;flex-wrap:wrap;align-items:center;}
+.status-item{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;padding:0.3rem 0.8rem;border-radius:50px;border:1px solid rgba(255,255,255,0.1);transition:var(--transition);cursor:pointer;color:var(--text);}
+.status-item img{height:30px;width:30px;border-radius:50%;object-fit:cover;cursor:pointer;}
+.status-item:hover{border-color:var(--highlight);background:rgba(0,212,255,0.1);}
+main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem;}
+.tool-card{background:var(--glass);backdrop-filter:blur(var(--blur));border-radius:var(--radius);padding:2rem;width:100%;max-width:700px;text-align:center;border:1px solid rgba(255,255,255,0.05);}
+.tool-card h2{font-weight:600;margin-bottom:1rem;color:var(--text);}
+.tool-card textarea{width:100%;height:150px;background:#000;color:var(--green);border:none;border-radius:var(--radius);padding:1rem;resize:vertical;font-family:'JetBrains Mono',monospace;margin-bottom:1rem;}
+.button-grid{
+  display:grid;
+  grid-template-columns:repeat(2, var(--btn-width));
+  grid-auto-rows: var(--btn-height);
+  gap:0.5rem;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:0.5rem;
+}
+.button-grid button, .button-grid select{
+  height:var(--btn-height);
+  width:var(--btn-width);
+  border-radius:50px;
+  padding:0.3rem 0.6rem;
+  border:1px solid var(--highlight);
+  background:#000;
+  color:var(--text);
+  font-weight:600;
+  cursor:pointer;
+  transition:var(--transition);
+  font-family:'JetBrains Mono',monospace;
+}
+.button-grid button:hover, .button-grid select:hover{
+  background:rgba(0,212,255,0.1);
+  box-shadow:0 0 10px rgba(0,212,255,0.2);
+  transform:scale(1.05);
+}
+pre{background:#000;color:var(--green);padding:1rem;border-radius:var(--radius);width:100%;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word;position:relative;text-shadow:0 0 2px var(--green);font-family:'JetBrains Mono',monospace;}
+.output-grid{
+  display:grid;
+  grid-template-columns:repeat(2, var(--btn-width));
+  grid-auto-rows: var(--btn-height);
+  gap:0.5rem;
+  justify-content:center;
+  align-items:center;
+  margin-top:0.5rem;
+}
+.output-grid button,.output-grid input{
+  height:var(--btn-height);
+  width:var(--btn-width);
+  border-radius:50px;
+  padding:0.3rem 0.6rem;
+  border:1px solid var(--highlight);
+  background:#000;
+  color:var(--text);
+  font-weight:600;
+  cursor:pointer;
+  transition:var(--transition);
+  font-family:'JetBrains Mono',monospace;
+}
+.output-grid button:hover,.output-grid input:hover{
+  background:rgba(0,212,255,0.1);
+  box-shadow:0 0 10px rgba(0,212,255,0.2);
+  transform:scale(1.05);
+}
+footer{
+  margin-top:1rem;
+  text-align:center;
+  font-size:0.85rem;
+  color:var(--muted);
+}
+footer a{
+  color:var(--highlight);
+  text-decoration:none;
+  cursor:pointer;
+}
+footer a:hover{
+  text-shadow:0 0 10px var(--highlight);
+}
+/* Login Modal */
+#loginModal{
+  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
+}
+#loginModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;}
+#loginModal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
+#loginModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+#loginModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+#profileModal{
+  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
+}
+#profileModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
+#profileModal h3{display:flex;align-items:center;margin-bottom:1rem;}
+#profileModal h3 img{margin-right:10px;}
+#profileModal ul{list-style:none;text-align:left;margin:0;padding:0;}
+#profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
+#profileModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+#profileModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+#accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
+#accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);}
+#accountsList li:hover{background:rgba(0,212,255,0.1);}
+</style>
 </head>
 <body>
 
 <header>
-  <div id="logoSection">
-    <img id="logo" src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Logo">
-    <span id="aboutMe">About Me</span>
-
-    <!-- Dropdown menu -->
-    <div id="logoDropdown">
-      <button onclick="window.open('https://chat.whatsapp.com/YOUR-WA-GROUP','_blank')">WA Group</button>
-      <button onclick="window.open('https://whatsapp.com/channel/YOUR-WA-CHANNEL','_blank')">WA Channel</button>
-      <button onclick="window.open('https://tiktok.com/@yourprofile','_blank')">TikTok</button>
-      <button onclick="window.open('https://wa.me/255781144539','_blank')">Chat Me</button>
-      <button onclick="window.open('https://github.com/joeljamestech2','_blank')">GitHub</button>
-      <button onclick="window.open('https://www.buymeacoffee.com/yourusername','_blank')">Buy Me Coffee</button>
-      <button onclick="window.open('https://github.com/joeljamestech2/JS-Obfuscator','_blank')">Repo</button>
-      <button onclick="logout()">Logout</button>
-    </div>
+  <div class="logo">
+    <img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Logo">
   </div>
-
-  <div id="userProfile">
-    <img id="profileImg" src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg" alt="User">
-    <span id="username">Guest</span>
+  <div class="status">
+    <div class="status-item" id="userProfile">
+      <img src="" alt="User" id="userImg">
+      <span id="usernameText"></span>
+    </div>
   </div>
 </header>
 
 <main>
-  <h2>JS Obfuscator</h2>
-  <textarea id="inputCode" placeholder="Write your JS code here..."></textarea><br>
-  <button onclick="obfuscateCode()">Obfuscate</button>
-  <textarea id="outputCode" placeholder="Obfuscated code will appear here..."></textarea>
-  <br>
-  <input type="text" id="fileName" placeholder="Enter file name before downloading">
-  <button onclick="downloadCode()">Download</button>
+  <div class="tool-card">
+    <h2>JS OBFUSCATOR </h2>
+    <textarea id="code" placeholder="Paste your JavaScript code here..."></textarea>
+
+    <div class="button-grid">
+      <button id="pasteBtn">Paste codes</button>
+      <button id="uploadBtn">Upload codes</button>
+      <select id="levelSelect">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high" selected>High</option>
+      </select>
+      <button id="obfuscateBtn">Obfuscate</button>    
+    </div>
+
+    <pre id="result">⚡ Your obfuscated code will appear here...</pre>
+
+    <div class="output-grid">
+      <button id="copyBtn">Copy</button>
+      <button id="settingBtn">Setting</button>
+      <input type="text" id="filename" placeholder="Filename">
+      <button id="downloadBtn">Download</button>
+    </div>
+  </div>
 </main>
 
+<footer>
+  JavaScript Obfuscator website created by <a onclick="window.open('https://github.com/joeljamestech2','_blank')">joeljamestech</a>
+</footer>
+
 <!-- Login Modal -->
-<div id="loginModal" class="modal">
+<div id="loginModal">
   <div class="modal-content">
-    <h2>Login</h2>
-    <input type="text" id="loginUsername" placeholder="Enter username">
-    <input type="file" id="loginImage">
-    <input type="text" id="loginSecretId" placeholder="Enter Secret ID (starts with LORD~JOEL~)">
-    <button onclick="login()">Login</button>
+    <h3>Login / Register</h3>
+    <input type="text" id="loginUsername" placeholder="Username" required>
+    <input type="email" id="loginEmail" placeholder="Email" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <input type="text" id="loginImg" placeholder="User Image URL (optional)">
+    <button id="loginBtn">Login / Register</button>
+    <h4>Saved Accounts</h4>
+    <ul id="accountsList"></ul>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div id="profileModal">
+  <div class="modal-content">
+    <h3>
+      <img id="profileHeaderImg" src="" alt="User" style="height:30px;width:30px;border-radius:50%;">
+      <span id="profileHeaderUsername"></span>
+    </h3>
+    <ul id="profileInfo"></ul>
+    <button id="uploadProfileImgBtn">Upload Profile Image</button>
+    <button id="logoutBtn">Logout</button>
+    <button id="closeProfile">Close</button>
   </div>
 </div>
 
 <script>
-  const logoSection = document.getElementById("logoSection");
-  const logoDropdown = document.getElementById("logoDropdown");
+let lastObfuscatedCode="";
+let originalFileName=null;
+const defaultUserImg = "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
 
-  // Toggle dropdown
-  logoSection.onclick = (e) => {
-    e.stopPropagation();
-    logoDropdown.style.display = logoDropdown.style.display === "block" ? "none" : "block";
-  };
-  document.addEventListener("click", () => {
-    logoDropdown.style.display = "none";
+let users = JSON.parse(localStorage.getItem("joelUsers")) || [];
+let user = JSON.parse(localStorage.getItem("joelCurrentUser")) || null;
+
+const loginModal = document.getElementById("loginModal");
+const profileModal = document.getElementById("profileModal");
+const userImgEl = document.getElementById("userImg");
+const usernameText = document.getElementById("usernameText");
+const accountsList = document.getElementById("accountsList");
+
+function showLogin(){ loginModal.style.display = "flex"; renderAccounts(); }
+function hideLogin(){ loginModal.style.display = "none"; }
+function updateHeaderUser(){
+  if(user){
+    userImgEl.src = user.userImg || defaultUserImg;
+    usernameText.innerText = user.username;
+  }
+}
+
+function renderAccounts(){
+  accountsList.innerHTML="";
+  users.forEach(u=>{
+    const li = document.createElement("li");
+    li.innerHTML=`<img src="${u.userImg||defaultUserImg}" style="height:20px;width:20px;border-radius:50%;vertical-align:middle;margin-right:5px;"> ${u.username}`;
+    li.onclick=()=>{
+      user = u;
+      localStorage.setItem("joelCurrentUser", JSON.stringify(user));
+      updateHeaderUser();
+      hideLogin();
+    };
+    accountsList.appendChild(li);
   });
+}
 
-  // Show login modal if not logged in
-  window.onload = () => {
-    if(!localStorage.getItem("username") || !localStorage.getItem("secretId")) {
-      document.getElementById("loginModal").style.display="flex";
-    } else {
-      loadUser();
+// Login/Register
+document.getElementById("loginBtn").addEventListener("click",()=>{
+  const username = document.getElementById("loginUsername").value.trim();
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  let userImg = document.getElementById("loginImg").value.trim() || defaultUserImg;
+
+  if(!username || !email || !password){ alert("Please fill all fields!"); return; }
+
+  let existing = users.find(u=>u.email===email);
+  if(existing){
+    user = existing;
+  } else {
+    user = {
+      username,
+      email,
+      password,
+      userImg,
+      secretId: Math.random().toString(36).substr(2,10),
+      downloads: []
+    };
+    users.push(user);
+    localStorage.setItem("joelUsers", JSON.stringify(users));
+  }
+
+  localStorage.setItem("joelCurrentUser", JSON.stringify(user));
+  hideLogin();
+  updateHeaderUser();
+});
+
+// Show login if no user
+if(!user){ showLogin(); } else { updateHeaderUser(); }
+
+// Profile modal
+document.getElementById("userProfile").addEventListener("click",()=>{
+  const profileInfo = document.getElementById("profileInfo");
+  const profileHeaderImg = document.getElementById("profileHeaderImg");
+  const profileHeaderUsername = document.getElementById("profileHeaderUsername");
+
+  if(user){
+    // Set header image and username
+    profileHeaderImg.src = user.userImg || defaultUserImg;
+    profileHeaderUsername.textContent = user.username;
+
+    // Populate details
+    profileInfo.innerHTML = `
+      <li><strong>Email:</strong> ${user.email}</li>
+      <li><strong>Secret ID:</strong> ${user.secretId}</li>
+      <li><strong>Download History:</strong></li>
+    `;
+    if(user.downloads.length===0) profileInfo.innerHTML += `<li>None</li>`;
+    else user.downloads.forEach(d=>{profileInfo.innerHTML += `<li>${d.filename} - ${d.date}</li>`;});
+  }
+
+  profileModal.style.display="flex";
+});
+document.getElementById("closeProfile").addEventListener("click",()=>{ profileModal.style.display="none"; });
+
+// Logout
+document.getElementById("logoutBtn").addEventListener("click",()=>{
+  user = null;
+  localStorage.removeItem("joelCurrentUser");
+  profileModal.style.display="none";
+  showLogin();
+});
+
+// Upload profile image
+document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.onchange = ()=>{
+    const file = input.files[0];
+    if(file){
+      const reader = new FileReader();
+      reader.onload = e=>{
+        user.userImg = e.target.result; 
+        users = users.map(u=>u.email===user.email?user:u);
+        localStorage.setItem("joelUsers", JSON.stringify(users));
+        localStorage.setItem("joelCurrentUser", JSON.stringify(user));
+        updateHeaderUser();
+        alert("✅ Profile image updated!");
+      };
+      reader.readAsDataURL(file);
     }
   };
+  input.click();
+});
 
-  function login() {
-    const username = document.getElementById("loginUsername").value.trim();
-    const secretId = document.getElementById("loginSecretId").value.trim();
-    const imageInput = document.getElementById("loginImage");
-
-    if(!secretId.startsWith("LORD~JOEL~")) {
-      alert("Secret ID must start with LORD~JOEL~");
-      return;
-    }
-    if(username==="") {
-      alert("Enter username");
-      return;
-    }
-
-    localStorage.setItem("username", username);
-    localStorage.setItem("secretId", secretId);
-
-    if(imageInput.files && imageInput.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        localStorage.setItem("userImg", e.target.result);
-        loadUser();
-      };
-      reader.readAsDataURL(imageInput.files[0]);
-    } else {
-      localStorage.setItem("userImg", "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg");
-      loadUser();
-    }
-
-    document.getElementById("loginModal").style.display="none";
+// --- Obfuscator Code ---
+document.getElementById("obfuscateBtn").addEventListener("click",()=>{
+  const code=document.getElementById("code").value;
+  const level=document.getElementById("levelSelect").value;
+  if(!code){alert("⚠️ Paste code first!");return;}
+  let obfuscated="";
+  if(level==="low"){ obfuscated="// Level: low\n"+code.split("").reverse().join(""); }
+  else if(level==="medium"){ obfuscated=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${btoa(unescape(encodeURIComponent(code)))}")`; }
+  else if(level==="high"){
+    const lines = code.split("\n").map(l=>btoa(unescape(encodeURIComponent(l))));
+    let vars="";
+    lines.forEach(ln=>{ let v1="_0x"+(Math.random()*1e6|0).toString(16); vars+=`  var ${v1}="${ln}";\n  eval(_0x5de6a9(${v1}));\n`; });
+    obfuscated=`function _0x5de6a9(_0x3cb417){return decodeURIComponent(escape(atob(_0x3cb417)));}\n(function(){\n${vars}})();`;
   }
+  lastObfuscatedCode = obfuscated;
+  document.getElementById("result").textContent = obfuscated;
+});
 
-  function loadUser() {
-    document.getElementById("username").textContent = localStorage.getItem("username");
-    document.getElementById("profileImg").src = localStorage.getItem("userImg");
-  }
+// Paste
+document.getElementById("pasteBtn").addEventListener("click",async()=>{
+  try{const text=await navigator.clipboard.readText();document.getElementById("code").value=text;}catch{alert("⚠️ Paste failed!");}
+});
 
-  function logout() {
-    const entered = prompt("Enter your Secret ID to confirm logout:");
-    if(entered === localStorage.getItem("secretId")) {
-      localStorage.clear();
-      location.reload();
-    } else {
-      alert("Wrong Secret ID!");
-    }
-  }
+// Upload
+document.getElementById("uploadBtn").addEventListener("click",()=>{
+  const input=document.createElement("input");input.type="file";input.accept=".js";
+  input.onchange=()=>{const file=input.files[0];if(file){const reader=new FileReader();reader.onload=e=>{
+    document.getElementById("code").value=e.target.result;
+    originalFileName = file.name.replace(/\.[^/.]+$/, "");
+  };reader.readAsText(file);}};
+  input.click();
+});
 
-  function obfuscateCode() {
-    const code = document.getElementById("inputCode").value;
-    if(code.trim()==="") { alert("Enter code first!"); return; }
-    let result = code.split("").reverse().join(""); // Dummy obfuscation
-    document.getElementById("outputCode").value = result;
-  }
+// Copy
+document.getElementById("copyBtn").addEventListener("click",()=>{
+  if(!lastObfuscatedCode){alert("⚠️ Obfuscate first!");return;}
+  navigator.clipboard.writeText(lastObfuscatedCode).then(()=>alert("✅ Copied!")).catch(()=>alert("❌ Copy failed!"));
+});
 
-  function downloadCode() {
-    const filename = document.getElementById("fileName").value.trim();
-    if(filename==="") { alert("Enter a file name!"); return; }
-    const content = document.getElementById("outputCode").value;
-    const blob = new Blob([content], { type: "text/javascript" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = filename+".js";
-    a.click();
+// Download
+document.getElementById("downloadBtn").addEventListener("click",()=>{
+  if(!lastObfuscatedCode){alert("⚠️ Obfuscate first!");return;}
+  let filename=document.getElementById("filename").value.trim();
+  if(!filename && originalFileName){ filename = originalFileName + "_obfuscated"; }
+  if(!filename){ alert("⚠️ Please enter a filename before downloading!"); return; }
+  if(!filename.endsWith(".js")) filename += ".js";
+  const blob=new Blob([lastObfuscatedCode],{type:"text/javascript"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
+
+  if(user){ // save to download history
+    user.downloads.push({filename,date:new Date().toLocaleString()});
+    users = users.map(u=>u.email===user.email?user:u);
+    localStorage.setItem("joelUsers", JSON.stringify(users));
+    localStorage.setItem("joelCurrentUser", JSON.stringify(user));
   }
+});
 </script>
-
 </body>
-  </html>
+</html>
