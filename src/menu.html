@@ -23,7 +23,9 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;font-family:'JetBrains Mono',monospace;}
 body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
 header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;backdrop-filter:blur(var(--blur));border-bottom:1px solid rgba(255,255,255,0.1);}
-.logo img{height:50px; border-radius:8px; max-width:100%; object-fit:contain; cursor:pointer;}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.logo img{height:45px;width:45px;border-radius:8px;object-fit:contain;}
+.logo span{font-weight:600;font-size:18px;color:var(--highlight);}
 .status{display:flex;gap:0.7rem;flex-wrap:wrap;align-items:center;}
 .status-item{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;padding:0.3rem 0.8rem;border-radius:50px;border:1px solid rgba(255,255,255,0.1);transition:var(--transition);cursor:pointer;color:var(--text);}
 .status-item img{height:30px;width:30px;border-radius:50%;object-fit:cover;cursor:pointer;}
@@ -32,99 +34,40 @@ main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;g
 .tool-card{background:var(--glass);backdrop-filter:blur(var(--blur));border-radius:var(--radius);padding:2rem;width:100%;max-width:700px;text-align:center;border:1px solid rgba(255,255,255,0.05);}
 .tool-card h2{font-weight:600;margin-bottom:1rem;color:var(--text);}
 .tool-card textarea{width:100%;height:150px;background:#000;color:var(--green);border:none;border-radius:var(--radius);padding:1rem;resize:vertical;font-family:'JetBrains Mono',monospace;margin-bottom:1rem;}
-.button-grid{
-  display:grid;
-  grid-template-columns:repeat(2, var(--btn-width));
-  grid-auto-rows: var(--btn-height);
-  gap:0.5rem;
-  justify-content:center;
-  align-items:center;
-  margin-bottom:0.5rem;
-}
-.button-grid button, .button-grid select{
-  height:var(--btn-height);
-  width:var(--btn-width);
-  border-radius:50px;
-  padding:0.3rem 0.6rem;
-  border:1px solid var(--highlight);
-  background:#000;
-  color:var(--text);
-  font-weight:600;
-  cursor:pointer;
-  transition:var(--transition);
-  font-family:'JetBrains Mono',monospace;
-}
-.button-grid button:hover, .button-grid select:hover{
-  background:rgba(0,212,255,0.1);
-  box-shadow:0 0 10px rgba(0,212,255,0.2);
-  transform:scale(1.05);
-}
-pre{background:#000;color:var(--green);padding:1rem;border-radius:var(--radius);width:100%;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word;position:relative;text-shadow:0 0 2px var(--green);font-family:'JetBrains Mono',monospace;}
-.output-grid{
-  display:grid;
-  grid-template-columns:repeat(2, var(--btn-width));
-  grid-auto-rows: var(--btn-height);
-  gap:0.5rem;
-  justify-content:center;
-  align-items:center;
-  margin-top:0.5rem;
-}
-.output-grid button,.output-grid input{
-  height:var(--btn-height);
-  width:var(--btn-width);
-  border-radius:50px;
-  padding:0.3rem 0.6rem;
-  border:1px solid var(--highlight);
-  background:#000;
-  color:var(--text);
-  font-weight:600;
-  cursor:pointer;
-  transition:var(--transition);
-  font-family:'JetBrains Mono',monospace;
-}
-.output-grid button:hover,.output-grid input:hover{
-  background:rgba(0,212,255,0.1);
-  box-shadow:0 0 10px rgba(0,212,255,0.2);
-  transform:scale(1.05);
-}
+.button-grid{display:grid;grid-template-columns:repeat(2, var(--btn-width));grid-auto-rows: var(--btn-height);gap:0.5rem;justify-content:center;align-items:center;margin-bottom:0.5rem;}
+.button-grid button, .button-grid select{height:var(--btn-height);width:var(--btn-width);border-radius:50px;padding:0.3rem 0.6rem;border:1px solid var(--highlight);background:#000;color:var(--text);font-weight:600;cursor:pointer;transition:var(--transition);font-family:'JetBrains Mono',monospace;}
+.button-grid button:hover, .button-grid select:hover{background:rgba(0,212,255,0.1);box-shadow:0 0 10px rgba(0,212,255,0.2);transform:scale(1.05);}
+pre{background:#000;color:var(--green);padding:1rem;border-radius:var(--radius);width:100%;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word;position:relative;text-shadow:0 0 2px var(--green);}
+.output-grid{display:grid;grid-template-columns:repeat(2, var(--btn-width));grid-auto-rows: var(--btn-height);gap:0.5rem;justify-content:center;align-items:center;margin-top:0.5rem;}
+.output-grid button,.output-grid input{height:var(--btn-height);width:var(--btn-width);border-radius:50px;padding:0.3rem 0.6rem;border:1px solid var(--highlight);background:#000;color:var(--text);font-weight:600;cursor:pointer;transition:var(--transition);}
+.output-grid button:hover,.output-grid input:hover{background:rgba(0,212,255,0.1);box-shadow:0 0 10px rgba(0,212,255,0.2);transform:scale(1.05);}
 footer{margin-top:1rem;text-align:center;font-size:0.85rem;color:var(--muted);}
 footer a{color:var(--highlight);text-decoration:none;cursor:pointer;}
 footer a:hover{text-shadow:0 0 10px var(--highlight);}
 
-/* Login Modal */
-#loginModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;}
-#loginModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;}
-#loginModal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
-#loginModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
-#loginModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
-
-/* Profile Modal */
-#profileModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;}
-#profileModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
-#profileModal h3{display:flex;align-items:center;margin-bottom:1rem;}
-#profileModal h3 img{margin-right:10px;}
-#profileModal ul{list-style:none;text-align:left;margin:0;padding:0;}
-#profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
-#profileModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
-#profileModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
-#accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
-#accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);}
-#accountsList li:hover{background:rgba(0,212,255,0.1);}
-
-/* Logout Secret Modal */
-#logoutModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1100;display:none;}
-#logoutModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:350px;text-align:center;}
-#logoutModal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
-#logoutModal button{margin-top:0.5rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
-#logoutModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+/* Modals */
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;}
+.modal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;}
+.modal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
+.modal button{margin-top:0.5rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+.modal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
 #errorMsg{color:red;font-size:0.85rem;display:none;}
+
+/* More Info Menu */
+#moreInfo{display:none;flex-direction:column;gap:0.5rem;align-items:center;margin-top:1rem;}
+#moreInfo button{width:200px;padding:10px;border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;}
+#moreInfo button:hover{background:rgba(0,212,255,0.1);}
+
+/* AI Modal */
+#aiResponse{margin-top:1rem;color:var(--green);white-space:pre-wrap;text-align:left;font-size:0.9rem;}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">
+  <div class="logo" onclick="toggleMoreInfo()">
     <img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Logo">
+    <span>More Info</span>
   </div>
   <div class="status">
     <div class="status-item" id="userProfile">
@@ -134,11 +77,20 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
   </div>
 </header>
 
+<!-- More Info Menu -->
+<div id="moreInfo">
+  <button onclick="window.open('https://wa.me/255781144539','_blank')">Chat Me</button>
+  <button onclick="window.open('https://whatsapp.com/channel/XXXX','_blank')">WA Channel</button>
+  <button onclick="window.open('https://chat.whatsapp.com/XXXX','_blank')">WA Group</button>
+  <button onclick="window.open('https://github.com/joeljamestech2','_blank')">GitHub</button>
+  <button onclick="window.open('https://youtube.com/@joeljamestech','_blank')">YouTube</button>
+  <button onclick="document.getElementById('aiModal').style.display='flex'">Ask AI</button>
+</div>
+
 <main>
   <div class="tool-card">
-    <h2>JS OBFUSCATOR </h2>
+    <h2>JS OBFUSCATOR</h2>
     <textarea id="code" placeholder="Paste your JavaScript code here..."></textarea>
-
     <div class="button-grid">
       <button id="pasteBtn">Paste codes</button>
       <button id="uploadBtn">Upload codes</button>
@@ -147,11 +99,9 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
         <option value="medium">Medium</option>
         <option value="high" selected>High</option>
       </select>
-      <button id="obfuscateBtn">Obfuscate</button>    
+      <button id="obfuscateBtn">Obfuscate</button>
     </div>
-
     <pre id="result">⚡ Your obfuscated code will appear here...</pre>
-
     <div class="output-grid">
       <button id="copyBtn">Copy</button>
       <button id="settingBtn">Setting</button>
@@ -166,7 +116,7 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
 </footer>
 
 <!-- Login Modal -->
-<div id="loginModal">
+<div id="loginModal" class="modal">
   <div class="modal-content">
     <h3>Login / Register</h3>
     <input type="text" id="loginUsername" placeholder="Username" required>
@@ -180,7 +130,7 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
 </div>
 
 <!-- Profile Modal -->
-<div id="profileModal">
+<div id="profileModal" class="modal">
   <div class="modal-content">
     <h3>
       <img id="profileHeaderImg" src="" alt="User" style="height:30px;width:30px;border-radius:50%;">
@@ -189,12 +139,13 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
     <ul id="profileInfo"></ul>
     <button id="uploadProfileImgBtn">Upload Profile Image</button>
     <button id="logoutBtn">Logout</button>
+    <button id="deleteAccountBtn">Delete Account</button>
     <button id="closeProfile">Close</button>
   </div>
 </div>
 
-<!-- Logout Secret Modal -->
-<div id="logoutModal">
+<!-- Logout Modal -->
+<div id="logoutModal" class="modal">
   <div class="modal-content">
     <h3>Enter Secret ID</h3>
     <input type="text" id="logoutSecretInput" placeholder="LORD~JOEL~xxxx">
@@ -204,194 +155,90 @@ footer a:hover{text-shadow:0 0 10px var(--highlight);}
   </div>
 </div>
 
-<script>
-let lastObfuscatedCode="";
-let originalFileName=null;
-const defaultUserImg = "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
+<!-- Delete Account Modal -->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <h3>Enter Email to Delete Account</h3>
+    <input type="email" id="deleteEmailInput" placeholder="Enter your email">
+    <div id="deleteErrorMsg" style="color:red;display:none;">❌ Email not matched!</div>
+    <button id="confirmDelete">Delete</button>
+    <button onclick="document.getElementById('deleteModal').style.display='none'">Cancel</button>
+  </div>
+</div>
 
+<!-- Ask AI Modal -->
+<div id="aiModal" class="modal">
+  <div class="modal-content">
+    <h3>Ask Joel XMD AI</h3>
+    <input type="text" id="aiPrompt" placeholder="Type your message...">
+    <button id="sendAi">Send</button>
+    <div id="aiResponse"></div>
+    <button onclick="document.getElementById('aiModal').style.display='none'">Close</button>
+  </div>
+</div>
+
+<script>
 let users = JSON.parse(localStorage.getItem("joelUsers")) || [];
 let user = JSON.parse(localStorage.getItem("joelCurrentUser")) || null;
+const defaultUserImg = "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
 
-const loginModal = document.getElementById("loginModal");
-const profileModal = document.getElementById("profileModal");
-const userImgEl = document.getElementById("userImg");
-const usernameText = document.getElementById("usernameText");
-const accountsList = document.getElementById("accountsList");
+function toggleMoreInfo(){
+  const box=document.getElementById("moreInfo");
+  box.style.display=(box.style.display==="flex")?"none":"flex";
+}
 
-function showLogin(){ loginModal.style.display = "flex"; renderAccounts(); }
-function hideLogin(){ loginModal.style.display = "none"; }
+// Update header user
 function updateHeaderUser(){
   if(user){
-    userImgEl.src = user.userImg || defaultUserImg;
-    usernameText.innerText = user.username;
+    document.getElementById("userImg").src=user.userImg||defaultUserImg;
+    document.getElementById("usernameText").innerText=user.username;
   }
 }
-function renderAccounts(){
-  accountsList.innerHTML="";
-  users.forEach(u=>{
-    const li = document.createElement("li");
-    li.innerHTML=`<img src="${u.userImg||defaultUserImg}" style="height:20px;width:20px;border-radius:50%;vertical-align:middle;margin-right:5px;"> ${u.username}`;
-    li.onclick=()=>{
-      user = u;
-      localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-      updateHeaderUser();
-      hideLogin();
-    };
-    accountsList.appendChild(li);
-  });
-}
 
-// Login/Register
-document.getElementById("loginBtn").addEventListener("click",()=>{
-  const username = document.getElementById("loginUsername").value.trim();
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value;
-  let userImg = document.getElementById("loginImg").value.trim() || defaultUserImg;
-
-  if(!username || !email || !password){ alert("Please fill all fields!"); return; }
-
-  let existing = users.find(u=>u.email===email);
-  if(existing){ user = existing; }
-  else {
-    user = {
-      username,
-      email,
-      password,
-      userImg,
-      secretId: "LORD~JOEL~" + Math.random().toString(36).substr(2,6),
-      downloads: []
-    };
-    users.push(user);
-    localStorage.setItem("joelUsers", JSON.stringify(users));
-  }
-  localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-  hideLogin();
-  updateHeaderUser();
-});
-
-// Show login if no user
-if(!user){ showLogin(); } else { updateHeaderUser(); }
-
-// Profile modal
-document.getElementById("userProfile").addEventListener("click",()=>{
-  const profileInfo = document.getElementById("profileInfo");
-  const profileHeaderImg = document.getElementById("profileHeaderImg");
-  const profileHeaderUsername = document.getElementById("profileHeaderUsername");
-
-  if(user){
-    profileHeaderImg.src = user.userImg || defaultUserImg;
-    profileHeaderUsername.textContent = user.username;
-    profileInfo.innerHTML = `
-      <li><strong>Email:</strong> ${user.email}</li>
-      <li><strong>Secret ID:</strong> ${user.secretId}</li>
-      <li><strong>Download History:</strong></li>
-    `;
-    if(user.downloads.length===0) profileInfo.innerHTML += `<li>None</li>`;
-    else user.downloads.forEach(d=>{profileInfo.innerHTML += `<li>${d.filename} - ${d.date}</li>`;});
-  }
-  profileModal.style.display="flex";
-});
-document.getElementById("closeProfile").addEventListener("click",()=>{ profileModal.style.display="none"; });
-
-// Logout with Secret ID
-document.getElementById("logoutBtn").addEventListener("click",()=>{
-  document.getElementById("logoutModal").style.display="flex";
-  document.getElementById("logoutSecretInput").value="";
-  document.getElementById("errorMsg").style.display="none";
-});
-document.getElementById("confirmLogout").addEventListener("click",()=>{
-  const input=document.getElementById("logoutSecretInput").value.trim();
-  if(input===user.secretId && input.startsWith("LORD~JOEL~")){
-    user=null;
+// Delete account flow
+document.getElementById("deleteAccountBtn").onclick=()=>{
+  document.getElementById("deleteModal").style.display="flex";
+  document.getElementById("deleteEmailInput").value="";
+  document.getElementById("deleteErrorMsg").style.display="none";
+};
+document.getElementById("confirmDelete").onclick=()=>{
+  const email=document.getElementById("deleteEmailInput").value.trim();
+  if(email===user.email){
+    users=users.filter(u=>u.email!==email);
+    localStorage.setItem("joelUsers",JSON.stringify(users));
     localStorage.removeItem("joelCurrentUser");
-    profileModal.style.display="none";
-    document.getElementById("logoutModal").style.display="none";
-    showLogin();
+    user=null;
+    document.getElementById("deleteModal").style.display="none";
+    document.getElementById("profileModal").style.display="none";
+    document.getElementById("loginModal").style.display="flex";
   } else {
-    document.getElementById("errorMsg").style.display="block";
+    document.getElementById("deleteErrorMsg").style.display="block";
   }
-});
+};
 
-/// Upload profile image
-document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*";
-  input.onchange = ()=>{
-    const file = input.files[0];
-    if(file){
-      const reader = new FileReader();
-      reader.onload = e=>{
-        user.userImg = e.target.result; 
-        users = users.map(u=>u.email===user.email?user:u);
-        localStorage.setItem("joelUsers", JSON.stringify(users));
-        localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-        updateHeaderUser();
-        alert("✅ Profile image updated!");
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  input.click();
-});
-
-// --- Obfuscator Code ---
-document.getElementById("obfuscateBtn").addEventListener("click",()=>{
-  const code=document.getElementById("code").value;
-  const level=document.getElementById("levelSelect").value;
-  if(!code){alert("⚠️ Paste code first!");return;}
-  let obfuscated="";
-  if(level==="low"){ obfuscated="// Level: low\n"+code.split("").reverse().join(""); }
-  else if(level==="medium"){ obfuscated=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${btoa(unescape(encodeURIComponent(code)))}")`; }
-  else if(level==="high"){
-    const lines = code.split("\n").map(l=>btoa(unescape(encodeURIComponent(l))));
-    let vars="";
-    lines.forEach(ln=>{ let v1="_0x"+(Math.random()*1e6|0).toString(16); vars+=`  var ${v1}="${ln}";\n  eval(_0x5de6a9(${v1}));\n`; });
-    obfuscated=`function _0x5de6a9(_0x3cb417){return decodeURIComponent(escape(atob(_0x3cb417)));}\n(function(){\n${vars}})();`;
+// Ask AI flow
+document.getElementById("sendAi").onclick=async()=>{
+  const prompt=document.getElementById("aiPrompt").value.trim();
+  if(!prompt) return;
+  const apiUrl=`https://api.paxsenix.biz.id/ai/gemini-realtime?text=${encodeURIComponent(prompt)}&session_id=ZXlKaklqb2lZMTg0T0RKall6TTNNek13TVdFNE1qazNJaXdpY2lJNkluSmZNbU01TUdGa05ETmtNVFF3WmpNNU5pSXNJbU5vSWpvaWNtTmZZVE16TURWaE1qTmpNR1ExTnpObFl5Sjk`;
+  document.getElementById("aiResponse").innerText="⏳ Thinking...";
+  try{
+    const res=await fetch(apiUrl);
+    let data=await res.json();
+    let answer=data.answer||"No response";
+    answer=answer.replace(/I am a large language model, trained by Google\.?/gi,"I am joel Xmd bot, trained by Lord Joel.")
+                 .replace(/by Google/gi,"by Lord Joel")
+                 .replace(/large language model/gi,"joel Xmd bot");
+    document.getElementById("aiResponse").innerText=`JOEL XMD AI:\n${answer}`;
+  }catch(e){
+    document.getElementById("aiResponse").innerText="❌ Error connecting to AI!";
   }
-  lastObfuscatedCode = obfuscated;
-  document.getElementById("result").textContent = obfuscated;
-});
+};
 
-// Paste
-document.getElementById("pasteBtn").addEventListener("click",async()=>{
-  try{const text=await navigator.clipboard.readText();document.getElementById("code").value=text;}catch{alert("⚠️ Paste failed!");}
-});
-
-// Upload
-document.getElementById("uploadBtn").addEventListener("click",()=>{
-  const input=document.createElement("input");input.type="file";input.accept=".js";
-  input.onchange=()=>{const file=input.files[0];if(file){const reader=new FileReader();reader.onload=e=>{
-    document.getElementById("code").value=e.target.result;
-    originalFileName = file.name.replace(/\.[^/.]+$/, "");
-  };reader.readAsText(file);}};
-  input.click();
-});
-
-// Copy
-document.getElementById("copyBtn").addEventListener("click",()=>{
-  if(!lastObfuscatedCode){alert("⚠️ Obfuscate first!");return;}
-  navigator.clipboard.writeText(lastObfuscatedCode).then(()=>alert("✅ Copied!")).catch(()=>alert("❌ Copy failed!"));
-});
-
-// Download
-document.getElementById("downloadBtn").addEventListener("click",()=>{
-  if(!lastObfuscatedCode){alert("⚠️ Obfuscate first!");return;}
-  let filename=document.getElementById("filename").value.trim();
-  if(!filename && originalFileName){ filename = originalFileName + "_obfuscated"; }
-  if(!filename){ alert("⚠️ Please enter a filename before downloading!"); return; }
-  if(!filename.endsWith(".js")) filename += ".js";
-  const blob=new Blob([lastObfuscatedCode],{type:"text/javascript"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
-
-  if(user){ // save to download history
-    user.downloads.push({filename,date:new Date().toLocaleString()});
-    users = users.map(u=>u.email===user.email?user:u);
-    localStorage.setItem("joelUsers", JSON.stringify(users));
-    localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-  }
-});
+// Initialize
+if(user){updateHeaderUser();}
+else{document.getElementById("loginModal").style.display="flex";}
 </script>
+
 </body>
 </html>
