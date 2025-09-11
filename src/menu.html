@@ -87,31 +87,19 @@ pre{background:#000;color:var(--green);padding:1rem;border-radius:var(--radius);
   box-shadow:0 0 10px rgba(0,212,255,0.2);
   transform:scale(1.05);
 }
-footer{
-  margin-top:1rem;
-  text-align:center;
-  font-size:0.85rem;
-  color:var(--muted);
-}
-footer a{
-  color:var(--highlight);
-  text-decoration:none;
-  cursor:pointer;
-}
-footer a:hover{
-  text-shadow:0 0 10px var(--highlight);
-}
+footer{margin-top:1rem;text-align:center;font-size:0.85rem;color:var(--muted);}
+footer a{color:var(--highlight);text-decoration:none;cursor:pointer;}
+footer a:hover{text-shadow:0 0 10px var(--highlight);}
+
 /* Login Modal */
-#loginModal{
-  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
-}
+#loginModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;}
 #loginModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;}
 #loginModal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
 #loginModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
 #loginModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
-#profileModal{
-  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
-}
+
+/* Profile Modal */
+#profileModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;}
 #profileModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
 #profileModal h3{display:flex;align-items:center;margin-bottom:1rem;}
 #profileModal h3 img{margin-right:10px;}
@@ -122,6 +110,14 @@ footer a:hover{
 #accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
 #accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);}
 #accountsList li:hover{background:rgba(0,212,255,0.1);}
+
+/* Logout Secret Modal */
+#logoutModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1100;display:none;}
+#logoutModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:350px;text-align:center;}
+#logoutModal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
+#logoutModal button{margin-top:0.5rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+#logoutModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+#errorMsg{color:red;font-size:0.85rem;display:none;}
 </style>
 </head>
 <body>
@@ -197,6 +193,17 @@ footer a:hover{
   </div>
 </div>
 
+<!-- Logout Secret Modal -->
+<div id="logoutModal">
+  <div class="modal-content">
+    <h3>Enter Secret ID</h3>
+    <input type="text" id="logoutSecretInput" placeholder="LORD~JOEL~xxxx">
+    <div id="errorMsg">❌ Invalid Secret ID!</div>
+    <button id="confirmLogout">Confirm</button>
+    <button onclick="document.getElementById('logoutModal').style.display='none'">Cancel</button>
+  </div>
+</div>
+
 <script>
 let lastObfuscatedCode="";
 let originalFileName=null;
@@ -219,7 +226,6 @@ function updateHeaderUser(){
     usernameText.innerText = user.username;
   }
 }
-
 function renderAccounts(){
   accountsList.innerHTML="";
   users.forEach(u=>{
@@ -245,21 +251,19 @@ document.getElementById("loginBtn").addEventListener("click",()=>{
   if(!username || !email || !password){ alert("Please fill all fields!"); return; }
 
   let existing = users.find(u=>u.email===email);
-  if(existing){
-    user = existing;
-  } else {
+  if(existing){ user = existing; }
+  else {
     user = {
       username,
       email,
       password,
       userImg,
-      secretId: Math.random().toString(36).substr(2,10),
+      secretId: "LORD~JOEL~" + Math.random().toString(36).substr(2,6),
       downloads: []
     };
     users.push(user);
     localStorage.setItem("joelUsers", JSON.stringify(users));
   }
-
   localStorage.setItem("joelCurrentUser", JSON.stringify(user));
   hideLogin();
   updateHeaderUser();
@@ -275,11 +279,8 @@ document.getElementById("userProfile").addEventListener("click",()=>{
   const profileHeaderUsername = document.getElementById("profileHeaderUsername");
 
   if(user){
-    // Set header image and username
     profileHeaderImg.src = user.userImg || defaultUserImg;
     profileHeaderUsername.textContent = user.username;
-
-    // Populate details
     profileInfo.innerHTML = `
       <li><strong>Email:</strong> ${user.email}</li>
       <li><strong>Secret ID:</strong> ${user.secretId}</li>
@@ -288,20 +289,30 @@ document.getElementById("userProfile").addEventListener("click",()=>{
     if(user.downloads.length===0) profileInfo.innerHTML += `<li>None</li>`;
     else user.downloads.forEach(d=>{profileInfo.innerHTML += `<li>${d.filename} - ${d.date}</li>`;});
   }
-
   profileModal.style.display="flex";
 });
 document.getElementById("closeProfile").addEventListener("click",()=>{ profileModal.style.display="none"; });
 
-// Logout
+// Logout with Secret ID
 document.getElementById("logoutBtn").addEventListener("click",()=>{
-  user = null;
-  localStorage.removeItem("joelCurrentUser");
-  profileModal.style.display="none";
-  showLogin();
+  document.getElementById("logoutModal").style.display="flex";
+  document.getElementById("logoutSecretInput").value="";
+  document.getElementById("errorMsg").style.display="none";
+});
+document.getElementById("confirmLogout").addEventListener("click",()=>{
+  const input=document.getElementById("logoutSecretInput").value.trim();
+  if(input===user.secretId && input.startsWith("LORD~JOEL~")){
+    user=null;
+    localStorage.removeItem("joelCurrentUser");
+    profileModal.style.display="none";
+    document.getElementById("logoutModal").style.display="none";
+    showLogin();
+  } else {
+    document.getElementById("errorMsg").style.display="block";
+  }
 });
 
-// Upload profile image
+/// Upload profile image
 document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
   const input = document.createElement("input");
   input.type = "file";
