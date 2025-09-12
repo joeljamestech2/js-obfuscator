@@ -7,11 +7,12 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <style>
-:root {
+:root{
   --bg:#000;
   --glass:rgba(255,255,255,0.05);
   --text:#fff;
   --green:#00ff00;
+  --red:#ff4d4d;
   --muted:#aaa;
   --highlight:#0ff;
   --radius:12px;
@@ -19,7 +20,6 @@
   --transition:0.3s ease;
   --btn-height:35px;
   --btn-width:130px;
-  --bar-height:220px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;font-family:'JetBrains Mono',monospace;}
 body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
@@ -36,7 +36,7 @@ main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;g
 .button-grid{
   display:grid;
   grid-template-columns:repeat(2, var(--btn-width));
-  grid-auto-rows: var(--btn-height);
+  grid-template-rows:repeat(2, var(--btn-height));
   gap:0.5rem;
   justify-content:center;
   align-items:center;
@@ -88,6 +88,7 @@ pre{background:#000;color:var(--green);padding:1rem;border-radius:var(--radius);
   box-shadow:0 0 10px rgba(0,212,255,0.2);
   transform:scale(1.05);
 }
+#statusMsg{margin-top:0.5rem;font-size:0.9rem;height:20px;}
 footer{
   margin-top:1rem;
   text-align:center;
@@ -102,70 +103,33 @@ footer a{
 footer a:hover{
   text-shadow:0 0 10px var(--highlight);
 }
-/* Login Modal */
-#loginModal{
-  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
-}
-#loginModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;}
-#loginModal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
-#loginModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
-#loginModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
 
-/* Profile Modal */
-#profileModal{
-  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
+/* Logo dropdown bar */
+#logoDropdown{
+  position:absolute; top:70px; left:2rem; display:none; flex-direction:column; background:var(--glass);
+  backdrop-filter:blur(var(--blur)); border-radius:var(--radius); border:1px solid rgba(255,255,255,0.1); padding:0.5rem; z-index:200;
 }
-#profileModal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
-#profileModal h3{display:flex;align-items:center;margin-bottom:1rem;gap:10px;}
-#profileModal h3 img{margin-right:10px;}
-#profileModal ul{list-style:none;text-align:left;margin:0;padding:0;}
-#profileModal li{padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.1);}
-#profileModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
-#profileModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
-#accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
-#accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:8px;}
-#accountsList li:hover{background:rgba(0,212,255,0.1);}
-
-/* Confirmation bar (styled input bar for logout & delete) */
-.confirmBarBackdrop {
-  position:fixed; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:none; align-items:center; justify-content:center; z-index:1100;
+#logoDropdown button{
+  width:140px; height:32px; margin:3px 0; border-radius:50px; border:1px solid var(--highlight);
+  background:#000;color:var(--text); font-weight:600; cursor:pointer;
 }
-.confirmBar {
-  width:90%; max-width:520px; background:var(--glass); border-radius:18px; padding:1.2rem; backdrop-filter:blur(var(--blur)); border:1px solid rgba(255,255,255,0.06);
-  box-shadow:0 10px 30px rgba(0,0,0,0.6);
-}
-.confirmBar h4{margin-bottom:0.7rem; font-weight:700; color:var(--text);}
-.confirmBar p{color:var(--muted); margin-bottom:0.8rem; font-size:0.9rem;}
-.confirmBar .row{display:flex; gap:0.6rem; margin-bottom:0.6rem; flex-wrap:wrap;}
-.confirmBar input[type="text"], .confirmBar input[type="email"], .confirmBar input[type="password"]{
-  width:100%; padding:0.6rem 0.8rem; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:#000; color:var(--text); font-family:'JetBrains Mono';
-}
-.confirmBar .btns{display:flex; gap:0.6rem; justify-content:flex-end; margin-top:0.6rem;}
-.confirmBar .btn{
-  height:38px; min-width:110px; border-radius:30px; border:1px solid var(--highlight); background:#000; color:var(--text); font-weight:700; cursor:pointer;
-}
-.confirmBar .btn:hover{background:rgba(0,212,255,0.08); transform:scale(1.03); box-shadow:0 0 8px rgba(0,212,255,0.12);}
-
-/* small adjustments for username display in header */
-#usernameText { font-weight:600; }
-
-/* accessibility focus */
-:focus { outline:2px solid rgba(0,212,255,0.15); outline-offset:2px; }
-
-@media (max-width:520px){
-  .button-grid, .output-grid { grid-template-columns: repeat(1, 100%); }
-}
+#logoDropdown button:hover{background:rgba(0,212,255,0.1); transform:scale(1.03);}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="logo" title="Open GitHub">
-    <img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Logo" id="mainLogo">
+  <div class="logo" title="Click for options">
+    <img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" id="mainLogo">
+    <div id="logoDropdown">
+      <button onclick="window.open('https://wa.me/255781144539','_blank')">Chat me</button>
+      <button onclick="window.open('https://joel-xmd-bot.onrender.com/joel','_blank')">Ask AI</button>
+      <button onclick="window.open('https://github.com/joeljamestech2','_blank')">GitHub</button>
+      <button onclick="window.open('https://www.youtube.com','_blank')">YouTube</button>
+    </div>
   </div>
   <div class="status">
-    <div class="status-item" id="userProfile" title="Open profile" tabindex="0" role="button" aria-pressed="false">
-      <img src="" alt="User" id="userImg">
+    <div class="status-item" id="userProfile">
+      <img src="" id="userImg">
       <span id="usernameText"></span>
     </div>
   </div>
@@ -173,18 +137,18 @@ footer a:hover{
 
 <main>
   <div class="tool-card">
-    <h2>JS OBFUSCATOR </h2>
+    <h2>JS OBFUSCATOR</h2>
     <textarea id="code" placeholder="Paste your JavaScript code here..."></textarea>
 
     <div class="button-grid">
       <button id="pasteBtn">Paste codes</button>
       <button id="uploadBtn">Upload codes</button>
-      <select id="levelSelect" aria-label="Obfuscation level">
+      <select id="levelSelect">
         <option value="low">Low</option>
         <option value="medium">Medium</option>
         <option value="high" selected>High</option>
       </select>
-      <button id="obfuscateBtn">Obfuscate</button>    
+      <button id="obfuscateBtn">Obfuscate</button>
     </div>
 
     <pre id="result">⚡ Your obfuscated code will appear here...</pre>
@@ -192,9 +156,11 @@ footer a:hover{
     <div class="output-grid">
       <button id="copyBtn">Copy</button>
       <button id="settingBtn">Setting</button>
-      <input type="text" id="filename" placeholder="Filename" aria-label="Filename">
+      <input type="text" id="filename" placeholder="Filename">
       <button id="downloadBtn">Download</button>
     </div>
+
+    <div id="statusMsg"></div>
   </div>
 </main>
 
@@ -202,381 +168,85 @@ footer a:hover{
   JavaScript Obfuscator website created by <a onclick="window.open('https://github.com/joeljamestech2','_blank')">joeljamestech</a>
 </footer>
 
-<!-- Login Modal -->
-<div id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
-  <div class="modal-content">
-    <h3 id="loginTitle">Login / Register</h3>
-    <input type="text" id="loginUsername" placeholder="Username" required>
-    <input type="email" id="loginEmail" placeholder="Email" required>
-    <input type="password" id="loginPassword" placeholder="Password" required>
-    <input type="text" id="loginImg" placeholder="User Image URL (optional)">
-    <button id="loginBtn">Login / Register</button>
-    <h4>Saved Accounts</h4>
-    <ul id="accountsList" aria-live="polite"></ul>
-  </div>
-</div>
-
-<!-- Profile Modal -->
-<div id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
-  <div class="modal-content">
-    <h3 id="profileTitle">
-      <img id="profileHeaderImg" src="" alt="User" style="height:30px;width:30px;border-radius:50%;">
-      <span id="profileHeaderUsername"></span>
-    </h3>
-    <ul id="profileInfo"></ul>
-    <button id="uploadProfileImgBtn">Upload Profile Image</button>
-    <button id="deleteAccountBtn" style="background:transparent;color:#ff6b6b;border-color:#ff6b6b;margin-top:0.5rem;">Delete Account</button>
-    <button id="logoutBtn">Logout</button>
-    <button id="closeProfile">Close</button>
-  </div>
-</div>
-
-<!-- Confirm Bar for Logout -->
-<div id="logoutConfirmBackdrop" class="confirmBarBackdrop" role="dialog" aria-modal="true" aria-labelledby="logoutConfirmTitle">
-  <div class="confirmBar" role="document">
-    <h4 id="logoutConfirmTitle">Confirm Logout</h4>
-    <p>Please enter your <strong>Secret ID</strong> to confirm logout. This action will only end your current session.</p>
-    <div class="row">
-      <input type="text" id="logoutSecretInput" placeholder="Enter Secret ID (case-sensitive)" aria-label="Secret ID for logout">
-    </div>
-    <div class="btns">
-      <button class="btn" id="logoutCancelBtn">Cancel</button>
-      <button class="btn" id="logoutConfirmBtn">Confirm Logout</button>
-    </div>
-  </div>
-</div>
-
-<!-- Confirm Bar for Delete Account -->
-<div id="deleteConfirmBackdrop" class="confirmBarBackdrop" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
-  <div class="confirmBar" role="document">
-    <h4 id="deleteConfirmTitle">Delete Account</h4>
-    <p>This will permanently remove your account and all stored download history. Provide your credentials to confirm.</p>
-    <div class="row">
-      <input type="text" id="deleteSecretInput" placeholder="Secret ID (LORD~JOEL~...)" aria-label="Secret ID for delete">
-    </div>
-    <div class="row">
-      <input type="email" id="deleteEmailInput" placeholder="Email used for account" aria-label="Email for delete">
-    </div>
-    <div class="row">
-      <input type="password" id="deletePasswordInput" placeholder="Password" aria-label="Password for delete">
-    </div>
-    <div class="btns">
-      <button class="btn" id="deleteCancelBtn">Cancel</button>
-      <button class="btn" id="deleteConfirmBtn" style="border-color:#ff6b6b;">Delete Account</button>
-    </div>
-  </div>
-</div>
-
 <script>
-/* -------------------------
-   Configuration / Defaults
-   ------------------------- */
-let lastObfuscatedCode = "";
-let originalFileName = null;
-const defaultUserImg = "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
+const defaultUserImg="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
+let users=JSON.parse(localStorage.getItem("joelUsers"))||[];
+let user=JSON.parse(localStorage.getItem("joelCurrentUser"))||null;
+let lastObfuscatedCode="";
+let originalFileName=null;
 
-/* -------------------------
-   Storage helpers
-   ------------------------- */
-let users = JSON.parse(localStorage.getItem("joelUsers")) || [];
-let user = JSON.parse(localStorage.getItem("joelCurrentUser")) || null;
+const userImgEl=document.getElementById("userImg");
+const usernameText=document.getElementById("usernameText");
+const statusMsg=document.getElementById("statusMsg");
 
-/* UI elements */
-const loginModal = document.getElementById("loginModal");
-const profileModal = document.getElementById("profileModal");
-const userImgEl = document.getElementById("userImg");
-const usernameText = document.getElementById("usernameText");
-const accountsList = document.getElementById("accountsList");
-const mainLogo = document.getElementById("mainLogo");
-
-/* confirm bars */
-const logoutBackdrop = document.getElementById("logoutConfirmBackdrop");
-const deleteBackdrop = document.getElementById("deleteConfirmBackdrop");
-
-/* click logo => open GitHub (keeps behavior) */
-mainLogo.addEventListener("click", ()=> window.open('https://github.com/joeljamestech2','_blank'));
-
-/* -------------------------
-   UI helper functions
-   ------------------------- */
-function showLogin(){ loginModal.style.display = "flex"; renderAccounts(); }
-function hideLogin(){ loginModal.style.display = "none"; }
-function showProfile(){ profileModal.style.display = "flex"; }
-function hideProfile(){ profileModal.style.display = "none"; }
-
-function showLogoutBar(){ logoutBackdrop.style.display = "flex"; document.getElementById('logoutSecretInput').focus(); }
-function hideLogoutBar(){ logoutBackdrop.style.display = "none"; document.getElementById('logoutSecretInput').value = ""; }
-
-function showDeleteBar(){ deleteBackdrop.style.display = "flex"; document.getElementById('deleteSecretInput').focus(); }
-function hideDeleteBar(){ deleteBackdrop.style.display = "none"; document.getElementById('deleteSecretInput').value = ""; document.getElementById('deleteEmailInput').value = ""; document.getElementById('deletePasswordInput').value = ""; }
-
+/* update header user */
 function updateHeaderUser(){
   if(user){
-    userImgEl.src = user.userImg || defaultUserImg;
-    usernameText.innerText = user.username;
-    usernameText.title = user.email || "";
-  } else {
-    userImgEl.src = defaultUserImg;
-    usernameText.innerText = "Guest";
-    usernameText.title = "";
+    userImgEl.src=user.userImg||defaultUserImg;
+    usernameText.textContent=user.username;
+  }else{
+    userImgEl.src=defaultUserImg;
+    usernameText.textContent="Guest";
   }
 }
 
-function renderAccounts(){
-  accountsList.innerHTML = "";
-  if(users.length === 0){
-    accountsList.innerHTML = "<li style='opacity:.7'>No saved accounts</li>";
-    return;
-  }
-  users.forEach(u=>{
-    const li = document.createElement("li");
-    li.innerHTML = `<img src="${u.userImg||defaultUserImg}" style="height:24px;width:24px;border-radius:50%;vertical-align:middle;"> <span style="font-weight:600">${u.username}</span>`;
-    li.onclick = () => {
-      user = u;
-      localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-      updateHeaderUser();
-      hideLogin();
-    };
-    accountsList.appendChild(li);
-  });
+/* show status text */
+function showStatus(msg,color="#0f0"){
+  statusMsg.textContent=msg;
+  statusMsg.style.color=color;
+  setTimeout(()=>{statusMsg.textContent="";},4000);
 }
 
-/* -------------------------
-   Login / Register logic
-   ------------------------- */
-document.getElementById("loginBtn").addEventListener("click", ()=>{
-  const username = document.getElementById("loginUsername").value.trim();
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value;
-  let userImg = document.getElementById("loginImg").value.trim() || defaultUserImg;
-
-  if(!username || !email || !password){ alert("Please fill all fields!"); return; }
-
-  let existing = users.find(u => u.email === email);
-  if(existing){
-    // simple password check (client-side only)
-    if(existing.password !== password){
-      alert("Incorrect password for this email.");
-      return;
-    }
-    user = existing;
-  } else {
-    // generate secretId with required prefix
-    const rand = Math.random().toString(36).substr(2,10).toUpperCase();
-    user = {
-      username,
-      email,
-      password,
-      userImg,
-      secretId: `LORD~JOEL~${rand}`,
-      downloads: []
-    };
-    users.push(user);
-    localStorage.setItem("joelUsers", JSON.stringify(users));
-  }
-
-  localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-  hideLogin();
-  updateHeaderUser();
+/* Logo dropdown toggle */
+const mainLogo=document.getElementById("mainLogo");
+const logoDropdown=document.getElementById("logoDropdown");
+mainLogo.addEventListener("click", ()=>{
+  logoDropdown.style.display=(logoDropdown.style.display==="flex")?"none":"flex";
 });
 
-/* show login if no current user */
-if(!user){ showLogin(); } else { updateHeaderUser(); }
-
-/* -------------------------
-   Profile modal logic
-   ------------------------- */
-document.getElementById("userProfile").addEventListener("click", ()=>{
-  const profileInfo = document.getElementById("profileInfo");
-  const profileHeaderImg = document.getElementById("profileHeaderImg");
-  const profileHeaderUsername = document.getElementById("profileHeaderUsername");
-
-  if(user){
-    profileHeaderImg.src = user.userImg || defaultUserImg;
-    profileHeaderUsername.textContent = user.username;
-
-    // populate details: username styled, email, secret id, downloads
-    let html = `
-      <li><strong>Username:</strong> ${user.username}</li>
-      <li><strong>Email:</strong> ${user.email}</li>
-      <li><strong>Secret ID:</strong> ${user.secretId}</li>
-      <li><strong>Download History:</strong></li>
-    `;
-    if(!user.downloads || user.downloads.length === 0){
-      html += `<li style="opacity:.8">None</li>`;
-    } else {
-      user.downloads.forEach(d => {
-        html += `<li>${d.filename} - ${d.date}</li>`;
-      });
-    }
-    profileInfo.innerHTML = html;
-  } else {
-    profileHeaderImg.src = defaultUserImg;
-    profileHeaderUsername.textContent = "Guest";
-    profileInfo.innerHTML = `<li>Not logged in</li>`;
-  }
-
-  showProfile();
-});
-
-document.getElementById("closeProfile").addEventListener("click", ()=> { hideProfile(); });
-
-/* Upload profile image button */
-document.getElementById("uploadProfileImgBtn").addEventListener("click", ()=>{
-  if(!user){ alert("Login first to upload a profile image."); return; }
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*";
-  input.onchange = () => {
-    const file = input.files[0];
-    if(file){
-      const reader = new FileReader();
-      reader.onload = e => {
-        user.userImg = e.target.result;
-        users = users.map(u=> u.email === user.email ? user : u);
-        localStorage.setItem("joelUsers", JSON.stringify(users));
-        localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-        updateHeaderUser();
-        alert("✅ Profile image updated!");
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  input.click();
-});
-
-/* -------------------------
-   Logout via styled bar (no prompt)
-   ------------------------- */
-document.getElementById("logoutBtn").addEventListener("click", ()=>{
-  if(!user){ alert("No user is currently logged in."); return; }
-  showLogoutBar();
-});
-
-document.getElementById("logoutCancelBtn").addEventListener("click", ()=>{
-  hideLogoutBar();
-});
-
-document.getElementById("logoutConfirmBtn").addEventListener("click", ()=>{
-  const value = document.getElementById("logoutSecretInput").value.trim();
-  if(!value){
-    alert("Secret ID is required to logout.");
-    return;
-  }
-  if(value === user.secretId){
-    // proceed to logout
-    user = null;
-    localStorage.removeItem("joelCurrentUser");
-    hideProfile();
-    updateHeaderUser();
-    hideLogoutBar();
-    showLogin();
-    alert("✅ Logged out successfully.");
-  } else {
-    alert("❌ Secret ID mismatch. Logout cancelled.");
-  }
-});
-
-/* also allow Esc to close logout bar */
-logoutBackdrop.addEventListener("keydown", (e)=> {
-  if(e.key === "Escape") hideLogoutBar();
-});
-
-/* -------------------------
-   Delete account flow via styled bar
-   ------------------------- */
-document.getElementById("deleteAccountBtn").addEventListener("click", ()=>{
-  if(!user){ alert("No user is currently logged in."); return; }
-  showDeleteBar();
-});
-
-document.getElementById("deleteCancelBtn").addEventListener("click", ()=>{
-  hideDeleteBar();
-});
-
-document.getElementById("deleteConfirmBtn").addEventListener("click", ()=>{
-  const secret = document.getElementById("deleteSecretInput").value.trim();
-  const email = document.getElementById("deleteEmailInput").value.trim();
-  const pass = document.getElementById("deletePasswordInput").value;
-
-  if(!secret || !email || !pass){
-    alert("All fields are required to delete the account.");
-    return;
-  }
-  // Validate that the entered credentials match the currently logged in user
-  if(!user){
-    alert("No user is currently logged in."); hideDeleteBar(); return;
-  }
-  if(secret !== user.secretId || email !== user.email || pass !== user.password){
-    alert("Credentials mismatch. Account deletion cancelled.");
-    return;
-  }
-
-  // Remove from users array
-  users = users.filter(u => u.email !== user.email);
-  localStorage.setItem("joelUsers", JSON.stringify(users));
-  // Remove current user and related storage
-  user = null;
-  localStorage.removeItem("joelCurrentUser");
-  hideDeleteBar();
-  hideProfile();
-  updateHeaderUser();
-  showLogin();
-  alert("🗑️ Account deleted successfully.");
-});
-
-/* -------------------------
-   Obfuscator logic
-   ------------------------- */
+/* Obfuscate */
 document.getElementById("obfuscateBtn").addEventListener("click", ()=>{
-  const code = document.getElementById("code").value;
-  const level = document.getElementById("levelSelect").value;
-  if(!code){ alert("⚠️ Paste code first!"); return; }
-  let obfuscated = "";
-
-  if(level === "low"){
-    obfuscated = "// Level: low\n" + code.split("").reverse().join("");
-  } else if(level === "medium"){
-    obfuscated = `(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${btoa(unescape(encodeURIComponent(code)))}")`;
-  } else if(level === "high"){
-    const lines = code.split("\n").map(l => btoa(unescape(encodeURIComponent(l))));
-    let vars = "";
+  const code=document.getElementById("code").value;
+  const level=document.getElementById("levelSelect").value;
+  if(!code){ showStatus("⚠️ Paste code first!", "#ff4d4d"); return; }
+  let obf="";
+  if(level==="low"){ obf=code.split("").reverse().join(""); }
+  else if(level==="medium"){ obf=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${btoa(unescape(encodeURIComponent(code)))}")`; }
+  else{
+    const lines=code.split("\n").map(l=>btoa(unescape(encodeURIComponent(l))));
+    let vars="";
     lines.forEach(ln=>{
-      let v1 = "_0x" + (Math.random()*1e6|0).toString(16);
-      vars += `  var ${v1}="${ln}";\n  eval(_0x5de6a9(${v1}));\n`;
+      let v1="_0x"+(Math.random()*1e6|0).toString(16);
+      vars+=`var ${v1}="${ln}";\n eval(_0x5de6a9(${v1}));\n`;
     });
-    obfuscated = `function _0x5de6a9(_0x3cb417){return decodeURIComponent(escape(atob(_0x3cb417)));}\n(function(){\n${vars}})();`;
+    obf=`function _0x5de6a9(_0x3cb417){return decodeURIComponent(escape(atob(_0x3cb417)));}\n(function(){\n${vars}})();`;
   }
-
-  lastObfuscatedCode = obfuscated;
-  document.getElementById("result").textContent = obfuscated;
+  lastObfuscatedCode=obf;
+  document.getElementById("result").textContent=obf;
+  showStatus("✅ Code obfuscated successfully!");
 });
 
-/* -------------------------
-   Clipboard, Upload, Download
-   ------------------------- */
-// Paste from clipboard into textarea
+/* Paste from clipboard */
 document.getElementById("pasteBtn").addEventListener("click", async ()=>{
-  try {
-    const text = await navigator.clipboard.readText();
-    document.getElementById("code").value = text;
-  } catch (err) {
-    alert("⚠️ Paste failed! Make sure your browser allows clipboard access.");
-  }
+  try{
+    const text=await navigator.clipboard.readText();
+    document.getElementById("code").value=text;
+    showStatus("📋 Code pasted from clipboard!");
+  }catch(e){ showStatus("⚠️ Paste failed!", "#ff4d4d"); }
 });
 
-// Upload a .js file into textarea
+/* Upload .js file */
 document.getElementById("uploadBtn").addEventListener("click", ()=>{
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".js";
-  input.onchange = () => {
-    const file = input.files[0];
+  const input=document.createElement("input");
+  input.type="file"; input.accept=".js";
+  input.onchange=()=>{
+    const file=input.files[0];
     if(file){
-      const reader = new FileReader();
-      reader.onload = e => {
-        document.getElementById("code").value = e.target.result;
-        originalFileName = file.name.replace(/\.[^/.]+$/, "");
+      const reader=new FileReader();
+      reader.onload=e=>{
+        document.getElementById("code").value=e.target.result;
+        originalFileName=file.name.replace(/\.[^/.]+$/,"");
+        showStatus("📁 File uploaded successfully!");
       };
       reader.readAsText(file);
     }
@@ -584,67 +254,25 @@ document.getElementById("uploadBtn").addEventListener("click", ()=>{
   input.click();
 });
 
-// Copy obfuscated code to clipboard
+/* Copy */
 document.getElementById("copyBtn").addEventListener("click", ()=>{
-  if(!lastObfuscatedCode){ alert("⚠️ Obfuscate first!"); return; }
-  navigator.clipboard.writeText(lastObfuscatedCode).then(()=> alert("✅ Copied!")).catch(()=> alert("❌ Copy failed!"));
+  if(!lastObfuscatedCode){ showStatus("⚠️ Obfuscate first!", "#ff4d4d"); return; }
+  navigator.clipboard.writeText(lastObfuscatedCode).then(()=> showStatus("✅ Copied to clipboard!")).catch(()=> showStatus("❌ Copy failed!", "#ff4d4d"));
 });
 
-// Download obfuscated file
+/* Download */
 document.getElementById("downloadBtn").addEventListener("click", ()=>{
-  if(!lastObfuscatedCode){ alert("⚠️ Obfuscate first!"); return; }
-
-  let filename = document.getElementById("filename").value.trim();
-  if(!filename && originalFileName){ filename = originalFileName + "_obfuscated"; }
-  if(!filename){ alert("⚠️ Please enter a filename before downloading!"); return; }
-  if(!filename.endsWith(".js")) filename += ".js";
-
-  const blob = new Blob([lastObfuscatedCode], { type: "text/javascript" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-
-  // save download history if user logged in
-  if(user){
-    user.downloads = user.downloads || [];
-    user.downloads.push({ filename, date: new Date().toLocaleString() });
-    users = users.map(u => u.email === user.email ? user : u);
-    localStorage.setItem("joelUsers", JSON.stringify(users));
-    localStorage.setItem("joelCurrentUser", JSON.stringify(user));
-  }
+  if(!lastObfuscatedCode){ showStatus("⚠️ Obfuscate first!", "#ff4d4d"); return; }
+  let filename=document.getElementById("filename").value.trim()||originalFileName+"_obfuscated";
+  if(!filename.endsWith(".js")) filename+=".js";
+  const blob=new Blob([lastObfuscatedCode],{type:"text/javascript"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url);
+  showStatus("💾 File downloaded!");
 });
 
-/* -------------------------
-   Settings button (placeholder)
-   ------------------------- */
-document.getElementById("settingBtn").addEventListener("click", ()=>{
-  alert("Settings panel coming soon — keep the button names & styles intact as requested.");
-});
-
-/* -------------------------
-   Account list rendering (initial)
-   ------------------------- */
-renderAccounts();
+/* initialize */
 updateHeaderUser();
-
-/* -------------------------
-   Extra: keyboard helpers
-   ------------------------- */
-document.getElementById("loginModal").addEventListener("keydown", (e)=>{
-  if(e.key === "Enter"){
-    document.getElementById("loginBtn").click();
-  }
-});
-document.addEventListener("keydown", (e)=>{
-  // close delete bar / logout bar with Escape
-  if(e.key === "Escape"){
-    if(deleteBackdrop.style.display === "flex") hideDeleteBar();
-    if(logoutBackdrop.style.display === "flex") hideLogoutBar();
-  }
-});
 </script>
 </body>
-</html>
+  </html>
