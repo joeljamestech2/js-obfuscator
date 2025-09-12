@@ -19,6 +19,7 @@
   --transition:0.3s ease;
   --btn-height:35px;
   --btn-width:130px;
+  --bar-height:220px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;font-family:'JetBrains Mono',monospace;}
 body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
@@ -109,6 +110,8 @@ footer a:hover{
 #loginModal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
 #loginModal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
 #loginModal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+
+/* Profile Modal */
 #profileModal{
   position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
 }
@@ -123,8 +126,35 @@ footer a:hover{
 #accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:8px;}
 #accountsList li:hover{background:rgba(0,212,255,0.1);}
 
+/* Confirmation bar (styled input bar for logout & delete) */
+.confirmBarBackdrop {
+  position:fixed; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:none; align-items:center; justify-content:center; z-index:1100;
+}
+.confirmBar {
+  width:90%; max-width:520px; background:var(--glass); border-radius:18px; padding:1.2rem; backdrop-filter:blur(var(--blur)); border:1px solid rgba(255,255,255,0.06);
+  box-shadow:0 10px 30px rgba(0,0,0,0.6);
+}
+.confirmBar h4{margin-bottom:0.7rem; font-weight:700; color:var(--text);}
+.confirmBar p{color:var(--muted); margin-bottom:0.8rem; font-size:0.9rem;}
+.confirmBar .row{display:flex; gap:0.6rem; margin-bottom:0.6rem; flex-wrap:wrap;}
+.confirmBar input[type="text"], .confirmBar input[type="email"], .confirmBar input[type="password"]{
+  width:100%; padding:0.6rem 0.8rem; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:#000; color:var(--text); font-family:'JetBrains Mono';
+}
+.confirmBar .btns{display:flex; gap:0.6rem; justify-content:flex-end; margin-top:0.6rem;}
+.confirmBar .btn{
+  height:38px; min-width:110px; border-radius:30px; border:1px solid var(--highlight); background:#000; color:var(--text); font-weight:700; cursor:pointer;
+}
+.confirmBar .btn:hover{background:rgba(0,212,255,0.08); transform:scale(1.03); box-shadow:0 0 8px rgba(0,212,255,0.12);}
+
 /* small adjustments for username display in header */
 #usernameText { font-weight:600; }
+
+/* accessibility focus */
+:focus { outline:2px solid rgba(0,212,255,0.15); outline-offset:2px; }
+
+@media (max-width:520px){
+  .button-grid, .output-grid { grid-template-columns: repeat(1, 100%); }
+}
 </style>
 </head>
 <body>
@@ -134,7 +164,7 @@ footer a:hover{
     <img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Logo" id="mainLogo">
   </div>
   <div class="status">
-    <div class="status-item" id="userProfile" title="Open profile">
+    <div class="status-item" id="userProfile" title="Open profile" tabindex="0" role="button" aria-pressed="false">
       <img src="" alt="User" id="userImg">
       <span id="usernameText"></span>
     </div>
@@ -162,7 +192,7 @@ footer a:hover{
     <div class="output-grid">
       <button id="copyBtn">Copy</button>
       <button id="settingBtn">Setting</button>
-      <input type="text" id="filename" placeholder="Filename">
+      <input type="text" id="filename" placeholder="Filename" aria-label="Filename">
       <button id="downloadBtn">Download</button>
     </div>
   </div>
@@ -195,8 +225,45 @@ footer a:hover{
     </h3>
     <ul id="profileInfo"></ul>
     <button id="uploadProfileImgBtn">Upload Profile Image</button>
+    <button id="deleteAccountBtn" style="background:transparent;color:#ff6b6b;border-color:#ff6b6b;margin-top:0.5rem;">Delete Account</button>
     <button id="logoutBtn">Logout</button>
     <button id="closeProfile">Close</button>
+  </div>
+</div>
+
+<!-- Confirm Bar for Logout -->
+<div id="logoutConfirmBackdrop" class="confirmBarBackdrop" role="dialog" aria-modal="true" aria-labelledby="logoutConfirmTitle">
+  <div class="confirmBar" role="document">
+    <h4 id="logoutConfirmTitle">Confirm Logout</h4>
+    <p>Please enter your <strong>Secret ID</strong> to confirm logout. This action will only end your current session.</p>
+    <div class="row">
+      <input type="text" id="logoutSecretInput" placeholder="Enter Secret ID (case-sensitive)" aria-label="Secret ID for logout">
+    </div>
+    <div class="btns">
+      <button class="btn" id="logoutCancelBtn">Cancel</button>
+      <button class="btn" id="logoutConfirmBtn">Confirm Logout</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Bar for Delete Account -->
+<div id="deleteConfirmBackdrop" class="confirmBarBackdrop" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
+  <div class="confirmBar" role="document">
+    <h4 id="deleteConfirmTitle">Delete Account</h4>
+    <p>This will permanently remove your account and all stored download history. Provide your credentials to confirm.</p>
+    <div class="row">
+      <input type="text" id="deleteSecretInput" placeholder="Secret ID (LORD~JOEL~...)" aria-label="Secret ID for delete">
+    </div>
+    <div class="row">
+      <input type="email" id="deleteEmailInput" placeholder="Email used for account" aria-label="Email for delete">
+    </div>
+    <div class="row">
+      <input type="password" id="deletePasswordInput" placeholder="Password" aria-label="Password for delete">
+    </div>
+    <div class="btns">
+      <button class="btn" id="deleteCancelBtn">Cancel</button>
+      <button class="btn" id="deleteConfirmBtn" style="border-color:#ff6b6b;">Delete Account</button>
+    </div>
   </div>
 </div>
 
@@ -222,6 +289,10 @@ const usernameText = document.getElementById("usernameText");
 const accountsList = document.getElementById("accountsList");
 const mainLogo = document.getElementById("mainLogo");
 
+/* confirm bars */
+const logoutBackdrop = document.getElementById("logoutConfirmBackdrop");
+const deleteBackdrop = document.getElementById("deleteConfirmBackdrop");
+
 /* click logo => open GitHub (keeps behavior) */
 mainLogo.addEventListener("click", ()=> window.open('https://github.com/joeljamestech2','_blank'));
 
@@ -233,13 +304,21 @@ function hideLogin(){ loginModal.style.display = "none"; }
 function showProfile(){ profileModal.style.display = "flex"; }
 function hideProfile(){ profileModal.style.display = "none"; }
 
+function showLogoutBar(){ logoutBackdrop.style.display = "flex"; document.getElementById('logoutSecretInput').focus(); }
+function hideLogoutBar(){ logoutBackdrop.style.display = "none"; document.getElementById('logoutSecretInput').value = ""; }
+
+function showDeleteBar(){ deleteBackdrop.style.display = "flex"; document.getElementById('deleteSecretInput').focus(); }
+function hideDeleteBar(){ deleteBackdrop.style.display = "none"; document.getElementById('deleteSecretInput').value = ""; document.getElementById('deleteEmailInput').value = ""; document.getElementById('deletePasswordInput').value = ""; }
+
 function updateHeaderUser(){
   if(user){
     userImgEl.src = user.userImg || defaultUserImg;
     usernameText.innerText = user.username;
+    usernameText.title = user.email || "";
   } else {
     userImgEl.src = defaultUserImg;
     usernameText.innerText = "Guest";
+    usernameText.title = "";
   }
 }
 
@@ -317,22 +396,20 @@ document.getElementById("userProfile").addEventListener("click", ()=>{
     profileHeaderUsername.textContent = user.username;
 
     // populate details: username styled, email, secret id, downloads
-    profileInfo.innerHTML = `
+    let html = `
       <li><strong>Username:</strong> ${user.username}</li>
       <li><strong>Email:</strong> ${user.email}</li>
       <li><strong>Secret ID:</strong> ${user.secretId}</li>
       <li><strong>Download History:</strong></li>
     `;
-    const downloadsList = document.createElement("ul");
-    downloadsList.style.listStyle = "none";
-    downloadsList.style.padding = "0";
     if(!user.downloads || user.downloads.length === 0){
-      profileInfo.innerHTML += `<li style="opacity:.8">None</li>`;
+      html += `<li style="opacity:.8">None</li>`;
     } else {
       user.downloads.forEach(d => {
-        profileInfo.innerHTML += `<li>${d.filename} - ${d.date}</li>`;
+        html += `<li>${d.filename} - ${d.date}</li>`;
       });
     }
+    profileInfo.innerHTML = html;
   } else {
     profileHeaderImg.src = defaultUserImg;
     profileHeaderUsername.textContent = "Guest";
@@ -369,27 +446,83 @@ document.getElementById("uploadProfileImgBtn").addEventListener("click", ()=>{
 });
 
 /* -------------------------
-   Logout with secret ID confirmation
+   Logout via styled bar (no prompt)
    ------------------------- */
 document.getElementById("logoutBtn").addEventListener("click", ()=>{
   if(!user){ alert("No user is currently logged in."); return; }
+  showLogoutBar();
+});
 
-  // ask for secret id before logout — user must input exactly their secretId
-  const input = prompt("Enter your Secret ID to confirm logout (case-sensitive):");
-  if(input === null) { return; } // cancelled
-  if(input.trim() === "") { alert("Secret ID is required to logout."); return; }
+document.getElementById("logoutCancelBtn").addEventListener("click", ()=>{
+  hideLogoutBar();
+});
 
-  if(input.trim() === user.secretId){
+document.getElementById("logoutConfirmBtn").addEventListener("click", ()=>{
+  const value = document.getElementById("logoutSecretInput").value.trim();
+  if(!value){
+    alert("Secret ID is required to logout.");
+    return;
+  }
+  if(value === user.secretId){
     // proceed to logout
     user = null;
     localStorage.removeItem("joelCurrentUser");
     hideProfile();
     updateHeaderUser();
+    hideLogoutBar();
     showLogin();
     alert("✅ Logged out successfully.");
   } else {
     alert("❌ Secret ID mismatch. Logout cancelled.");
   }
+});
+
+/* also allow Esc to close logout bar */
+logoutBackdrop.addEventListener("keydown", (e)=> {
+  if(e.key === "Escape") hideLogoutBar();
+});
+
+/* -------------------------
+   Delete account flow via styled bar
+   ------------------------- */
+document.getElementById("deleteAccountBtn").addEventListener("click", ()=>{
+  if(!user){ alert("No user is currently logged in."); return; }
+  showDeleteBar();
+});
+
+document.getElementById("deleteCancelBtn").addEventListener("click", ()=>{
+  hideDeleteBar();
+});
+
+document.getElementById("deleteConfirmBtn").addEventListener("click", ()=>{
+  const secret = document.getElementById("deleteSecretInput").value.trim();
+  const email = document.getElementById("deleteEmailInput").value.trim();
+  const pass = document.getElementById("deletePasswordInput").value;
+
+  if(!secret || !email || !pass){
+    alert("All fields are required to delete the account.");
+    return;
+  }
+  // Validate that the entered credentials match the currently logged in user
+  if(!user){
+    alert("No user is currently logged in."); hideDeleteBar(); return;
+  }
+  if(secret !== user.secretId || email !== user.email || pass !== user.password){
+    alert("Credentials mismatch. Account deletion cancelled.");
+    return;
+  }
+
+  // Remove from users array
+  users = users.filter(u => u.email !== user.email);
+  localStorage.setItem("joelUsers", JSON.stringify(users));
+  // Remove current user and related storage
+  user = null;
+  localStorage.removeItem("joelCurrentUser");
+  hideDeleteBar();
+  hideProfile();
+  updateHeaderUser();
+  showLogin();
+  alert("🗑️ Account deleted successfully.");
 });
 
 /* -------------------------
@@ -498,11 +631,18 @@ renderAccounts();
 updateHeaderUser();
 
 /* -------------------------
-   Extra: allow Enter to login when modal open
+   Extra: keyboard helpers
    ------------------------- */
 document.getElementById("loginModal").addEventListener("keydown", (e)=>{
   if(e.key === "Enter"){
     document.getElementById("loginBtn").click();
+  }
+});
+document.addEventListener("keydown", (e)=>{
+  // close delete bar / logout bar with Escape
+  if(e.key === "Escape"){
+    if(deleteBackdrop.style.display === "flex") hideDeleteBar();
+    if(logoutBackdrop.style.display === "flex") hideLogoutBar();
   }
 });
 </script>
