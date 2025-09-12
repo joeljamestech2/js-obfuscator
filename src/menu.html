@@ -1,206 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Joel XMD Bot | iMessage Style Chat</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'JetBrains Mono', monospace;
-      margin: 0;
-      background-color: #f0f0f0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 1rem;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 1rem;
-      color: #007aff;
-    }
-
-    #chatBox {
-      width: 100%;
-      max-width: 500px;
-      background: #e5ddd5;
-      border-radius: 20px;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      max-height: 70vh;
-      overflow-y: auto;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .msg {
-      padding: 10px 16px;
-      border-radius: 20px;
-      max-width: 75%;
-      word-wrap: break-word;
-      line-height: 1.4;
-      position: relative;
-      font-size: 14px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      animation: fadeIn 0.2s ease-out;
-    }
-
-    .user {
-      background-color: #007aff;
-      color: white;
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
-      border-bottom-left-radius: 20px;
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
-    }
-
-    .bot {
-      background-color: #e0e0e0;
-      color: black;
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-      border-bottom-right-radius: 20px;
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
-    }
-
-    .sender {
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 2px;
-      color: #555;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px);}
-      to { opacity: 1; transform: translateY(0);}
-    }
-
-    form {
-      width: 100%;
-      max-width: 500px;
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    input[type="text"] {
-      flex: 1;
-      padding: 12px 16px;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-
-    button {
-      background-color: #007aff;
-      color: white;
-      border: none;
-      padding: 12px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 14px;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background-color: #005ecb;
-    }
-
-    @media (max-width: 600px) {
-      form, #chatBox {
-        max-width: 100%;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Joel XMD Bot | Infinite Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+body {
+  font-family: 'JetBrains Mono', monospace;
+  margin: 0;
+  background-color: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+h1 { text-align: center; margin-bottom: 1rem; color: #007aff; }
+#chatBox {
+  width: 100%;
+  max-width: 500px;
+  background: #e5ddd5;
+  border-radius: 20px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.msg {
+  padding: 10px 16px;
+  border-radius: 20px;
+  max-width: 75%;
+  word-wrap: break-word;
+  line-height: 1.4;
+  position: relative;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  animation: fadeIn 0.2s ease-out;
+}
+.user {
+  background-color: #007aff;
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+.bot {
+  background-color: #e0e0e0;
+  color: black;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+.sender {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 2px;
+  color: #555;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px);} to { opacity: 1; transform: translateY(0);} }
+form {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+input[type="text"] {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+button {
+  background-color: #007aff;
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: 0.2s;
+}
+button:hover { background-color: #005ecb; }
+@media (max-width: 600px) { form, #chatBox { max-width: 100%; } }
+</style>
 </head>
 <body>
-  <h1>Joel XMD AI Chat</h1>
-  <div id="chatBox"></div>
-  <form onsubmit="handleJoelAI(event)">
-    <input type="text" id="prompt" placeholder="Type a message..." required />
-    <button type="submit">Send</button>
-  </form>
+<h1>Joel XMD AI Chat</h1>
+<div id="chatBox"></div>
+<form onsubmit="handleJoelAI(event)">
+  <input type="text" id="prompt" placeholder="Type a message..." required />
+  <button type="submit">Send</button>
+</form>
 
-  <script>
-    const chatBox = document.getElementById("chatBox");
-    const storageKey = "joel_ai_chat_history";
+<script>
+const chatBox = document.getElementById("chatBox");
+const storageKey = "joel_ai_chat_history";
 
-    // Load conversation history from localStorage
-    let conversationHistory = JSON.parse(localStorage.getItem(storageKey)) || [];
+// Load conversation history
+let conversationHistory = JSON.parse(localStorage.getItem(storageKey)) || [];
+window.onload = () => conversationHistory.forEach(msg => addMessage(msg.text, msg.sender));
 
-    window.onload = () => {
-      conversationHistory.forEach(msg => addMessage(msg.text, msg.sender));
-    };
+// Max messages to send to API for context
+const MAX_CONTEXT = 12;
 
-    async function handleJoelAI(event) {
-      event.preventDefault();
-      const input = document.getElementById("prompt");
-      const prompt = input.value.trim();
-      if (!prompt) return;
+async function handleJoelAI(event) {
+  event.preventDefault();
+  const input = document.getElementById("prompt");
+  const prompt = input.value.trim();
+  if (!prompt) return;
 
-      // Display user message
-      addMessage(prompt, "user");
-      saveMessage(prompt, "user");
-      conversationHistory.push({ text: prompt, sender: "user" });
+  // Display user message
+  addMessage(prompt, "user");
+  saveMessage(prompt, "user");
+  conversationHistory.push({ text: prompt, sender: "user" });
 
-      const tempDiv = addMessage("Thinking...", "bot", true);
+  // Show temporary "thinking" message
+  const tempDiv = addMessage("Thinking...", "bot", true);
 
-      // Build context-aware prompt for AI
-      const apiPrompt = conversationHistory
-        .map(msg => `${msg.sender === "user" ? "User" : "Joel Info"}: ${msg.text}`)
-        .join("\n") + "\nJoel Info:";
+  // Take last MAX_CONTEXT messages for API context
+  const contextMessages = conversationHistory.slice(-MAX_CONTEXT);
+  const apiPrompt = contextMessages
+    .map(msg => {
+      const text = msg.text.length > 200 ? msg.text.slice(0,200)+"..." : msg.text;
+      return `${msg.sender === "user" ? "User" : "Joel Info"}: ${text}`;
+    }).join("\n") + "\nJoel Info:";
 
-      const apiUrl = `https://api.paxsenix.biz.id/ai/gemini-realtime?text=${encodeURIComponent(apiPrompt)}&session_id=ZXlKaklqb2lZMTg0T0RKall6TTNNek13TVdFNE1qazNJaXdpY2lJNkluSmZNbU01TUdGa05ETmtNVFF3WmpNNU5pSXNJbU5vSWpvaWNtTmZZVE16TURWaE1qTmpNR1ExTnpObFl5Sjk`;
+  const apiUrl = `https://api.paxsenix.biz.id/ai/gemini-realtime?text=${encodeURIComponent(apiPrompt)}&session_id=ZXlKaklqb2lZMTg0T0RKall6TTNNek13TVdFNE1qazNJaXdpY2lJNkluSmZNbU01TUdGa05ETmtNVFF3WmpNNU5pSXNJbU5vSWpvaWNtTmZZVE16TURWaE1qTmpNR1ExTnpObFl5Sjk`;
 
-      try {
-        const res = await fetch(apiUrl);
-        const data = await res.json();
-        tempDiv.remove();
-        const botMessage = data.message || "No response.";
-        addMessage(botMessage, "bot");
-        saveMessage(botMessage, "bot");
-        conversationHistory.push({ text: botMessage, sender: "bot" });
-      } catch {
-        tempDiv.remove();
-        const errorMsg = "Something went wrong. Try again later.";
-        addMessage(errorMsg, "bot");
-        saveMessage(errorMsg, "bot");
-        conversationHistory.push({ text: errorMsg, sender: "bot" });
-      }
+  try {
+    const res = await fetch(apiUrl);
+    const data = await res.json();
+    tempDiv.remove();
+    const botMessage = data.message || "No response.";
+    addMessage(botMessage, "bot");
+    saveMessage(botMessage, "bot");
+    conversationHistory.push({ text: botMessage, sender: "bot" });
+  } catch {
+    tempDiv.remove();
+    const errorMsg = "Something went wrong. Try again later.";
+    addMessage(errorMsg, "bot");
+    saveMessage(errorMsg, "bot");
+    conversationHistory.push({ text: errorMsg, sender: "bot" });
+  }
 
-      input.value = "";
-    }
+  input.value = "";
+}
 
-    function addMessage(text, sender, isTemp = false) {
-      const container = document.createElement("div");
-      if(sender === "bot") {
-        const senderLabel = document.createElement("div");
-        senderLabel.className = "sender";
-        senderLabel.textContent = "Joel Info";
-        container.appendChild(senderLabel);
-      }
-      const div = document.createElement("div");
-      div.className = `msg ${sender}`;
-      div.textContent = text;
-      if (isTemp) div.style.opacity = 0.6;
-      container.appendChild(div);
-      chatBox.appendChild(container);
-      chatBox.scrollTop = chatBox.scrollHeight;
-      return container;
-    }
+function addMessage(text, sender, isTemp=false) {
+  const container = document.createElement("div");
+  if(sender==="bot"){
+    const senderLabel = document.createElement("div");
+    senderLabel.className="sender";
+    senderLabel.textContent="Joel Info";
+    container.appendChild(senderLabel);
+  }
+  const div=document.createElement("div");
+  div.className=`msg ${sender}`;
+  div.textContent=text;
+  if(isTemp) div.style.opacity=0.6;
+  container.appendChild(div);
+  chatBox.appendChild(container);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  return container;
+}
 
-    function saveMessage(text, sender) {
-      const existing = JSON.parse(localStorage.getItem(storageKey)) || [];
-      existing.push({ text, sender });
-      localStorage.setItem(storageKey, JSON.stringify(existing));
-    }
-  </script>
+function saveMessage(text,sender){
+  const existing = JSON.parse(localStorage.getItem(storageKey)) || [];
+  existing.push({ text, sender });
+  localStorage.setItem(storageKey, JSON.stringify(existing));
+}
+</script>
 </body>
 </html>
