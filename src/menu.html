@@ -1,24 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>JS OBFUSCATOR TOOL BY | LORD JOEL XMD</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <style>
-:root {
-  --bg:#000;
-  --glass:rgba(255,255,255,0.05);
-  --text:#fff;
-  --green:#00ff00;
-  --muted:#aaa;
-  --highlight:#0ff;
-  --radius:12px;
-  --blur:8px;
-  --transition:0.3s ease;
-  --btn-height:35px;
-  --btn-width:130px;
+:root{
+  --bg:#000;--glass:rgba(255,255,255,0.05);--text:#fff;--green:#00ff00;
+  --muted:#aaa;--highlight:#0ff;--radius:12px;--blur:8px;--transition:0.3s ease;
+  --btn-height:35px;--btn-width:130px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;font-family:'JetBrains Mono',monospace;}
 body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
@@ -33,374 +25,324 @@ main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;g
 .tool-card h2{font-weight:600;margin-bottom:1rem;color:var(--text);}
 .tool-card textarea{width:100%;height:150px;background:#000;color:var(--green);border:none;border-radius:var(--radius);padding:1rem;resize:vertical;font-family:'JetBrains Mono',monospace;margin-bottom:1rem;}
 .button-grid{
-  display:grid;
-  grid-template-columns:repeat(2, var(--btn-width));
-  grid-auto-rows: var(--btn-height);
-  gap:0.5rem;
-  justify-content:center;
-  align-items:center;
-  margin-bottom:0.5rem;
+  display:grid;grid-template-columns:repeat(2,var(--btn-width));
+  grid-auto-rows: var(--btn-height);gap:0.5rem;justify-content:center;align-items:center;margin-bottom:0.5rem;
 }
 .button-grid button, .button-grid select{
-  height:var(--btn-height);
-  width:var(--btn-width);
-  border-radius:50px;
-  padding:0.3rem 0.6rem;
-  border:1px solid var(--highlight);
-  background:#000;
-  color:var(--text);
-  font-weight:600;
-  cursor:pointer;
-  transition:var(--transition);
-  font-family:'JetBrains Mono',monospace;
+  height:var(--btn-height);width:var(--btn-width);border-radius:50px;padding:0.3rem 0.6rem;border:1px solid var(--highlight);
+  background:#000;color:var(--text);font-weight:600;cursor:pointer;transition:var(--transition);font-family:'JetBrains Mono',monospace;
 }
 .button-grid button:hover, .button-grid select:hover{
-  background:rgba(0,212,255,0.1);
-  box-shadow:0 0 10px rgba(0,212,255,0.2);
-  transform:scale(1.05);
+  background:rgba(0,212,255,0.1);box-shadow:0 0 10px rgba(0,212,255,0.2);transform:scale(1.05);
 }
 pre{background:#000;color:var(--green);padding:1rem;border-radius:var(--radius);width:100%;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word;position:relative;text-shadow:0 0 2px var(--green);font-family:'JetBrains Mono',monospace;}
-.output-grid{
-  display:grid;
-  grid-template-columns:repeat(2, var(--btn-width));
-  grid-auto-rows: var(--btn-height);
-  gap:0.5rem;
-  justify-content:center;
-  align-items:center;
-  margin-top:0.5rem;
-}
-.output-grid button,.output-grid input{
-  height:var(--btn-height);
-  width:var(--btn-width);
-  border-radius:50px;
-  padding:0.3rem 0.6rem;
-  border:1px solid var(--highlight);
-  background:#000;
-  color:var(--text);
-  font-weight:600;
-  cursor:pointer;
-  transition:var(--transition);
-  font-family:'JetBrains Mono',monospace;
-}
-.output-grid button:hover,.output-grid input:hover{
-  background:rgba(0,212,255,0.1);
-  box-shadow:0 0 10px rgba(0,212,255,0.2);
-  transform:scale(1.05);
-}
-footer{
-  margin-top:1rem;
-  text-align:center;
-  font-size:0.85rem;
-  color:var(--muted);
-}
-footer a{
-  color:var(--highlight);
-  text-decoration:none;
-  cursor:pointer;
-}
-footer a:hover{
-  text-shadow:0 0 10px var(--highlight);
-}
-
-/* Modals */
-.modal{
-  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;
-}
-.modal .modal-content{
-  background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;
-}
-.modal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
-.modal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
-.modal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
-
-/* Logo Dropdown Menu */
-#logoDropdown{
-  position:absolute;top:70px;left:20px;background:var(--glass);backdrop-filter:blur(var(--blur));padding:1rem;border-radius:var(--radius);display:none;flex-direction:column;gap:0.5rem;z-index:1001;
-}
-#logoDropdown button{width:150px;text-align:left;padding-left:10px;}
+.output-grid{display:grid;grid-template-columns:repeat(2,var(--btn-width));grid-auto-rows:var(--btn-height);gap:0.5rem;justify-content:center;align-items:center;margin-top:0.5rem;}
+.output-grid button,.output-grid input{height:var(--btn-height);width:var(--btn-width);border-radius:50px;padding:0.3rem 0.6rem;border:1px solid var(--highlight);background:#000;color:var(--text);font-weight:600;cursor:pointer;transition:var(--transition);font-family:'JetBrains Mono',monospace;}
+.output-grid button:hover,.output-grid input:hover{background:rgba(0,212,255,0.1);box-shadow:0 0 10px rgba(0,212,255,0.2);transform:scale(1.05);}
+footer{margin-top:1rem;text-align:center;font-size:0.85rem;color:var(--muted);}
+footer a{color:var(--highlight);text-decoration:none;cursor:pointer;}
+footer a:hover{text-shadow:0 0 10px var(--highlight);}
+#loginModal, #profileModal, .confirmModal, #aiChatBar{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;}
+.modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
+.modal-content h3{margin-bottom:1rem;}
+.modal-content input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:var(--text);}
+.modal-content button{margin-top:0.5rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+.modal-content button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
 
 /* AI Chat Bar */
-#aiChatBar{
-  position:fixed;bottom:20px;right:20px;width:300px;background:var(--glass);backdrop-filter:blur(var(--blur));border-radius:var(--radius);display:none;flex-direction:column;overflow:hidden;box-shadow:0 0 15px rgba(0,212,255,0.3);z-index:1002;
-}
-#chatMessages{flex:1;padding:10px;overflow-y:auto;max-height:250px;}
-#chatMessages div{margin:5px 0;padding:5px 10px;border-radius:10px;max-width:80%;word-wrap:break-word;}
-.botMsg{background:#111;color:#0ff;align-self:flex-start;}
-.userMsg{background:#555;color:#fff;align-self:flex-end;}
-#chatInputBar{display:flex;}
-#chatInput{flex:1;border-radius:50px 0 0 50px;padding:5px 10px;border:none;background:#000;color:#fff;}
-#sendChatBtn{border-radius:0 50px 50px 0;border:none;background:#0ff;color:#000;cursor:pointer;padding:0 15px;}
-#closeChatBtn{align-self:flex-end;margin-bottom:5px;cursor:pointer;color:var(--highlight);}
+#aiChatBar{display:flex;flex-direction:column;background:var(--glass);backdrop-filter:blur(var(--blur));border-radius:var(--radius);padding:1rem;width:400px;height:500px;position:fixed;right:2rem;bottom:2rem;}
+#chatMessages{flex:1;overflow-y:auto;margin-bottom:0.5rem;padding:0.5rem;border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);}
+.botMsg{background:rgba(0,212,255,0.1);text-align:left;padding:5px 10px;border-radius:10px;margin-bottom:5px;}
+.userMsg{background:rgba(255,255,255,0.1);text-align:right;padding:5px 10px;border-radius:10px;margin-bottom:5px;}
+#chatInput{flex:1;padding:0.5rem;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:#fff;margin-right:0.3rem;}
+.chat-input-bar{display:flex;gap:0.3rem;}
+#sendChatBtn{width:40px;height:40px;border-radius:50%;padding:0;margin:0;display:flex;justify-content:center;align-items:center;}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="logo" title="Open GitHub">
-    <img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Logo" id="mainLogo">
+  <div class="logo" id="logoBtn">
+    <img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Logo">
   </div>
   <div class="status">
-    <div class="status-item" id="userProfile" title="Open profile">
+    <div class="status-item" id="userProfile">
       <img src="" alt="User" id="userImg">
       <span id="usernameText"></span>
     </div>
   </div>
 </header>
 
-<div id="logoDropdown">
-  <button id="chatBtn">Chat me</button>
-  <button id="askAiBtn">Ask AI</button>
-  <button onclick="window.open('https://github.com/joeljamestech2','_blank')">GitHub</button>
-  <button onclick="window.open('https://www.youtube.com','_blank')">YouTube</button>
-</div>
-
 <main>
-  <div class="tool-card">
-    <h2>JS OBFUSCATOR </h2>
-    <textarea id="code" placeholder="Paste your JavaScript code here..."></textarea>
-    <div class="button-grid">
-      <button id="pasteBtn">Paste codes</button>
-      <button id="uploadBtn">Upload codes</button>
-      <select id="levelSelect" aria-label="Obfuscation level">
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high" selected>High</option>
-      </select>
-      <button id="obfuscateBtn">Obfuscate</button>    
-    </div>
-    <pre id="result">⚡ Your obfuscated code will appear here...</pre>
-    <div class="output-grid">
-      <button id="copyBtn">Copy</button>
-      <button id="settingBtn">Setting</button>
-      <input type="text" id="filename" placeholder="Filename">
-      <button id="downloadBtn">Download</button>
-    </div>
-    <div id="statusMessage" style="margin-top:10px;color:var(--highlight);font-weight:600;"></div>
-  </div>
+<div class="tool-card">
+<h2>JS OBFUSCATOR</h2>
+<textarea id="code" placeholder="Paste your JavaScript code here..."></textarea>
+<div class="button-grid">
+  <button id="pasteBtn">Paste codes</button>
+  <button id="uploadBtn">Upload codes</button>
+  <select id="levelSelect">
+    <option value="low">Low</option>
+    <option value="medium">Medium</option>
+    <option value="high" selected>High</option>
+  </select>
+  <button id="obfuscateBtn">Obfuscate</button>
+</div>
+<pre id="result">⚡ Your obfuscated code will appear here...</pre>
+<div class="output-grid">
+  <button id="copyBtn">Copy</button>
+  <button id="settingBtn">Setting</button>
+  <input type="text" id="filename" placeholder="Filename">
+  <button id="downloadBtn">Download</button>
+</div>
+</div>
 </main>
 
 <footer>
   JavaScript Obfuscator website created by <a onclick="window.open('https://github.com/joeljamestech2','_blank')">joeljamestech</a>
 </footer>
 
-<!-- Login Modal -->
-<div class="modal" id="loginModal">
-  <div class="modal-content">
-    <h3>Login / Register</h3>
-    <input type="text" id="loginUsername" placeholder="Username">
-    <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPassword" placeholder="Password">
-    <input type="text" id="loginImg" placeholder="User Image URL (optional)">
-    <button id="loginBtn">Login / Register</button>
-    <h4>Saved Accounts</h4>
-    <ul id="accountsList"></ul>
-  </div>
-</div>
-
 <!-- Profile Modal -->
-<div class="modal" id="profileModal">
+<div id="profileModal" class="modal">
   <div class="modal-content">
     <h3>
       <img id="profileHeaderImg" src="" alt="User" style="height:30px;width:30px;border-radius:50%;">
       <span id="profileHeaderUsername"></span>
     </h3>
     <ul id="profileInfo"></ul>
-    <button id="uploadProfileImgBtn">Upload Profile Image</button>
-    <button id="logoutBtn">Logout</button>
-    <button id="deleteAccountBtn">Delete Account</button>
-    <button id="closeProfile">Close</button>
+    <div class="button-grid">
+      <button id="uploadProfileImgBtn">Upload Profile Image</button>
+      <button id="logoutBtn">Logout</button>
+      <button id="deleteAccountBtn">Delete Account</button>
+      <button id="closeProfile">Close</button>
+    </div>
   </div>
 </div>
 
 <!-- AI Chat Bar -->
 <div id="aiChatBar">
-  <div id="closeChatBtn">✖</div>
   <div id="chatMessages"></div>
-  <div id="chatInputBar">
-    <input type="text" id="chatInput" placeholder="Type your message...">
-    <button id="sendChatBtn">➤</button>
+  <div class="chat-input-bar">
+    <input type="text" id="chatInput" placeholder="Ask JOEL AI...">
+    <button id="sendChatBtn">➡</button>
   </div>
+  <button id="closeChatBtn">Close</button>
 </div>
 
 <script>
 /* -------------------- Defaults -------------------- */
-const defaultUserImg="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
-let users=JSON.parse(localStorage.getItem("joelUsers"))||[];
-let user=JSON.parse(localStorage.getItem("joelCurrentUser"))||null;
-let lastObfuscatedCode="";
+let users = JSON.parse(localStorage.getItem("joelUsers"))||[];
+let user = JSON.parse(localStorage.getItem("joelCurrentUser"))||null;
+const defaultUserImg = "https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
+let lastObfuscatedCode="", originalFileName=null;
 
 /* -------------------- UI Elements -------------------- */
-const loginModal=document.getElementById("loginModal");
-const profileModal=document.getElementById("profileModal");
-const userImgEl=document.getElementById("userImg");
-const usernameText=document.getElementById("usernameText");
-const accountsList=document.getElementById("accountsList");
-const mainLogo=document.getElementById("mainLogo");
-const logoDropdown=document.getElementById("logoDropdown");
-const statusMessage=document.getElementById("statusMessage");
+const loginModal = document.getElementById("loginModal");
+const profileModal = document.getElementById("profileModal");
+const userImgEl = document.getElementById("userImg");
+const usernameText = document.getElementById("usernameText");
+const mainLogo = document.getElementById("logoBtn");
+const aiChatBar = document.getElementById("aiChatBar");
+const chatMessages = document.getElementById("chatMessages");
 
-/* -------------------- Helpers -------------------- */
-function showLogin(){ loginModal.style.display="flex"; renderAccounts(); }
-function hideLogin(){ loginModal.style.display="none"; }
-function showProfile(){ profileModal.style.display="flex"; renderProfileInfo(); }
-function hideProfile(){ profileModal.style.display="none"; }
-function showStatus(msg){ statusMessage.innerText=msg; setTimeout(()=>statusMessage.innerText="",5000); }
-
+/* -------------------- Header User -------------------- */
 function updateHeaderUser(){
-  if(user){ userImgEl.src=user.userImg||defaultUserImg; usernameText.innerText=user.username; }
-  else{ userImgEl.src=defaultUserImg; usernameText.innerText="Guest"; }
+  if(user){
+    userImgEl.src = user.userImg||defaultUserImg;
+    usernameText.innerText=user.username;
+  } else {
+    userImgEl.src=defaultUserImg;
+    usernameText.innerText="Guest";
+  }
 }
-function renderAccounts(){
-  accountsList.innerHTML="";
-  if(users.length===0){ accountsList.innerHTML="<li style='opacity:.7'>No saved accounts</li>"; return; }
-  users.forEach(u=>{
-    const li=document.createElement("li");
-    li.innerHTML=`<img src="${u.userImg||defaultUserImg}" style="height:24px;width:24px;border-radius:50%;vertical-align:middle;"> <span style="font-weight:600">${u.username}</span>`;
-    li.onclick=()=>{ user=u; localStorage.setItem("joelCurrentUser",JSON.stringify(user)); updateHeaderUser(); hideLogin(); showStatus("✅ Logged in"); };
-    accountsList.appendChild(li);
+updateHeaderUser();
+
+/* -------------------- Logo Dropdown Menu -------------------- */
+const logoDropdown = document.createElement("div");
+logoDropdown.style.position="fixed";
+logoDropdown.style.top="70px";
+logoDropdown.style.right="20px";
+logoDropdown.style.background="var(--glass)";
+logoDropdown.style.backdropFilter="blur(var(--blur))";
+logoDropdown.style.borderRadius="var(--radius)";
+logoDropdown.style.padding="1rem";
+logoDropdown.style.display="none";
+logoDropdown.style.flexDirection="column";
+logoDropdown.style.zIndex="999";
+["Chat Me","Ask AI","GitHub","YouTube"].forEach(label=>{
+  const btn = document.createElement("button");
+  btn.innerText=label;
+  btn.style.marginBottom="0.3rem";
+  btn.style.width="150px";
+  btn.style.borderRadius="50px";
+  btn.style.border="1px solid var(--highlight)";
+  btn.style.background="#000";
+  btn.style.color="#fff";
+  btn.style.cursor="pointer";
+  btn.addEventListener("click",()=>{
+    if(label==="Ask AI") aiChatBar.style.display="flex";
+    if(label==="Chat Me") alert("💬 Chat feature coming soon!");
+    if(label==="GitHub") window.open("https://github.com/joeljamestech2","_blank");
+    if(label==="YouTube") window.open("https://youtube.com","_blank");
+    logoDropdown.style.display="none";
+  });
+  logoDropdown.appendChild(btn);
+});
+document.body.appendChild(logoDropdown);
+mainLogo.addEventListener("click",()=>{ logoDropdown.style.display="flex"; aiChatBar.style.display="none"; });
+
+/* -------------------- Status Message -------------------- */
+function showStatus(msg){
+  const el=document.createElement("div");
+  el.innerText=msg;
+  el.style.position="fixed";
+  el.style.bottom="20px";
+  el.style.left="50%";
+  el.style.transform="translateX(-50%)";
+  el.style.background="var(--glass)";
+  el.style.padding="0.5rem 1rem";
+  el.style.borderRadius="var(--radius)";
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),3000);
+}
+
+/* -------------------- Confirm Modal -------------------- */
+function createConfirmModal(title, fields, callback){
+  const modal=document.createElement("div");
+  modal.className="modal";
+  const content=document.createElement("div");
+  content.className="modal-content";
+  let html=`<h3>${title}</h3>`;
+  fields.forEach((f,i)=> html+=`<input type="${f.toLowerCase().includes("password")?"password":"text"}" placeholder="${f}" id="confirmField${i}">`);
+  html+=`<div class="button-grid" style="margin-top:0.5rem;">
+    <button id="confirmBtn">Confirm</button>
+    <button id="cancelBtn">Cancel</button>
+  </div>`;
+  content.innerHTML=html;
+  modal.appendChild(content);
+  document.body.appendChild(modal);
+  modal.style.display="flex";
+  content.querySelector("#cancelBtn").addEventListener("click",()=>modal.remove());
+  content.querySelector("#confirmBtn").addEventListener("click",()=>{
+    const values = fields.map((f,i)=> content.querySelector(`#confirmField${i}`).value.trim());
+    callback(values);
+    modal.remove();
   });
 }
-function renderProfileInfo(){
-  if(!user) return;
-  const profileInfo=document.getElementById("profileInfo");
-  document.getElementById("profileHeaderImg").src=user.userImg||defaultUserImg;
-  document.getElementById("profileHeaderUsername").innerText=user.username;
-  let html=`<li><strong>Username:</strong> ${user.username}</li>
-            <li><strong>Email:</strong> ${user.email}</li>
-            <li><strong>Secret ID:</strong> ${user.secretId}</li>
-            <li><strong>Download History:</strong></li>`;
-  if(user.downloads && user.downloads.length>0) user.downloads.forEach(d=>html+=`<li>${d}</li>`);
-  else html+="<li style='opacity:.7'>None</li>";
-  profileInfo.innerHTML=html;
-}
 
-/* -------------------- Login/Register -------------------- */
-document.getElementById("loginBtn").addEventListener("click",()=>{
-  const username=document.getElementById("loginUsername").value.trim();
-  const email=document.getElementById("loginEmail").value.trim();
-  const password=document.getElementById("loginPassword").value;
-  let userImg=document.getElementById("loginImg").value.trim()||defaultUserImg;
-  if(!username||!email||!password){ showStatus("⚠️ Fill all fields!"); return;
-}
-  let secretId = `LORD~JOEL~${Math.floor(Math.random()*1000000)}`;
-  let existing = users.find(u=>u.username===username && u.email===email);
-  if(existing){
-    user = existing;
-    showStatus("✅ Logged in existing user");
+/* -------------------- Profile Actions -------------------- */
+document.getElementById("userProfile").addEventListener("click",()=>{
+  const profileHeaderImg = document.getElementById("profileHeaderImg");
+  const profileHeaderUsername = document.getElementById("profileHeaderUsername");
+  const profileInfo = document.getElementById("profileInfo");
+  if(user){
+    profileHeaderImg.src=user.userImg||defaultUserImg;
+    profileHeaderUsername.innerText=user.username;
+    profileInfo.innerHTML=`
+      <li><strong>Username:</strong> ${user.username}</li>
+      <li><strong>Email:</strong> ${user.email}</li>
+      <li><strong>Secret ID:</strong> ${user.secretId}</li>
+      <li><strong>Email:</strong> ${user.email}</li>
+      <li><strong>Secret ID:</strong> ${user.secretId}</li>
+    `;
+    profileModal.style.display="flex";
   } else {
-    user = {username,email,password,userImg,secretId,downloads:[]};
-    users.push(user);
-    showStatus("✅ Registered new user");
+    showStatus("No user logged in!");
   }
-  localStorage.setItem("joelUsers",JSON.stringify(users));
-  localStorage.setItem("joelCurrentUser",JSON.stringify(user));
-  updateHeaderUser();
-  hideLogin();
+});
+
+document.getElementById("closeProfile").addEventListener("click",()=>{
+  profileModal.style.display="none";
+});
+
+/* -------------------- Upload Profile Image -------------------- */
+document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
+  const url = prompt("Enter profile image URL:");
+  if(url) { user.userImg = url; localStorage.setItem("joelCurrentUser",JSON.stringify(user)); updateHeaderUser(); showStatus("Profile image updated!"); }
 });
 
 /* -------------------- Logout -------------------- */
 document.getElementById("logoutBtn").addEventListener("click",()=>{
-  const sid = prompt("Enter your secret ID to logout","");
-  if(!sid) { showStatus("❌ Logout cancelled"); return; }
-  if(sid !== user.secretId) { showStatus("❌ Wrong secret ID"); return; }
-  user=null;
-  localStorage.setItem("joelCurrentUser",null);
-  updateHeaderUser();
-  hideProfile();
-  showStatus("✅ Logged out");
+  createConfirmModal("Logout - Enter Secret ID", ["Secret ID"], (vals)=>{
+    if(vals[0]===user.secretId){ user=null; localStorage.removeItem("joelCurrentUser"); updateHeaderUser(); showStatus("Logged out successfully!"); profileModal.style.display="none"; }
+    else showStatus("Secret ID incorrect!");
+  });
 });
 
 /* -------------------- Delete Account -------------------- */
 document.getElementById("deleteAccountBtn").addEventListener("click",()=>{
-  const modalContent=document.createElement("div");
-  modalContent.className="modal-content";
-  modalContent.innerHTML=`<h3>Confirm Account Deletion</h3>
-    <input type="text" id="delSid" placeholder="Secret ID">
-    <input type="email" id="delEmail" placeholder="Email">
-    <input type="password" id="delPassword" placeholder="Password">
-    <button id="confirmDel">Confirm</button>
-    <button id="cancelDel">Cancel</button>`;
-  const delModal=document.createElement("div");
-  delModal.className="modal"; delModal.appendChild(modalContent);
-  document.body.appendChild(delModal);
-  delModal.style.display="flex";
-  
-  modalContent.querySelector("#cancelDel").addEventListener("click",()=>{ delModal.remove(); });
-  modalContent.querySelector("#confirmDel").addEventListener("click",()=>{
-    const sid = modalContent.querySelector("#delSid").value.trim();
-    const email = modalContent.querySelector("#delEmail").value.trim();
-    const password = modalContent.querySelector("#delPassword").value;
-    if(sid===user.secretId && email===user.email && password===user.password){
+  createConfirmModal("Delete Account", ["Secret ID","Email","Password"], (vals)=>{
+    const [sid,email,pwd]=vals;
+    if(sid===user.secretId && email===user.email && pwd===user.password){
       users = users.filter(u=>u.username!==user.username);
       localStorage.setItem("joelUsers",JSON.stringify(users));
-      localStorage.setItem("joelCurrentUser",null);
       user=null;
+      localStorage.removeItem("joelCurrentUser");
       updateHeaderUser();
-      delModal.remove();
-      hideProfile();
-      showStatus("✅ Account deleted");
-    } else { showStatus("❌ Incorrect details"); }
+      profileModal.style.display="none";
+      showStatus("Account deleted successfully!");
+    } else showStatus("Information incorrect, cannot delete account.");
   });
 });
 
-/* -------------------- Logo Dropdown Menu -------------------- */
-mainLogo.addEventListener("click",()=>{ logoDropdown.style.display=logoDropdown.style.display==="flex"?"none":"flex"; });
-
-/* -------------------- AI Chat Bar -------------------- */
-const aiChatBar=document.getElementById("aiChatBar");
-document.getElementById("askAiBtn").addEventListener("click",()=>{ aiChatBar.style.display="flex"; logoDropdown.style.display="none"; });
-document.getElementById("closeChatBtn").addEventListener("click",()=>{ aiChatBar.style.display="none"; });
-const chatMessages=document.getElementById("chatMessages");
-document.getElementById("sendChatBtn").addEventListener("click",async()=>{
-  const input=document.getElementById("chatInput");
-  const message=input.value.trim();
-  if(!message) return;
-  const userMsg=document.createElement("div");
-  userMsg.className="userMsg"; userMsg.innerText=message;
-  chatMessages.appendChild(userMsg);
-  input.value=""; chatMessages.scrollTop=chatMessages.scrollHeight;
-  
-  const botMsg=document.createElement("div"); botMsg.className="botMsg"; botMsg.innerText="⌛ Thinking...";
-  chatMessages.appendChild(botMsg); chatMessages.scrollTop=chatMessages.scrollHeight;
-
-  try{
-    const controller=new AbortController();
-    const timeout=setTimeout(()=>controller.abort(),20000);
-    const response=await fetch(`https://api.nexoracle.com/ai/chatgpt?apikey=33241c3a8402295fdc&prompt=${encodeURIComponent(message)}`,{signal:controller.signal});
-    clearTimeout(timeout);
-    const data=await response.json();
-    botMsg.innerText=data.response.replace(/OpenAI/gi,"joeljamestech").replace(/ChatGPT/gi,"JOEL AI").replace(/AI language model/gi,"chatbot").replace(/created by OpenAI/gi,"created by joeljamestech");
-  }catch(e){
-    botMsg.innerText="❌ No response or timeout";
-  }
+/* -------------------- AI Chat -------------------- */
+function appendMessage(text, isBot){
+  const msg=document.createElement("div");
+  msg.innerText=text;
+  msg.className=isBot?"botMsg":"userMsg";
+  chatMessages.appendChild(msg);
   chatMessages.scrollTop=chatMessages.scrollHeight;
+}
+
+document.getElementById("sendChatBtn").addEventListener("click",async ()=>{
+  const input = document.getElementById("chatInput");
+  const question = input.value.trim();
+  if(!question) return;
+  appendMessage(question,false);
+  input.value="";
+  appendMessage("JOEL AI is typing...",true);
+  try{
+    const controller = new AbortController();
+    const timeout = setTimeout(()=>controller.abort(),20000);
+    const res = await fetch(`https://api.nexoracle.com/ai/chatgpt?apikey=33241c3a8402295fdc&prompt=${encodeURIComponent(question)}`,{signal:controller.signal});
+    clearTimeout(timeout);
+    const data = await res.json();
+    chatMessages.lastChild.innerText=data.response || "No response from JOEL AI.";
+  } catch(e){
+    chatMessages.lastChild.innerText="No response from JOEL AI (timeout or error).";
+  }
 });
 
-/* -------------------- Obfuscate / Copy / Download -------------------- */
-document.getElementById("obfuscateBtn").addEventListener("click",()=>{
-  const code=document.getElementById("code").value.trim();
-  if(!code) { showStatus("⚠️ Paste code first"); return; }
-  const level=document.getElementById("levelSelect").value;
-  // simple obfuscation simulation
-  let obf=code.replace(/[a-zA-Z]/g,c=>String.fromCharCode(c.charCodeAt(0)+1));
-  if(level==="medium") obf=obf.split("").reverse().join("");
-  if(level==="high") obf=btoa(obf);
-  lastObfuscatedCode=obf;
-  document.getElementById("result").innerText=obf;
-  showStatus("✅ Code obfuscated");
+document.getElementById("closeChatBtn").addEventListener("click",()=>{aiChatBar.style.display="none";});
+
+/* -------------------- Obfuscator Buttons -------------------- */
+document.getElementById("pasteBtn").addEventListener("click",()=>navigator.clipboard.readText().then(txt=>document.getElementById("code").value=txt));
+document.getElementById("uploadBtn").addEventListener("click",()=>{
+  const fileInput=document.createElement("input");
+  fileInput.type="file"; fileInput.accept=".js";
+  fileInput.onchange=()=>{const file=fileInput.files[0]; originalFileName=file.name; const reader=new FileReader(); reader.onload=e=>document.getElementById("code").value=e.target.result; reader.readAsText(file);}
+  fileInput.click();
 });
-document.getElementById("copyBtn").addEventListener("click",()=>{ navigator.clipboard.writeText(lastObfuscatedCode); showStatus("✅ Copied to clipboard"); });
+document.getElementById("obfuscateBtn").addEventListener("click",()=>{
+  let code=document.getElementById("code").value.trim();
+  if(!code) return showStatus("Paste or upload code first!");
+  const level=document.getElementById("levelSelect").value;
+  // Simple obfuscation simulation
+  let obfuscated=code.split("").reverse().join(""); // placeholder, can integrate real obfuscator
+  if(level==="medium") obfuscated=obfuscated.replace(/[a-zA-Z]/g,c=>String.fromCharCode(c.charCodeAt(0)+1));
+  if(level==="high") obfuscated=btoa(obfuscated);
+  lastObfuscatedCode=obfuscated;
+  document.getElementById("result").innerText=obfuscated;
+  showStatus("Code obfuscated!");
+});
+document.getElementById("copyBtn").addEventListener("click",()=>navigator.clipboard.writeText(lastObfuscatedCode).then(()=>showStatus("Copied to clipboard!")));
 document.getElementById("downloadBtn").addEventListener("click",()=>{
-  const filename=document.getElementById("filename").value.trim()||"obfuscated.js";
+  const filename=document.getElementById("filename").value.trim() || (originalFileName || "obfuscated.js");
   const blob=new Blob([lastObfuscatedCode],{type:"text/javascript"});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement("a"); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url);
+  const a=document.createElement("a");
+  a.href=url; a.download=filename; a.click();
+  URL.revokeObjectURL(url);
+  showStatus("File downloaded!");
 });
-
-/* -------------------- Initialize -------------------- */
-updateHeaderUser();
-if(!user) showLogin();
 </script>
-
 </body>
 </html>
