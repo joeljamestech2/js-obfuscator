@@ -7,12 +7,11 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <style>
-:root{
+:root {
   --bg:#000;
   --glass:rgba(255,255,255,0.05);
   --text:#fff;
   --green:#00ff00;
-  --red:#ff4d4d;
   --muted:#aaa;
   --highlight:#0ff;
   --radius:12px;
@@ -36,7 +35,7 @@ main{flex:1;padding:2rem;display:flex;flex-direction:column;align-items:center;g
 .button-grid{
   display:grid;
   grid-template-columns:repeat(2, var(--btn-width));
-  grid-template-rows:repeat(2, var(--btn-height));
+  grid-auto-rows: var(--btn-height);
   gap:0.5rem;
   justify-content:center;
   align-items:center;
@@ -88,7 +87,7 @@ pre{background:#000;color:var(--green);padding:1rem;border-radius:var(--radius);
   box-shadow:0 0 10px rgba(0,212,255,0.2);
   transform:scale(1.05);
 }
-#statusMsg{margin-top:0.5rem;font-size:0.9rem;height:20px;}
+#statusMsg{text-align:center;margin:10px;font-size:0.9rem;color:#0ff;}
 footer{
   margin-top:1rem;
   text-align:center;
@@ -104,51 +103,69 @@ footer a:hover{
   text-shadow:0 0 10px var(--highlight);
 }
 
-/* Logo dropdown bar */
-#logoDropdown{
-  position:absolute; top:70px; left:2rem; display:none; flex-direction:column; background:var(--glass);
-  backdrop-filter:blur(var(--blur)); border-radius:var(--radius); border:1px solid rgba(255,255,255,0.1); padding:0.5rem; z-index:200;
+/* Login & Profile Modals */
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000;display:none;}
+.modal .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;text-align:center;overflow-y:auto;max-height:90%;}
+.modal input{width:100%;padding:0.5rem 1rem;margin:0.5rem 0;border-radius:var(--radius);border:1px solid var(--highlight);background:#000;color:#0ff;}
+.modal button{margin-top:1rem;width:100%;height:var(--btn-height);border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+.modal button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+#accountsList{margin-top:0.5rem;max-height:150px;overflow-y:auto;}
+#accountsList li{padding:0.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:8px;}
+#accountsList li:hover{background:rgba(0,212,255,0.1);}
+
+/* Small logo dropdown buttons */
+#logoDropdown{position:absolute;top:60px;right:20px;background:var(--glass);backdrop-filter:blur(var(--blur));border-radius:var(--radius);padding:0.5rem;display:none;flex-direction:column;gap:6px;}
+#logoDropdown button{width:120px;height:30px;border-radius:50px;border:1px solid var(--highlight);background:#000;color:var(--text);cursor:pointer;font-weight:600;transition:var(--transition);}
+#logoDropdown button:hover{background:rgba(0,212,255,0.1);transform:scale(1.05);}
+
+/* Ask AI Chat Bar */
+#aiChatBar{
+  display:none;position:fixed;bottom:20px;right:20px;width:320px;height:400px;background:rgba(0,0,0,0.95);
+  border:1px solid #0ff;border-radius:12px;display:flex;flex-direction:column;z-index:300;box-shadow:0 0 15px rgba(0,255,255,0.3);
 }
-#logoDropdown button{
-  width:140px; height:32px; margin:3px 0; border-radius:50px; border:1px solid var(--highlight);
-  background:#000;color:var(--text); font-weight:600; cursor:pointer;
-}
-#logoDropdown button:hover{background:rgba(0,212,255,0.1); transform:scale(1.03);}
+#aiChatBar .header{padding:10px;background:#000;border-bottom:1px solid #0ff;display:flex;justify-content:space-between;align-items:center;}
+#aiChatBar .header span{font-weight:600;color:#0ff;}
+#aiChatBar .messages{flex:1;padding:10px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;font-size:0.9rem;}
+#aiChatBar .inputBar{display:flex;padding:10px;border-top:1px solid #0ff;}
+#aiChatBar .inputBar input{flex:1;padding:0.5rem 0.8rem;border-radius:50px;border:1px solid #0ff;background:#000;color:#0ff;outline:none;}
+#aiChatBar .inputBar button{width:36px;height:36px;border-radius:50%;background:#0ff;border:none;color:#000;margin-left:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 </style>
 </head>
 <body>
+
 <header>
-  <div class="logo" title="Click for options">
-    <img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" id="mainLogo">
-    <div id="logoDropdown">
-      <button onclick="window.open('https://wa.me/255781144539','_blank')">Chat me</button>
-      <button onclick="window.open('https://joel-xmd-bot.onrender.com/joel','_blank')">Ask AI</button>
-      <button onclick="window.open('https://github.com/joeljamestech2','_blank')">GitHub</button>
-      <button onclick="window.open('https://www.youtube.com','_blank')">YouTube</button>
-    </div>
+  <div class="logo" title="Open GitHub">
+    <img src="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/main.jpg" alt="Logo" id="mainLogo">
   </div>
   <div class="status">
-    <div class="status-item" id="userProfile">
-      <img src="" id="userImg">
+    <div class="status-item" id="userProfile" title="Open profile">
+      <img src="" alt="User" id="userImg">
       <span id="usernameText"></span>
     </div>
   </div>
 </header>
 
+<div id="logoDropdown">
+  <button id="chatBtn">Chat me</button>
+  <button id="askAiBtn">Ask AI</button>
+  <button onclick="window.open('https://github.com/joeljamestech2','_blank')">GitHub</button>
+  <button onclick="window.open('https://www.youtube.com/','_blank')">YouTube</button>
+</div>
+
 <main>
   <div class="tool-card">
-    <h2>JS OBFUSCATOR</h2>
+    <h2>JS OBFUSCATOR </h2>
     <textarea id="code" placeholder="Paste your JavaScript code here..."></textarea>
 
     <div class="button-grid">
       <button id="pasteBtn">Paste codes</button>
       <button id="uploadBtn">Upload codes</button>
-      <select id="levelSelect">
+      <select id="levelSelect" aria-label="Obfuscation level">
         <option value="low">Low</option>
         <option value="medium">Medium</option>
         <option value="high" selected>High</option>
       </select>
-      <button id="obfuscateBtn">Obfuscate</button>
+      <button id="obfuscateBtn">Obfuscate</button>    
     </div>
 
     <pre id="result">⚡ Your obfuscated code will appear here...</pre>
@@ -159,7 +176,6 @@ footer a:hover{
       <input type="text" id="filename" placeholder="Filename">
       <button id="downloadBtn">Download</button>
     </div>
-
     <div id="statusMsg"></div>
   </div>
 </main>
@@ -168,111 +184,259 @@ footer a:hover{
   JavaScript Obfuscator website created by <a onclick="window.open('https://github.com/joeljamestech2','_blank')">joeljamestech</a>
 </footer>
 
+<!-- Login Modal -->
+<div id="loginModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+  <div class="modal-content">
+    <h3 id="loginTitle">Login / Register</h3>
+    <input type="text" id="loginUsername" placeholder="Username" required>
+    <input type="email" id="loginEmail" placeholder="Email" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <input type="text" id="loginImg" placeholder="User Image URL (optional)">
+    <button id="loginBtn">Login / Register</button>
+    <h4>Saved Accounts</h4>
+    <ul id="accountsList" aria-live="polite"></ul>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div id="profileModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+  <div class="modal-content">
+    <h3 id="profileTitle">
+      <img id="profileHeaderImg" src="" alt="User" style="height:30px;width:30px;border-radius:50%;">
+      <span id="profileHeaderUsername"></span>
+    </h3>
+    <ul id="profileInfo"></ul>
+    <button id="uploadProfileImgBtn">Upload Profile Image</button>
+    <button id="deleteAccountBtn">Delete Account</button>
+    <button id="logoutBtn">Logout</button>
+    <button id="closeProfile">Close</button>
+  </div>
+</div>
+
+<!-- Ask AI Chat Bar -->
+<div id="aiChatBar">
+  <div class="header">
+    <span>JOEL AI Chatbot</span>
+    <button id="closeChatBtn">✖</button>
+  </div>
+  <div class="messages" id="chatMessages"></div>
+  <div class="inputBar">
+    <input type="text" id="chatInput" placeholder="Type your message...">
+    <button id="sendChatBtn">➤</button>
+  </div>
+</div>
+
 <script>
+/* -------------------------
+   Config & Storage
+   ------------------------- */
+let lastObfuscatedCode="", originalFileName=null;
 const defaultUserImg="https://raw.githubusercontent.com/joeljamestech2/js-obfuscator/refs/heads/main/image/user.jpg";
 let users=JSON.parse(localStorage.getItem("joelUsers"))||[];
 let user=JSON.parse(localStorage.getItem("joelCurrentUser"))||null;
-let lastObfuscatedCode="";
-let originalFileName=null;
 
+/* Elements */
+const loginModal=document.getElementById("loginModal");
+const profileModal=document.getElementById("profileModal");
 const userImgEl=document.getElementById("userImg");
 const usernameText=document.getElementById("usernameText");
+const accountsList=document.getElementById("accountsList");
+const mainLogo=document.getElementById("mainLogo");
 const statusMsg=document.getElementById("statusMsg");
+const logoDropdown=document.getElementById("logoDropdown");
 
-/* update header user */
+/* -------------------------
+   Header User
+   ------------------------- */
 function updateHeaderUser(){
   if(user){
     userImgEl.src=user.userImg||defaultUserImg;
-    usernameText.textContent=user.username;
+    usernameText.innerText=user.username;
   }else{
     userImgEl.src=defaultUserImg;
-    usernameText.textContent="Guest";
+    usernameText.innerText="Guest";
   }
 }
 
-/* show status text */
-function showStatus(msg,color="#0f0"){
-  statusMsg.textContent=msg;
-  statusMsg.style.color=color;
-  setTimeout(()=>{statusMsg.textContent="";},4000);
+/* Render Accounts */
+function renderAccounts(){
+  accountsList.innerHTML="";
+  if(users.length===0){ accountsList.innerHTML="<li style='opacity:.7'>No saved accounts</li>"; return;}
+  users.forEach(u=>{
+    const li=document.createElement("li");
+    li.innerHTML=`<img src="${u.userImg||defaultUserImg}" style="height:24px;width:24px;border-radius:50%;vertical-align:middle;"> <span style="font-weight:600">${u.username}</span>`;
+    li.onclick=()=>{ user=u; localStorage.setItem("joelCurrentUser",JSON.stringify(user)); updateHeaderUser(); hideLogin();}
+    accountsList.appendChild(li);
+  });
 }
 
-/* Logo dropdown toggle */
-const mainLogo=document.getElementById("mainLogo");
-const logoDropdown=document.getElementById("logoDropdown");
-mainLogo.addEventListener("click", ()=>{
+/* Show/Hide modals */
+function showLogin(){ loginModal.style.display="flex"; renderAccounts(); }
+function hideLogin(){ loginModal.style.display="none"; }
+function showProfile(){ profileModal.style.display="flex"; renderProfileInfo();}
+function hideProfile(){ profileModal.style.display="none"; }
+
+function showStatus(msg){ statusMsg.textContent=msg; setTimeout(()=>{statusMsg.textContent=""},4000);}
+
+/* -------------------------
+   Login/Register
+   ------------------------- */
+document.getElementById("loginBtn").addEventListener("click",()=>{
+  const username=document.getElementById("loginUsername").value.trim();
+  const email=document.getElementById("loginEmail").value.trim();
+  const password=document.getElementById("loginPassword").value;
+  let userImg=document.getElementById("loginImg").value.trim()||defaultUserImg;
+  if(!username||!email||!password){ showStatus("⚠️ Fill all fields!"); return; }
+
+  let existing=users.find(u=>u.email===email);
+  if(existing){
+    if(existing.password!==password){ showStatus("❌ Incorrect password!"); return; }
+    user=existing;
+  }else{
+    const rand=Math.random().toString(36).substr(2,10).toUpperCase();
+    user={username,email,password,userImg,secretId:`LORD~JOEL~${rand}`,downloads:[]};
+    users.push(user);
+    localStorage.setItem("joelUsers",JSON.stringify(users));
+  }
+  localStorage.setItem("joelCurrentUser",JSON.stringify(user));
+  hideLogin(); updateHeaderUser(); showStatus("✅ Logged in successfully!");
+});
+if(!user){ showLogin(); }else{ updateHeaderUser(); }
+
+/* -------------------------
+   Profile info
+   ------------------------- */
+function renderProfileInfo(){
+  const profileInfo=document.getElementById("profileInfo");
+  const profileHeaderImg=document.getElementById("profileHeaderImg");
+  const profileHeaderUsername=document.getElementById("profileHeaderUsername");
+  if(user){
+    profileHeaderImg.src=user.userImg||defaultUserImg;
+    profileHeaderUsername.textContent=user.username;
+    profileInfo.innerHTML=`
+      <li><strong>Username:</strong> ${user.username}</li>
+      <li><strong>Email:</strong> ${user.email}</li>
+      <li><strong>Secret ID:</strong> ${user.secretId}</li>
+      <li><strong>Download History:</strong></li>
+    `;
+    if(!user.downloads||user.downloads.length===0){ profileInfo.innerHTML+=`<li style="opacity:.8">None</li>`;}
+    else{ 
+      user.downloads.forEach(d=>{
+        profileInfo.innerHTML+=`<li>${d}</li>`;
+      });
+    }
+  }
+}
+
+/* Upload profile image */
+document.getElementById("uploadProfileImgBtn").addEventListener("click",()=>{
+  const url=prompt("Enter new profile image URL:");
+  if(url){ user.userImg=url; localStorage.setItem("joelCurrentUser",JSON.stringify(user)); updateHeaderUser(); renderProfileInfo(); showStatus("✅ Profile image updated"); }
+});
+
+/* Logout with secret ID check */
+document.getElementById("logoutBtn").addEventListener("click",()=>{
+  const secret=prompt("Enter your secret ID to logout:");
+  if(secret===user.secretId){
+    user=null; localStorage.removeItem("joelCurrentUser"); updateHeaderUser(); hideProfile(); showLogin(); showStatus("✅ Logged out successfully");
+  }else showStatus("❌ Secret ID incorrect");
+});
+
+/* Delete account */
+document.getElementById("deleteAccountBtn").addEventListener("click",()=>{
+  const secret=prompt("Enter secret ID:");
+  const email=prompt("Enter your email:");
+  const pass=prompt("Enter your password:");
+  if(secret===user.secretId && email===user.email && pass===user.password){
+    users=users.filter(u=>u.email!==user.email);
+    localStorage.setItem("joelUsers",JSON.stringify(users));
+    user=null; localStorage.removeItem("joelCurrentUser");
+    hideProfile(); showLogin(); showStatus("✅ Account deleted successfully");
+  }else showStatus("❌ Credentials invalid");
+});
+
+document.getElementById("closeProfile").addEventListener("click",()=>hideProfile());
+
+/* -------------------------
+   Logo Dropdown
+   ------------------------- */
+mainLogo.addEventListener("click",()=>{
   logoDropdown.style.display=(logoDropdown.style.display==="flex")?"none":"flex";
 });
+document.getElementById("chatBtn").addEventListener("click",()=>{ window.open("https://wa.me/255781144539","_blank"); });
+document.getElementById("askAiBtn").addEventListener("click",()=>{ document.getElementById("aiChatBar").style.display="flex"; logoDropdown.style.display="none"; });
 
-/* Obfuscate */
-document.getElementById("obfuscateBtn").addEventListener("click", ()=>{
-  const code=document.getElementById("code").value;
-  const level=document.getElementById("levelSelect").value;
-  if(!code){ showStatus("⚠️ Paste code first!", "#ff4d4d"); return; }
-  let obf="";
-  if(level==="low"){ obf=code.split("").reverse().join(""); }
-  else if(level==="medium"){ obf=`(function(_0xabc){eval(decodeURIComponent(escape(atob(_0xabc))))})("${btoa(unescape(encodeURIComponent(code)))}")`; }
-  else{
-    const lines=code.split("\n").map(l=>btoa(unescape(encodeURIComponent(l))));
-    let vars="";
-    lines.forEach(ln=>{
-      let v1="_0x"+(Math.random()*1e6|0).toString(16);
-      vars+=`var ${v1}="${ln}";\n eval(_0x5de6a9(${v1}));\n`;
-    });
-    obf=`function _0x5de6a9(_0x3cb417){return decodeURIComponent(escape(atob(_0x3cb417)));}\n(function(){\n${vars}})();`;
-  }
-  lastObfuscatedCode=obf;
-  document.getElementById("result").textContent=obf;
-  showStatus("✅ Code obfuscated successfully!");
-});
+/* -------------------------
+   Ask AI
+   ------------------------- */
+const chatInput=document.getElementById("chatInput");
+const sendChatBtn=document.getElementById("sendChatBtn");
+const chatMessages=document.getElementById("chatMessages");
+document.getElementById("closeChatBtn").addEventListener("click",()=>{document.getElementById("aiChatBar").style.display="none";});
 
-/* Paste from clipboard */
-document.getElementById("pasteBtn").addEventListener("click", async ()=>{
+async function sendMessage(){
+  const msg=chatInput.value.trim();
+  if(!msg) return;
+  appendMessage("You",msg);
+  chatInput.value="";
   try{
-    const text=await navigator.clipboard.readText();
-    document.getElementById("code").value=text;
-    showStatus("📋 Code pasted from clipboard!");
-  }catch(e){ showStatus("⚠️ Paste failed!", "#ff4d4d"); }
+    const res=await fetch(`https://api.nexoracle.com/ai/chatgpt?apikey=33241c3a8402295fdc&prompt=${encodeURIComponent(msg)}`);
+    const data=await res.json();
+    let reply=data.response||"JOEL AI did not respond!";
+    reply=reply.replace(/OpenAI/gi,"joeljamestech").replace(/ChatGPT/gi,"JOEL AI").replace(/AI language model/gi,"chatbot").replace(/created by OpenAI/gi,"created by joeljamestech");
+    appendMessage("JOEL AI",reply);
+  }catch(err){ appendMessage("JOEL AI","❌ Failed to get response"); }
+}
+function appendMessage(sender,text){
+  const div=document.createElement("div");
+  div.innerHTML=`<strong>${sender}:</strong> ${text}`;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop=chatMessages.scrollHeight;
+}
+sendChatBtn.addEventListener("click",sendMessage);
+chatInput.addEventListener("keypress",(e)=>{if(e.key==="Enter")sendMessage();});
+
+/* -------------------------
+   JS Obfuscator Logic
+   ------------------------- */
+document.getElementById("pasteBtn").addEventListener("click",()=>{
+  navigator.clipboard.readText().then(text=>{document.getElementById("code").value=text; showStatus("📋 Code pasted");});
+});
+document.getElementById("obfuscateBtn").addEventListener("click",()=>{
+  const code=document.getElementById("code").value.trim();
+  const level=document.getElementById("levelSelect").value;
+  if(!code){ showStatus("⚠️ Paste code first!"); return; }
+  // simple obfuscation for demo
+  let obf=code.split("").map(c=>`\\u${c.charCodeAt(0).toString(16).padStart(4,"0")}`).join("");
+  if(level==="low") obf=`eval("${obf}")`;
+  else if(level==="medium") obf=`(function(){${obf}})();`;
+  else obf=`(function(){eval("${obf}")})();`;
+  document.getElementById("result").textContent=obf;
+  lastObfuscatedCode=obf;
+  if(user) { user.downloads.push("JS Obfuscation"); localStorage.setItem("joelCurrentUser",JSON.stringify(user)); }
+  showStatus("✅ Code obfuscated");
 });
 
-/* Upload .js file */
-document.getElementById("uploadBtn").addEventListener("click", ()=>{
-  const input=document.createElement("input");
-  input.type="file"; input.accept=".js";
-  input.onchange=()=>{
-    const file=input.files[0];
-    if(file){
-      const reader=new FileReader();
-      reader.onload=e=>{
-        document.getElementById("code").value=e.target.result;
-        originalFileName=file.name.replace(/\.[^/.]+$/,"");
-        showStatus("📁 File uploaded successfully!");
-      };
-      reader.readAsText(file);
-    }
-  };
-  input.click();
+document.getElementById("copyBtn").addEventListener("click",()=>{
+  navigator.clipboard.writeText(lastObfuscatedCode); showStatus("📋 Copied to clipboard");
 });
-
-/* Copy */
-document.getElementById("copyBtn").addEventListener("click", ()=>{
-  if(!lastObfuscatedCode){ showStatus("⚠️ Obfuscate first!", "#ff4d4d"); return; }
-  navigator.clipboard.writeText(lastObfuscatedCode).then(()=> showStatus("✅ Copied to clipboard!")).catch(()=> showStatus("❌ Copy failed!", "#ff4d4d"));
-});
-
-/* Download */
-document.getElementById("downloadBtn").addEventListener("click", ()=>{
-  if(!lastObfuscatedCode){ showStatus("⚠️ Obfuscate first!", "#ff4d4d"); return; }
-  let filename=document.getElementById("filename").value.trim()||originalFileName+"_obfuscated";
-  if(!filename.endsWith(".js")) filename+=".js";
+document.getElementById("downloadBtn").addEventListener("click",()=>{
+  if(!lastObfuscatedCode){ showStatus("⚠️ Nothing to download!"); return; }
+  const filename=document.getElementById("filename").value.trim()||"obfuscated.js";
   const blob=new Blob([lastObfuscatedCode],{type:"text/javascript"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a"); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url);
-  showStatus("💾 File downloaded!");
+  const link=document.createElement("a");
+  link.href=URL.createObjectURL(blob);
+  link.download=filename;
+  link.click();
+  showStatus("✅ File downloaded");
 });
 
-/* initialize */
+/* -------------------------
+   Initialize
+   ------------------------- */
 updateHeaderUser();
+renderAccounts();
 </script>
+
 </body>
-  </html>
+</html>
